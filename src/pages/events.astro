@@ -1,14 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Image } from 'astro:assets';
-import alpineMeme from '../images/alpineMeme.png'
+import Meme from '../components/Meme.astro';
 ---
 
 <Layout title="CS Hub Events">
 	<main>
   <h1>Events</h1>
   <p>Look at all the events we have here!</p>
-	<Image src={alpineMeme} alt="A woman dancing in an alpine meadow, in the style of 'The Sound of Music'"/>
+	<Meme />
   </main>
 </Layout>
 
