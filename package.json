@@ -1,5 +1,6 @@
 {
   "name": "ccsf-cs-club",
+  "license": "MIT",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
