@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Image } from 'astro:assets';
+import alpineMeme from '../images/alpineMeme.png'
+---
+
+<Layout title="Learning Pathways">
+	<main>
+  <h1>Learning Pathways</h1>
+  <p>Look at all the resources we have here!</p>
+	<Image src={alpineMeme} alt="A woman dancing in an alpine meadow, in the style of 'The Sound of Music'"/>
+  </main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 800px;
+		max-width: calc(100% - 2rem);
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+	h1 {
+		font-size: 4rem;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+		margin-bottom: 1em;
+	}
+</style>
