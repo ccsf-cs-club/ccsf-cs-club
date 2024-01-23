@@ -1,11 +1,23 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Navigation from '../components/Navigation.astro'
 ---
 <Layout title="About CS Hub">
-	<main>
-  <h1>About CS Hub</h1>
-  <p>It all changed when the Alpha@Coders Nation attacked...</p>
-  </main>
+  	<main>
+		<ul class="nav-bar">
+			<Navigation href="index" title="Home"/>
+			<Navigation href="learn" title="Learn"/>
+			<Navigation href="events" title="Events"/>
+			<Navigation href="projects" title="Projects"/>
+			<Navigation href="https://discord.gg/nrsPNfwBMY" title="Discord"/>
+			<Navigation href="https://cs-hub.tiddlyhost.com" title="Wiki"/>
+		</ul>
+  		<h1 class="title-gradient">About CS Hub</h1>
+  		<p>It all changed when the Alpha@Coders Nation attacked... Only the supreme coders, master of all code could stop them. But when the world needed them most, they vanished. Centuries have passed and we are slowly discovering the ancient techniques of code. Over the years, CS Hub was created to share these techniques so we can save the world.</p>
+		<p>CS Hub is a community made by computer science students for computer science students just like you. We like to discuss current tech events, new technologies, games, events, and share valuable resources for students. </p>
+		<p>One of our goals is to create multiple open source projects that we can contribute to! We share, discuss, and create projects for the benefit of us all. Whether you are a beginner, intermediate or a I don't know what I'm doing type of coder, you are welcome to learn, share, and contribute to our ongoing <a class="project-link" href="projects">projects</a>.</p>
+		
+  	</main>
 </Layout>
 
 <style>
@@ -25,4 +37,27 @@ import Layout from '../layouts/Layout.astro';
 		text-align: center;
 		margin-bottom: 1em;
 	}
+
+	.title-gradient {
+		background: linear-gradient(#e66465, #9198e5);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+
+	a {
+		text-decoration: none;
+		color: red;
+		font-weight: 700;
+	}
+
+	.project-link:hover {
+		color: rgb(77, 16, 96);
+	}
+
+	.nav-bar {
+		display: flex;
+		
+		padding: 1px;
+	}
+
 </style>
