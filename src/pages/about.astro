@@ -5,10 +5,10 @@ import Navigation from '../components/Navigation.astro'
 <Layout title="About CS Hub">
   	<main>
 		<ul class="nav-bar">
-			<Navigation href="index" title="Home"/>
-			<Navigation href="learn" title="Learn"/>
-			<Navigation href="events" title="Events"/>
-			<Navigation href="projects" title="Projects"/>
+			<Navigation href="/index" title="Home"/>
+			<Navigation href="/learn" title="Learn"/>
+			<Navigation href="/events" title="Events"/>
+			<Navigation href="/projects" title="Projects"/>
 			<Navigation href="https://discord.gg/nrsPNfwBMY" title="Discord"/>
 			<Navigation href="https://cs-hub.tiddlyhost.com" title="Wiki"/>
 		</ul>
@@ -56,8 +56,22 @@ import Navigation from '../components/Navigation.astro'
 
 	.nav-bar {
 		display: flex;
-		
 		padding: 1px;
+	}
+
+	.nav-bar li {
+        flex: 0 0 calc(16.666% - 10px); 
+        margin: 5px;
+    }
+
+	@media only screen and (max-width: 799px) {
+  		.nav-bar {
+		list-style: none;
+        padding: 1rem;
+        display: flex;
+        flex-wrap: wrap; 
+  		}
+
 	}
 
 </style>
