@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Hear from CS Club!">
+	<main>
+  <h1 class="text-4xl font-bold text-center mb-4">Unity Day</h1>
+  <form class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" action="https://docs.google.com/forms/d/e/1FAIpQLSfPYtqgOnb8NVG4i9BbTcJJJLZFhryloHMhapkyDZlhjDR3Xw/formResponse" method="POST" target="_blank">
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Your name</label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="entry.2010315656" required type="text" placeholder="Rocky Ram" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">E-Mail</label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="entry.432202038" type="text" placeholder="rram123@mail.ccsf.edu" />
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Number</label>
+      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="entry.1146887950" type="text" placeholder="4151111111" />
+    </div>
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Preferred Contact Method</label>
+      <select  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" name="entry.1724802709">
+        <option value="Email">E-Mail</option>
+        <option value="SMS">Phone/SMS</option>
+        <option value="Discord">Discord</option>
+      </select>
+    </div>
+    <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" value="Join">
+  </main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 1rem;
+		width: 800px;
+		max-width: calc(100% - 2rem);
+		color: white;
+		font-size: 20px;
+		line-height: 1.6;
+	}
+</style>
