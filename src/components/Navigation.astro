@@ -6,9 +6,9 @@ interface Props {
 
 const { title, href } = Astro.props;
 ---
-<li class="nav-component">
+<li class="nav-component mx-1.5">
     <a href={href}>
-        <h2>
+        <h2 class="m-0 text-xl">
             {title}
 			
         </h2>
@@ -37,11 +37,15 @@ const { title, href } = Astro.props;
 		opacity: 0.8;
 	}
     h2 {
-		margin: 0;
-		font-size: 1.25rem;
 		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 	}
     .nav-component:is(:hover, :focus-within) {
 		background: linear-gradient(#e66465, #9198e5);
+	}
+
+	a {
+		text-decoration: none;
+		color: red;
+		font-weight: 700;
 	}
 </style>

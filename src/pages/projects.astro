@@ -1,11 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Meme from '../components/Meme.astro';
+import Navbar from '../components/Navbar.astro';
 ---
 
 <Layout title="Projects">
 	<main>
-  <h1 class="underline"><a href="/">Projects</a></h1>
+    <Navbar />
+
+    <h1 class="underline"><a href="/">Projects</a></h1>
+
   <p>Look at all the projects we have here!</p>
 	<Meme />
 	</main>

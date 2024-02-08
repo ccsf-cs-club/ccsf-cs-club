@@ -7,16 +7,19 @@ import aiuc3 from "../assets/events/aiuc3.webp";
 import aiuc4 from "../assets/events/aiuc4.webp"; 
 import aiuc5 from "../assets/events/aiuc5.webp"; 
 import aiuc6 from "../assets/events/aiuc6.png"; 
+import Navbar from '../components/Navbar.astro';
 ---
 
 <Layout title="CS Hub Events">
-	<main>
-  <h1 class="underline">
+  <main>
+      <Navbar />
+      <h1 class="underline">
 	<a href="/">
 		Events
 	</a>
 	</h1>
 <p class="my-4"> A compilation of local, remote, free to little-cost tech events. </p>
+
 
 <p> Check out what the club's been up to: </p>
 <iframe class="mx-auto my-8" src="https://calendar.google.com/calendar/embed?height=560&wkst=1&bgcolor=%2313151a&ctz=America%2FLos_Angeles&showTitle=0&showNav=0&showDate=0&showPrint=0&showCalendars=0&mode=AGENDA&src=1881ec874c6a0f1bd100fee554d4eb16f1a56e072e6c173892ad4e557ec95f66%40group.calendar.google.com&color=%23039BE5" style="border-width:0" width="380" height="560" frameborder="0" scrolling="no"></iframe>
