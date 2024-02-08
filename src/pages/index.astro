@@ -1,17 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
+import GoldCard from '../components/GoldCard.astro';
 ---
 
-<Layout title="CS Hub">
+<Layout title="CS Club">
 	<main>
-		<h1>Welcome to <span class="text-gradient">CS Hub</span></h1>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="learn"
-				title="Learn"
-				body="Explore our CS interest groups"
+		<h1 class="mt-12">Welcome to <span class="text-gradient">CS Club</span></h1>
+			<ul role="list" class="mb-8">
+			<GoldCard
+				href="/subscribe"
+				title="Unity Day 2024"
+				body="Sign up for our mailing list to learn about cool opportunities and resources!"
 			/>
+			</ul>
+			<ul role="list" class="link-card-grid">				
 			<Card
 				href="events"
 				title="Events"
@@ -28,14 +31,9 @@ import Card from '../components/Card.astro';
 				body="Come say hi to our amazing Discord community"
 			/>
 			<Card
-				href="https://cs-hub.tiddlyhost.com"
-				title="Wiki"
-				body="Access our knowledge base for computer science"
-			/>
-			<Card
 				href="about"
 				title="About"
-				body="Learn more about CS Hub"
+				body="Learn more about CS Club"
 			/>
 		</ul>
 	</main>
