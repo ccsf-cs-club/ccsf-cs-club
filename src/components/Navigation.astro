@@ -1,24 +1,24 @@
 ---
 interface Props {
-	title: string;
-	href: string;
+  title: string;
+  href: string;
 }
 
 const { title, href } = Astro.props;
 ---
+
 <li class="nav-component mx-1.5 w-full text-center">
-    <a  href={href}>
-        <button class="m-1 text-xl bg-[#23262d] hover:bg-[#3e4a5f] text-center rounded-lg p-2 w-full">
-            {title}
-			
-        </button>
-    </a> 
+  <a href={href}>
+    <button
+      class="m-1 w-full rounded-lg bg-[#545c6e] p-2 text-center text-xl hover:bg-[#bbbec5]"
+    >
+      {title}
+    </button>
+  </a>
 </li>
 
-
-<!-- color choices
+<!-- bg-[#23262d] 
 #3e4a5f - dark-grayish 
 #545c6e - light grayish
 #5a73ad - blueish 
 -->
-
