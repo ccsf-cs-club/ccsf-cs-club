@@ -1,0 +1,23 @@
+---
+import Navigation from '../components/Navigation.astro';
+---
+
+<ul class="nav-bar flex p-1">
+    <Navigation href="/" title="Home"/>
+    <Navigation href="/events" title="Events"/>
+    <Navigation href="/projects" title="Projects"/>
+    <Navigation href="https://discord.gg/nrsPNfwBMY" title="Discord"/>
+</ul>
+
+<style>
+
+@media only screen and (max-width: 799px) {
+  		.nav-bar {
+		list-style: none;
+        padding: 1rem;
+        display: flex;
+        flex-wrap: wrap; 
+  		}
+	}
+</style>
+

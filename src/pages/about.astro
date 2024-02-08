@@ -1,18 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro'
+
+import Navbar from '../components/Navbar.astro';
 ---
 <Layout title="About CS Hub">
-  	<main>
-		<ul class="nav-bar">
-			<Navigation href="/index" title="Home"/>
-			<Navigation href="/learn" title="Learn"/>
-			<Navigation href="/events" title="Events"/>
-			<Navigation href="/projects" title="Projects"/>
-			<Navigation href="https://discord.gg/nrsPNfwBMY" title="Discord"/>
-			<Navigation href="https://cs-hub.tiddlyhost.com" title="Wiki"/>
-		</ul>
-  		<h1 class="title-gradient">About CS Hub</h1>
+  	<main class="m-auto p-4 w-[800px] text-white text-xl">
+		<Navbar />
+  		<h1 class="title-gradient text-6xl font-bold text-center my-6">About CS Hub</h1>
       <p>The CS Club is a welcoming community that increases access to programming-reliant careers.</p>
 			<p>We make open-source CS projects together, with gentle onboarding for beginners to professional-standard workflow. We are building a digital library of resources of self-learning guides, college opportunities, and career navigation. We connect students to experienced coders through tech events, invited speakers, an online communication space, and most importantly, having fun! </p>		
   	</main>
@@ -20,20 +14,7 @@ import Navigation from '../components/Navigation.astro'
 
 <style>
 	main {
-		margin: auto;
-		padding: 1rem;
-		width: 800px;
 		max-width: calc(100% - 2rem);
-		color: white;
-		font-size: 20px;
-		line-height: 1.6;
-	}
-	h1 {
-		font-size: 4rem;
-		font-weight: 700;
-		line-height: 1;
-		text-align: center;
-		margin-bottom: 1em;
 	}
 
 	.title-gradient {
@@ -41,35 +22,4 @@ import Navigation from '../components/Navigation.astro'
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
-
-	a {
-		text-decoration: none;
-		color: red;
-		font-weight: 700;
-	}
-
-	.project-link:hover {
-		color: rgb(77, 16, 96);
-	}
-
-	.nav-bar {
-		display: flex;
-		padding: 1px;
-	}
-
-	.nav-bar li {
-        flex: 0 0 calc(16.666% - 10px); 
-        margin: 5px;
-    }
-
-	@media only screen and (max-width: 799px) {
-  		.nav-bar {
-		list-style: none;
-        padding: 1rem;
-        display: flex;
-        flex-wrap: wrap; 
-  		}
-
-	}
-
 </style>
