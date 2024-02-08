@@ -1,24 +1,37 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
 ---
+
 <Layout title="About CS Hub">
-  	<main class="m-auto p-4 w-[800px] text-white text-xl">
-		<Navbar />
-  		<h1 class="title-gradient text-6xl font-bold text-center my-6">About CS Hub</h1>
-      <p>The CS Club is a welcoming community that increases access to programming-reliant careers.</p>
-			<p>We make open-source CS projects together, with gentle onboarding for beginners to professional-standard workflow. We are building a digital library of resources of self-learning guides, college opportunities, and career navigation. We connect students to experienced coders through tech events, invited speakers, an online communication space, and most importantly, having fun! </p>		
-  	</main>
+  <main class="m-auto p-4 w-[800px] text-white text-xl">
+    <Navbar />
+    <h1 class="title-gradient text-6xl font-bold text-center my-6">
+      About CS Hub
+    </h1>
+    <p>
+      The CS Club is a welcoming community that increases access to
+      programming-reliant careers.
+    </p>
+    <p>
+      We make open-source CS projects together, with gentle onboarding for
+      beginners to professional-standard workflow. We are building a digital
+      library of resources of self-learning guides, college opportunities, and
+      career navigation. We connect students to experienced coders through tech
+      events, invited speakers, an online communication space, and most
+      importantly, having fun!
+    </p>
+  </main>
 </Layout>
 
 <style>
-	main {
-		max-width: calc(100% - 2rem);
-	}
+  main {
+    max-width: calc(100% - 2rem);
+  }
 
-	.title-gradient {
-		background: linear-gradient(#e66465, #9198e5);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
+  .title-gradient {
+    background: linear-gradient(#e66465, #9198e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 </style>

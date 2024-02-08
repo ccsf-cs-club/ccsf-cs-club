@@ -1,14 +1,19 @@
 ---
-import { Image } from 'astro:assets';
-import alpineMeme from '../assets/alpineMeme.png'
+import { Image } from "astro:assets";
+import alpineMeme from "../assets/alpineMeme.png";
 ---
+
 <a href="/">
-	<Image class="meme" src={alpineMeme} alt="A woman dancing in an alpine meadow, in the style of 'The Sound of Music'"/>
+  <Image
+    class="meme"
+    src={alpineMeme}
+    alt="A woman dancing in an alpine meadow, in the style of 'The Sound of Music'"
+  />
 </a>
 <style>
-	.meme {
-		width: 100%;
-		max-width: 864px;
-		height: auto;
-	}
+  .meme {
+    width: 100%;
+    max-width: 864px;
+    height: auto;
+  }
 </style>
