@@ -6,3 +6,6 @@ dev:
 
 fmt:
 	yarn prettier . --write
+
+install_prettier:
+	yarn add --dev --exact prettier prettier-plugin-astro prettier-plugin-tailwindcss

@@ -1,17 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-	<head>
-		<title>Random Walk Simulation - Demo</title>
-		<style>
-			body { background-color: #000; margin: 0; overflow: hidden; }
-			canvas { width: 100%; height: 100%; }
-		</style>
-	</head>
-	<body onload="var rws = new RWS(); rws.initialize();">
-		<!-- three.js CDN: http://cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js -->
-		<script is:inline src="/three.min.js"></script>
-		<script is:inline src="/OrbitControls.js"></script>
-		<script is:inline src="/rainbowvis.js"></script>
-		<script is:inline src="/random-walk-simulation.js"></script>
-		</body>
+  <head>
+    <title>Random Walk Simulation - Demo</title>
+    <style>
+      body {
+        background-color: #000;
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body onload="var rws = new RWS(); rws.initialize();">
+    <!-- three.js CDN: http://cdnjs.cloudflare.com/ajax/libs/three.js/r68/three.min.js -->
+    <script is:inline src="/three.min.js"></script>
+    <script is:inline src="/OrbitControls.js"></script>
+    <script is:inline src="/rainbowvis.js"></script>
+    <script is:inline src="/random-walk-simulation.js"></script>
+  </body>
 </html>
