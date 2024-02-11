@@ -2,14 +2,23 @@
 import Layout from "../../layouts/Layout.astro";
 import Meme from "../../components/Meme.astro";
 import Navbar from "../../components/Navbar.astro";
+import GoldCard from "../../components/GoldCard.astro";
 ---
 
 <Layout title="Projects">
   <main>
     <Navbar />
     <h1 class="underline"><a href="/">Projects</a></h1>
-    <p>Look at all the projects we have here!</p>
+    <div class="w-4/5 m-auto">
+    <GoldCard
+      href="/projects/rainbow_walk"
+      title="Rainbow Random Walk"
+      body="Check out a simple algorithm showcase from this week!"
+    />
+    </div>
+    <br>
     <Meme />
+    <p class="mt-4">Look at all the other projects we have here!</p>
   </main>
 </Layout>
 
