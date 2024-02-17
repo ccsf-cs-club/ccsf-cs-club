@@ -4,10 +4,9 @@ export default {
   theme: {
     extend: {
       boxShadow: {
-        'custom-hover': '0 0 8px rgba(255, 255, 255, 0.6)', // Add this line
+        "custom-hover": "0 0 8px rgba(255, 255, 255, 0.6)", // Add this line
       },
     },
   },
   plugins: [],
 };
-
