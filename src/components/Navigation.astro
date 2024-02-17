@@ -5,17 +5,32 @@ interface Props {
 }
 
 const { title, href } = Astro.props;
+const currentPath = Astro.url.pathname;
+const isActive =
+  href === currentPath || (href !== "/" && currentPath.startsWith(href));
 ---
 
 <li class="nav-component mx-1.5 w-full text-center">
   <a href={href}>
     <button
-      class="m-1 w-full rounded-lg bg-[#545c6e] p-2 text-center text-xl hover:bg-[#bbbec5]"
+      class={`m-1 w-full rounded-lg p-2 text-center text-xl transition duration-100 ease-in-out ${isActive ? "active" : "hover:bg-[#545c6e]"} hover:box-shadow-custom-hover`}
+      style={`${isActive ? "background-color: #545c6e; box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);" : ""}`}
     >
       {title}
     </button>
   </a>
 </li>
+
+<style>
+  li.nav-component a button:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6); /* Light glow on hover */
+  }
+
+  .active {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* Brighter glow for active link */
+    background-color: #545c6e; /* Maintaining the background color for active state */
+  }
+</style>
 
 <!-- bg-[#23262d] 
 #3e4a5f - dark-grayish 
