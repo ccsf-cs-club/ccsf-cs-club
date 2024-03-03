@@ -3,16 +3,45 @@ import Layout from "../../layouts/Layout.astro";
 import NavbarDaisy from "../../components/NavbarDaisy.astro";
 ---
 
-<Layout title="RamBytes">
+<Layout title="Industry Speaker Event">
   <main>
     <NavbarDaisy />
-    <div class="h-full w-screen">
-      <embed
-        height="535"
-        width="100%"
-        src="/2024_03_13_Tech_Panel_Flyer.pdf"
-      />
+    <div class="flex flex-col items-center justify-center py-4">
+      <div class="w-full max-w-4xl px-4">
+        <object
+          data="/2024_03_13_Tech_Panel_Flyer.pdf"
+          type="application/pdf"
+          class="custom-height w-full"
+        >
+          <p>
+            Your browser does not support PDFs. Please download the PDF to view
+            it: <a href="/2024_03_13_Tech_Panel_Flyer.pdf">Download PDF</a>.
+          </p>
+        </object>
+      </div>
+      <p class="p-8 text-center">
+        Come listen to a speaker panel of seasoned tech veterans!
+      </p>
     </div>
   </main>
-  <p class="p-4">Come listen to a speaker panel of seasoned tech veterans!</p>
 </Layout>
+<style>
+  /* Custom CSS for Responsive PDF Viewer Height */
+  .custom-height {
+    height: 60vh; /* Default height for mobile and low-width screens */
+  }
+
+  @media (min-width: 640px) {
+    /* Tailwind's 'sm' breakpoint */
+    .custom-height {
+      height: 75vh; /* Increased height for small to medium screens */
+    }
+  }
+
+  @media (min-width: 1024px) {
+    /* Tailwind's 'lg' breakpoint */
+    .custom-height {
+      height: 85vh; /* Further increased height for larger screens */
+    }
+  }
+</style>
