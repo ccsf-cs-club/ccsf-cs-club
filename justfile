@@ -9,3 +9,6 @@ fmt:
 
 install_prettier:
 	yarn add --dev --exact prettier prettier-plugin-astro prettier-plugin-tailwindcss
+
+ngrok:
+	ngrok http 4321
