@@ -1,0 +1,27 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import NavbarDaisy from "../../components/NavbarDaisy.astro";
+---
+
+<Layout title="Industry Speaker Event">
+  <main>
+    <NavbarDaisy />
+    <div class="flex flex-col h-screen items-center justify-center py-4">
+      <div class="w-full h-full max-w-screen-lg max-h-screen-lg">
+        <object
+          data="/2024_03_13_Tech_Panel_Flyer.pdf"
+          type="application/pdf"
+          class="h-full w-full"
+        >
+          <p>
+            Your browser does not support PDFs. Please download the PDF to view
+            it: <a href="/2024_03_13_Tech_Panel_Flyer.pdf">Download PDF</a>.
+          </p>
+        </object>
+      </div>
+      <p class="p-8 text-center">
+        Come listen to a speaker panel of seasoned tech veterans!
+      </p>
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,90 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Project">
+  <!--- NavBar --->
+  <div class="navbar bg-base-100">
+    <div class="flex-1">
+      <a href="/" class="btn btn-ghost text-xl">CS Club</a>
+    </div>
+    <div class="flex-none">
+      <ul class="menu menu-horizontal px-1">
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/about">About</a></li>
+        <li>
+          <details>
+            <summary> Events </summary>
+            <ul class="rounded-t-none bg-base-100 p-2">
+              <li><a href="/events/headline">Featured</a></li>
+              <li><a href="/events">Calendar</a></li>
+              <li><a href="/subscribe">Sign Up</a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!--- Toggle Content --->
+  <!--- Introduction --->
+  <div class="m-auto grid w-3/5 space-y-3 py-8">
+    <h2 class="text-xl">Introduction to DaisyUI</h2>
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" checked="checked" />
+      <div class="text-l collapse-title font-medium">What is Daisy UI?</div>
+      <div class="collapse-content">
+        <p>
+          <a href="https://daisyui.com/" class="underline">DaisyUI</a> is like <a
+            href="https://getbootstrap.com/"
+            class="underline">Bootstrap</a
+          >, but for <a href="https://tailwindcss.com/" class="underline"
+            >Tailwind</a
+          >! Instead of writing endless tailwind classes, you can use premade
+          class names, provided by DaisyUI!
+        </p>
+      </div>
+    </div>
+    <!--- Installatiion --->
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <div class="text-l collapse-title font-medium">How can I use it?</div>
+      <div class="collapse-content">
+        <a href="https://daisyui.com/docs/install/" class="italic underline"
+          >Check out DaisyUI's installation guide!</a
+        >
+      </div>
+    </div>
+    <!--- Resources --->
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <div class="text-l collapse-title font-medium">Resources</div>
+      <div class="collapse-content">
+        <ul>
+          <li>
+            <a href="https://daisyui.com/components/" class="italic underline"
+              >Library of DaisyUI Components</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!--- Example 1: Buttons --->
+    <h2 class="text-xl">Examples</h2>
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <div class="text-l collapse-title font-medium">Buttons</div>
+      <div class="collapse-content">
+        <ul>
+          <div class="m-auto grid w-3/5 space-y-3 py-8">
+            <button class="btn btn-primary">Primary Button</button>
+            <button class="btn btn-secondary">Secondary Button</button>
+            <button class="btn btn-outline btn-accent"
+              >Alternative Button</button
+            >
+          </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</Layout>
