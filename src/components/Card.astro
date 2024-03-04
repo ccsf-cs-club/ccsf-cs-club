@@ -7,8 +7,8 @@ interface Props {
 const { href, title, body } = Astro.props;
 ---
 <a href={href}>
-<div class="card w-full h-48 bg-[#23262d] shadow-xl">
-  <div class="card-body">
+<div class="card w-full h-48 bg-stone-200 dark:bg-[#23262d] shadow-xl">
+  <div class="card-body text-[#23262d] dark:text-white">
     <h2 class="card-title">{title} &rarr;</h2>
     <p>{body}</p>
   </div>
@@ -20,7 +20,6 @@ const { href, title, body } = Astro.props;
     list-style: none;
     display: flex;
     padding: 1px;
-    background-color: #23262d;
     background-image: none;
     background-size: 400%;
     border-radius: 7px;
@@ -34,7 +33,6 @@ const { href, title, body } = Astro.props;
     line-height: 1.4;
     padding: calc(1.5rem - 1px);
     border-radius: 8px;
-    color: white;
     background-color: #23262d;
     opacity: 0.8;
   }

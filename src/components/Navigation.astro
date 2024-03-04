@@ -13,8 +13,8 @@ const isActive =
 <li class="nav-component mx-1.5 w-full text-center">
   <a href={href}>
     <button
-      class={`m-1 w-full rounded-lg p-2 text-center text-xl transition duration-100 ease-in-out ${isActive ? "active" : "hover:bg-[#545c6e]"} hover:box-shadow-custom-hover`}
-      style={`${isActive ? "background-color: #545c6e; box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);" : ""}`}
+      class={`m-1 w-full rounded-lg p-2 text-center text-xl transition duration-100 ease-in-out ${isActive ? "active bg-stone-200 dark:bg-stone-400" : "hover:bg-[#545c6e]"} hover:box-shadow-custom-hover`}
+      style={`${isActive ? "box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);" : ""}`}
     >
       {title}
     </button>

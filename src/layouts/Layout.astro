@@ -1,4 +1,6 @@
 ---
+import NavbarDaisy from "../components/NavbarDaisy.astro";
+
 interface Props {
   title: string;
 }
@@ -7,7 +9,7 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="bg-white dark:bg-[#13151a]">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content="CCSF CS Club" />
@@ -17,6 +19,7 @@ const { title } = Astro.props;
     <meta name="darkreader-lock" />
     <title>{title}</title>
   </head>
+  <NavbarDaisy />
   <body>
     <slot />
   </body>
