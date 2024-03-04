@@ -6,13 +6,14 @@ interface Props {
 }
 const { href, title, body } = Astro.props;
 ---
+
 <a href={href}>
-<div class="card w-full h-48 bg-stone-200 dark:bg-[#23262d] shadow-xl">
-  <div class="card-body text-[#23262d] dark:text-white">
-    <h2 class="card-title">{title} &rarr;</h2>
-    <p>{body}</p>
+  <div class="card h-48 w-full bg-stone-200 shadow-xl dark:bg-[#23262d]">
+    <div class="card-body text-[#23262d] dark:text-white">
+      <h2 class="card-title">{title} &rarr;</h2>
+      <p>{body}</p>
+    </div>
   </div>
-</div>
 </a>
 
 <style>
