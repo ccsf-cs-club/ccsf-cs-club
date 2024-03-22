@@ -6,14 +6,16 @@ import GoldCard from "../components/GoldCard.astro";
 const start = Date.now();
 
 function getNextDay(dayOfWeek) {
-    var resultDate = new Date(Date.now());
-    resultDate.setDate(resultDate.getDate() + (7 + dayOfWeek - resultDate.getDay()) % 7);
-    const dateTimeFormat = new Intl.DateTimeFormat('en-US', {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
-    return dateTimeFormat.format(resultDate);
+  var resultDate = new Date(Date.now());
+  resultDate.setDate(
+    resultDate.getDate() + ((7 + dayOfWeek - resultDate.getDay()) % 7),
+  );
+  const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+  return dateTimeFormat.format(resultDate);
 }
 
 const nextMeetUpDate = getNextDay(5);
