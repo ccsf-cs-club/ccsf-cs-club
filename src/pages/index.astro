@@ -2,6 +2,23 @@
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import GoldCard from "../components/GoldCard.astro";
+
+const start = Date.now();
+
+function getNextDay(dayOfWeek) {
+  var resultDate = new Date(Date.now());
+  resultDate.setDate(
+    resultDate.getDate() + ((7 + dayOfWeek - resultDate.getDay()) % 7),
+  );
+  const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+  return dateTimeFormat.format(resultDate);
+}
+
+const nextMeetUpDate = getNextDay(5);
 ---
 
 <Layout title="CS Club">
@@ -12,8 +29,8 @@ import GoldCard from "../components/GoldCard.astro";
     <ul role="list" class="mb-8">
       <GoldCard
         href="/events/headline"
-        title="General Meeting - March 15"
-        body="Come join us for our first general meeting, and introduce yourself!"
+        title=`Next General Meeting - ${nextMeetUpDate}`
+        body="Come join us at our general meeting, and hang out!"
       />
     </ul>
     <ul role="list" class="link-card-grid">
@@ -36,7 +53,6 @@ import GoldCard from "../components/GoldCard.astro";
     </ul>
   </main>
 </Layout>
-
 <style>
   main {
     margin: auto;
