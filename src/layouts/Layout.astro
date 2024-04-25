@@ -9,21 +9,100 @@ const { title } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en" class="bg-[#f7f3e6] dark:bg-[#13151a]">
-  <head>
-    <meta charset="UTF-8" />
+<html lang="en" class="bg-[#275AE5] light:bg-[12289F]">
+  <head> 
+<alert> = "Welcome!"
+<header>
+<div class> = "header-placement-top-left"
     <meta name="description" content="CCSF CS Club" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="darkreader-lock" />
+    <meta name="lightreader-lock" />
     <title>{title}</title>
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Text Animation</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+ 
+        body {
+            background: yellowgreen;
+        }
+ 
+        .container {
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+ 
+        .container span {
+            display: block;
+        }
+ 
+        .text1 {
+            color: white;
+            font-size: 70px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            background: yellowgreen;
+            position: relative;
+            animation: Hello Student 2s 1;
+        }
+ 
+        .text2 {
+            font-size: 30px;
+            color: darkgreen;
+            font-family: Georgia, serif;
+        }
+ 
+        @keyframes text {
+            0% {
+                color: black;
+                margin-bottom: -40px;
+            }
+ 
+            30% {
+                letter-spacing: 25px;
+                margin-bottom: -40px;
+            }
+ 
+            85% {
+                letter-spacing: 8px;
+                margin-bottom: -40px;
+            }
+        }
+    </style>
+</head>
+ 
+<body>
+    <div class="container">
+        <div class="row">
+            <span class="text1">Hello!</span>
+            <span class="text2">GeeksforGeeks</span>
+        </div>
+    </div>
+</body>
+ 
+</html>
   </head>
   <NavbarDaisy />
   <body>
     <slot />
   </body>
-
   <style is:global>
     :root {
       --accent: 136, 58, 234;
@@ -45,7 +124,8 @@ const { title } = Astro.props;
     }
     html {
       font-family: system-ui, sans-serif;
-      background: #13151a;
+<background>
+ <background-image.gif> = https://tenor.com/en-GB/view/rz-ds-project-gif-24176703;
       background-size: 224px;
     }
     code {
