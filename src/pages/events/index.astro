@@ -7,6 +7,8 @@ import aiuc3 from "../../assets/events/aiuc3.webp";
 import aiuc4 from "../../assets/events/aiuc4.webp";
 import aiuc5 from "../../assets/events/aiuc5.webp";
 import aiuc6 from "../../assets/events/aiuc6.png";
+import springfest from "../../assets/events/springfest.jpg";
+import springfest2 from "../../assets/events/springfest2.jpg";
 import Navbar from "../../components/Navbar.astro";
 ---
 
@@ -26,8 +28,73 @@ import Navbar from "../../components/Navbar.astro";
       frameborder="0"
       scrolling="no"></iframe>
     <!-- <iframe src="https://calendar.google.com/calendar/embed?src=1881ec874c6a0f1bd100fee554d4eb16f1a56e072e6c173892ad4e557ec95f66%40group.calendar.google.com&ctz=America%2FLos_Angeles" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
+  
+  <!--
+  <div class="calendar">
+  <div class="datenav">
+    <button id="prevBtn">
+      <p><</p>
+    </button>
+    <div class="monthYear" id="monthYear"></div>
+    <button id="nextBtn">
+      <p>></p>
+    </button>
+  </div>
+  <div class="days">
+    <div class="day">Mon</div>
+    <div class="day">Tue</div>
+    <div class="day">Wed</div>
+    <div class="day">Thu</div>
+    <div class="day">Fri</div>
+    <div class="day">Sat</div>
+    <div class="day">Sun</div>
+  </div>
+  <div class="dates" id="dates" ><div class="date"></div></div>
+</div>
+-->
+    
     <h3 class="mt-6 text-3xl font-bold">Spring 2024</h3>
-    :o
+    <br>
+<h5 class="mt-2 text-2xl font-bold"> Spring Fest 4/23</h5>
+    <p>
+    Spring Fest 2024 is an opportunity to showcase, attract new members, and have fun with us at our table. The event has a focus on game / engaging activities and will have free food. Drop by Table #3 and stick around to talk about the club while we demo a few projects.
+    </p>
+ <div class="flex gap-2">
+        <Picture src={springfest} alt="1/29" width="360" />
+        <Picture src={springfest2} alt="1/30" width="360" />
+  </div>
+  
+  <br>
+
+  <h5 class="mt-2 text-2xl font-bold"> Game Dev Interest Group Meeting 3/15 & 3/22</h5>
+    <p>
+    Game development is a growing and popular sub-interest in CS. A group of our members interested in discussing the latest trends and inspirations
+    </p>
+  <br>
+
+   <h5 class="mt-2 text-2xl font-bold"> Industry Professionals Speaker Panel 3/13</h5>
+    <p>
+
+    Frank in his last semester as a CS, Math, and Data Science Major at CCSF organized a group of speakers to share their insight on March 13th from 12:00-1:30 PST in Batmale 413.
+    Panel includes a software engineer from OpenAI, who has been there since the company was small and just a start-up. An engineer from YouTube. A data scientist who works with a start-up that works with the city of SF and Seattle to improve transportation. And finally, we have a technical recruiter who works in fintech. 
+    <br>
+    <a href="/events/3-13flyer">Link to Flyer</a></li>
+    </p>
+  <br>
+
+   <h5 class="mt-2 text-2xl font-bold">Leetcode / Mock Interview Practice 3/8</h5>
+    <p>
+     Come join us for mock interviews so you can confidently implement interview strategies for questions such as “Tell me about yourself”, receiving feedback in the process.
+
+Also we will be learning leetcode, a platform for tech interview questions. If you are a beginner at Leetcode don’t worry we will teach you how it works, and why it is used a lot.
+    </p>
+
+    <br>
+   <h5 class="mt-2 text-2xl font-bold">Personal Portfolio/Resume Workshop 3/1</h5>
+    <p>
+      Come join us to learn the basics of using web frameworks, and get hands-on experience building a personal portfolio site! This is one of the best ways to stand out among the pack, and is definitely something hirers would look at
+    </p>
+    <br>
     <h5 class="mt-2 text-2xl font-bold">Unity Day 2/13</h5>
     <p>
       Unity Day is a campus-wide event for students to come have fun, learn
@@ -35,7 +102,7 @@ import Navbar from "../../components/Navbar.astro";
       will have laptops for interested and prospecting club members to preview a
       live site and shared projects.
     </p>
-
+    <br>
     <h5 class="mt-2 text-2xl font-bold">
       Custom Keyboard Building Session 2/11
     </h5>
@@ -52,6 +119,7 @@ import Navbar from "../../components/Navbar.astro";
         here.</a
       >
     </p>
+      <br>
     <h5 class="mt-2 text-2xl font-bold">AI User Conference 1/29-1/31</h5>
     <p>
       During this three day event tailored for Marketers, Designers, and
@@ -74,7 +142,7 @@ import Navbar from "../../components/Navbar.astro";
         <Picture src={aiuc4} alt="1/30" width="240" />
       </div>
     </div>
-
+    <br>
     <h5 class="mt-2 text-2xl font-bold">
       Joint Mathematics Meeting (JMM) 2024 1/3-1/6
     </h5>
@@ -88,7 +156,7 @@ import Navbar from "../../components/Navbar.astro";
       minicourses, and poster sessions available to guests. Notes by attending
       club members can be found on the Wiki[Link to be added].
     </p>
-
+    <br>
     <h3 class="mt-6 text-3xl font-bold">Fall 2023</h3>
 
     <h5 class="mt-2 text-2xl font-bold">
@@ -129,6 +197,63 @@ import Navbar from "../../components/Navbar.astro";
       with colleagues and friends, including a hosted lunch and evening
       reception.
     </p>
+<script>
+
+    
+const monthYearElement = document.getElementById('monthYear');
+const datesElement = document.getElementById('dates');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+let currentDate = new Date();
+const updateCalendar = () => {
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth();
+
+  const firstDay = new Date(currentYear, currentMonth, 0);
+  const lastDay = new Date(currentYear, currentMonth+1, 0);
+  const totalDays= lastDay.getDate();
+  const firstDayIndex= firstDay.getDay();
+  const lastDayIndex= lastDay.getDay();
+
+  const monthYearString = currentDate.toLocaleString('default', {month: 'long', year: 'numeric'});
+
+  monthYearElement.textContent = monthYearString;
+
+let datesHTML = '';
+
+for (let i = firstDayIndex; i> 0; i--){
+  const prevDate = new Date(currentYear,currentMonth,0- i +1);
+  datesHTML += `<div class="date inactive">${prevDate.getDate()}</div>`;
+}
+
+for(let i=1; i <= totalDays; i++){
+  const date = new Date(currentYear, currentMonth, i);
+  const activeClass = date.toDateString() === new Date().
+  toDateString() ? 'active' : '';
+  datesHTML += `<div class="date${activeClass}">${i}</div>`;
+}
+
+for(let i=1; i<= 7-lastDayIndex; i++){
+  const nextDate = new Date(currentYear, currentMonth+1,i);
+  datesHTML += `<div class="date inactive">${nextDate.getDate()}</div>`;
+}
+  datesElement.innerHTML = datesHTML;
+}
+
+prevBtn.addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth()-1);
+  updateCalendar();
+})
+
+nextBtn.addEventListener('click', () => {
+  currentDate.setMonth(currentDate.getMonth()+1);
+  updateCalendar();
+})
+
+updateCalendar();
+
+</script>
   </main>
 </Layout>
 
@@ -149,4 +274,93 @@ import Navbar from "../../components/Navbar.astro";
     text-align: center;
     margin-bottom: 0.5em;
   }
+
+  a {
+    color:purple;
+    font-weight: 600;
+  }
+
+.calendar{
+  width: 380px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: black;
+  border-radius: 10px;
+  box-shadow: 0 0 10px white;
+}
+
+.datenav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+}
+
+.monthYear {
+  text-align: center;
+  font-weight: 600;
+}
+
+.datenav button{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: black;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 0 4px white;
+}
+
+.days{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.day {
+  text-align: center;
+  padding: 5px;
+  color: grey;
+  font-weight: 500;
+}
+
+.dates {
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.date {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  margin: auto;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 40px;
+  height:40px;
+  transition: 0.2s;
+}
+
+.date:hover,
+.date.active {
+  background: pink;
+  color: black;
+}
+
+.date.inactive {
+  color: white;
+}
+
+.date.inactive:hover{
+  color: black;
+}
+
 </style>
