@@ -17,6 +17,7 @@
     "daisyui": "^4.7.2",
     "flowbite": "^2.3.0",
     "flowbite-datepicker": "^1.2.6",
+    "postcss": "^8.4.38",
     "typescript": "^5.3.3"
   },
   "devDependencies": {
