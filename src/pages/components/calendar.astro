@@ -1,0 +1,60 @@
+---
+import { Image } from 'astro:assets';
+---
+
+<div class="bg-pink-500 w-screen h-screen flex flex-col">
+  <h1 class="text-white text-9xl">CS Club Events</h1>
+
+  <label class="input input-border bg-tomato-400 py-10 my-10 mx-16 flex items-center gap-2">
+    <input type="date" id="start" name="trip-start" value="2024-05-01" min="2024-01-01" max="2026-12-31" class="grow text-5xl" />
+  </label>
+  
+  <div class="carousel carousel-center mx-auto w-screen py-10 my-10 space-x-4 bg-neutral">
+    <!-- Carousel Item -->
+    <div class="carousel-item flex flex-col items-center">
+      <Image src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="a stock image for testing the site" class="rounded-box" width="940" height="480"/>
+      <div class="stats shadow mt-8">
+        <div class="stat my-2">
+          <div class="stat-value text-4xl mb-10">Finding a Laptop: Lapbottoms Convention</div>
+          <div class="stat-value text-2xl">Monday, May 6, 2024</div>
+        </div>
+      </div>
+    </div> 
+
+    <!-- Carousel Item -->
+    <div class="carousel-item flex flex-col items-center">
+      <Image src="https://images.unsplash.com/photo-1510773191282-3f25266bfa8b?q=80&w=2672&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="a stock image for testing the site" class="rounded-box" width="940" height="480"/>
+      <div class="stats shadow mt-8">
+        <div class="stat my-2">
+          <div class="stat-value text-4xl mb-10">Late Night Coding: Support Group</div>
+          <div class="stat-value text-2xl">Tuesday, May 7, 2024</div>
+        </div>
+      </div>
+    </div> 
+
+    <!-- Carousel Item -->
+    <div class="carousel-item flex flex-col items-center">
+      <Image src="https://images.unsplash.com/photo-1547190994-0dfe4ab1bdae?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="a stock image for testing the site" class="rounded-box" width="980" height="480"/>
+      <div class="stats shadow mt-8">
+        <div class="stat my-2">
+          <div class="stat-value text-4xl mb-10">Extreme Skateboarding: Helmets Forbidden</div>
+          <div class="stat-value text-2xl">Friday, May 10, 2024</div>
+        </div>
+      </div>
+    </div> 
+  </div>
+
+
+<button class="btn" onclick="my_modal_1.showModal()">open modal</button>
+<dialog id="my_modal_1" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Hello!</h3>
+    <p class="py-4">Press ESC key or click the button below to close</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>

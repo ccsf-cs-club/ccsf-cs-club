@@ -1,0 +1,59 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="HTMX Park">
+  <!--- Introduction --->
+  <div class="m-auto grid w-4/5 space-y-3 py-8">
+    <h2 class="text-xl">HTMX</h2>
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" checked="checked" />
+      <div class="text-l collapse-title font-medium">What is HTMX?</div>
+      <div class="collapse-content">
+        <a href="https://htmx.org/" class="underline">HTMX</a> is a
+        small library, useful for building simple, yet modern UI's.
+      </div>
+    </div>
+    
+    <!--- Installatiion --->
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <div class="text-l collapse-title font-medium">How can I use it?</div>
+      <div class="collapse-content">
+        <a href="https://htmx.org/docs/#installing" class="italic underline"
+          >You can include it as a &lt;script&gt; tag!</a
+        >
+      </div>
+    </div>
+    <!--- Resources --->
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <div class="text-l collapse-title font-medium">Resources</div>
+      <div class="collapse-content">
+        <a href="https://htmx.org/docs/" class="italic underline"
+          >HTMX Docs</a
+        >
+      </div>
+    </div>
+    <h2 class="text-xl">Examples</h2>
+    <!--- Example 1: Buttons --->
+    <div class="collapse collapse-arrow bg-base-200">
+      <input type="radio" name="my-accordion-2" />
+      <h3 class="text-l collapse-title font-medium">Buttons</h3>
+      <div class="collapse-content">
+        <ul>
+          <div class="m-auto grid grid-cols-2 w-3/5 space-x-8 py-8">
+            <button class="btn btn-primary">Primary Button</button>
+            <button class="btn btn-secondary">Secondary Button</button>
+          </div>
+        </ul>
+        <div hx-put="/projects/daisy_ui">
+          Put To Messages
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</Layout>
+
+<script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>
