@@ -1,0 +1,83 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout title="Chessboard">
+<!-- Preliminary Chessboard UI Sandbox START -->
+<div class="flex flex-col w-full items-center">
+  <!-- Chess Tile - A - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">An Empty Chess Tile</h2>
+      <p>The Basic Building Block of our Board</p>
+      <div class="card-actions justify-end">
+        <button class="btn btn-primary">Action</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Chess Tile - A -->
+  <div class="font-mono text-2xl">
+    _
+  </div>
+
+  <!-- Chess Tile - B - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Alternate Chess Tiles</h2>
+      <p>Valid States of Tiles on our Board</p>
+    </div>
+  </div>
+
+  <!-- Chess Tile - B -->
+  <div class="font-mono text-2xl">
+    $ _ Q @ $ %
+  </div>
+
+  <!-- Chess Piece - Black - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Black Chess Pieces</h2>
+      <p>Current Selection of Chess Pieces</p>
+    </div>
+  </div>
+  <!-- Chess Piece - Black -->
+  <div class="font-mono text-2xl">
+    rbnkqp
+  </div>
+
+  <!-- Chess Piece - White - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">White Chess Pieces</h2>
+      <p>Current Selection of Chess Pieces</p>
+    </div>
+  </div>
+  <!-- Chess Piece - White -->
+  <div class="font-mono text-2xl">
+    RBNKQP
+  </div>
+
+  <!-- Chess Board - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Sample Board</h2>
+      <p>A Board Drawn in Our UI!</p>
+    </div>
+  </div>
+  <!-- Chess Board -->
+  <div class="pl-5 py-4 tracking-[0.7em] font-mono text-2xl bg-slate-300 ">
+    rbnkqnbr<br>
+    pppppppp<br>
+    ________<br>
+    ________<br>
+    ________<br>
+    ________<br>
+    PPPPPPPP<br>
+    RBNQKNBR<br>
+  </div>
+
+</div>
+<!-- Preliminary Chessboard UI Sandbox STOP -->
+<div class="my-20" />
+</Layout>
