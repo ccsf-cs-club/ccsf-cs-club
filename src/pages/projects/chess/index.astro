@@ -1,4 +1,18 @@
 ---
+// Using Forsyth-Edwards Notation
+// const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+const fen = "r3r1k1/1p1n4/3Pp1p1/2pb1pP1/p7/2PN2BP/2P4K/3RR3";
+function process(fen) {
+  // Replace FEN notation's numerical shorthand with spaces
+  const replacement = " ";
+  let processedFen = fen.slice(0);
+  for (let i = 8; i > 0; i--) {
+    processedFen = processedFen.replaceAll(i.toString(), replacement.concat(i>1 ? i-1 : ""));
+  } 
+  return processedFen;
+}
+
+
 import Layout from "../../../layouts/Layout.astro";
 ---
 
@@ -8,30 +22,47 @@ import Layout from "../../../layouts/Layout.astro";
   <!-- Chess Tile - A - Explainer -->
   <div class="card w-96 bg-base-100 shadow-xl my-8">
     <div class="card-body">
-      <h2 class="card-title">An Empty Chess Tile</h2>
-      <p>The Basic Building Block of our Board</p>
-      <div class="card-actions justify-end">
-        <button class="btn btn-primary">Action</button>
-      </div>
+      <h2 class="card-title">Chess Tiles</h2>
+      <p>The Basic Building Blocks of our Board</p>
+      <!-- <div class="card-actions justify-end"> -->
+      <!--   <button class="btn btn-primary">Action</button> -->
+      <!-- </div> -->
     </div>
   </div>
   
   <!-- Chess Tile - A -->
-  <div class="font-mono text-2xl">
-    _
+  <div class="font-mono text-2xl flex">
+    <div class="w-12 h-12 bg-neutral-400" />
+    <div class="w-12 h-12 bg-neutral-800" />
   </div>
 
   <!-- Chess Tile - B - Explainer -->
   <div class="card w-96 bg-base-100 shadow-xl my-8">
     <div class="card-body">
-      <h2 class="card-title">Alternate Chess Tiles</h2>
-      <p>Valid States of Tiles on our Board</p>
+      <h2 class="card-title">Importing a Board</h2>
+      <p>Initializing Chessboard...</p>
+      <p class="text-xs italic">{fen}</p>
     </div>
   </div>
 
   <!-- Chess Tile - B -->
-  <div class="font-mono text-2xl">
-    $ _ Q @ $ %
+  <div class="font-mono text-2xl flex">
+    <div class="flex flex-col text-center align-middle">
+      {process(fen).split('/').map((rowPieces, rowNum) => 
+      <div class="flex">
+        {[...rowPieces].map((c, colNum) =>
+          <div class={(rowNum+colNum)%2 ? "w-24 h-24 bg-neutral-400" : "w-24 h-24 bg-neutral-800"}>
+            <div class="text-neutral-500 mb-3 opacity-30">
+              {String.fromCharCode(97 + colNum)}{8-rowNum}
+            </div>
+            <p class={(c == c.toLowerCase() ? "text-black" : "text-white").concat(" text-3xl bold")}>
+              {c}
+            </p>
+          </div>
+        )}
+      </div>
+      )}
+    </div>
   </div>
 
   <!-- Chess Piece - Black - Explainer -->
@@ -67,14 +98,14 @@ import Layout from "../../../layouts/Layout.astro";
   </div>
   <!-- Chess Board -->
   <div class="pl-5 py-4 tracking-[0.7em] font-mono text-2xl bg-slate-300 ">
-    rbnkqnbr<br>
+    rnbqkbnr<br>
     pppppppp<br>
     ________<br>
     ________<br>
     ________<br>
     ________<br>
     PPPPPPPP<br>
-    RBNQKNBR<br>
+    RNBQKBNR<br>
   </div>
 
 </div>
