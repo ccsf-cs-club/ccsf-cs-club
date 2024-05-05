@@ -7,7 +7,7 @@ function process(fen) {
   const replacement = " ";
   let processedFen = fen.slice(0);
   for (let i = 8; i > 0; i--) {
-    processedFen = processedFen.replaceAll(i.toString(), replacement.concat(i>1 ? i-1 : ""));
+    processedFen = processedFen.replaceAll(i.toString(), replacement.concat(i>1 ? (i-1).toString() : ""));
   } 
   return processedFen;
 }
