@@ -1,0 +1,114 @@
+---
+// Using Forsyth-Edwards Notation
+// const fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+const fen = "r3r1k1/1p1n4/3Pp1p1/2pb1pP1/p7/2PN2BP/2P4K/3RR3";
+function process(fen) {
+  // Replace FEN notation's numerical shorthand with spaces
+  const replacement = " ";
+  let processedFen = fen.slice(0);
+  for (let i = 8; i > 0; i--) {
+    processedFen = processedFen.replaceAll(i.toString(), replacement.concat(i>1 ? (i-1).toString() : ""));
+  } 
+  return processedFen;
+}
+
+
+import Layout from "../../../layouts/Layout.astro";
+---
+
+<Layout title="Chessboard">
+<!-- Preliminary Chessboard UI Sandbox START -->
+<div class="flex flex-col w-full items-center">
+  <!-- Chess Tile - A - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Chess Tiles</h2>
+      <p>The Basic Building Blocks of our Board</p>
+      <!-- <div class="card-actions justify-end"> -->
+      <!--   <button class="btn btn-primary">Action</button> -->
+      <!-- </div> -->
+    </div>
+  </div>
+  
+  <!-- Chess Tile - A -->
+  <div class="font-mono text-2xl flex">
+    <div class="w-12 h-12 bg-neutral-400" />
+    <div class="w-12 h-12 bg-neutral-800" />
+  </div>
+
+  <!-- Chess Tile - B - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Importing a Board</h2>
+      <p>Initializing Chessboard...</p>
+      <p class="text-xs italic">{fen}</p>
+    </div>
+  </div>
+
+  <!-- Chess Tile - B -->
+  <div class="font-mono text-2xl flex">
+    <div class="flex flex-col text-center align-middle">
+      {process(fen).split('/').map((rowPieces, rowNum) => 
+      <div class="flex">
+        {[...rowPieces].map((c, colNum) =>
+          <div class={(rowNum+colNum)%2 ? "w-24 h-24 bg-neutral-400" : "w-24 h-24 bg-neutral-800"}>
+            <div class="text-neutral-500 mb-3 opacity-30">
+              {String.fromCharCode(97 + colNum)}{8-rowNum}
+            </div>
+            <p class={(c == c.toLowerCase() ? "text-black" : "text-white").concat(" text-3xl bold")}>
+              {c}
+            </p>
+          </div>
+        )}
+      </div>
+      )}
+    </div>
+  </div>
+
+  <!-- Chess Piece - Black - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Black Chess Pieces</h2>
+      <p>Current Selection of Chess Pieces</p>
+    </div>
+  </div>
+  <!-- Chess Piece - Black -->
+  <div class="font-mono text-2xl">
+    rbnkqp
+  </div>
+
+  <!-- Chess Piece - White - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">White Chess Pieces</h2>
+      <p>Current Selection of Chess Pieces</p>
+    </div>
+  </div>
+  <!-- Chess Piece - White -->
+  <div class="font-mono text-2xl">
+    RBNKQP
+  </div>
+
+  <!-- Chess Board - Explainer -->
+  <div class="card w-96 bg-base-100 shadow-xl my-8">
+    <div class="card-body">
+      <h2 class="card-title">Sample Board</h2>
+      <p>A Board Drawn in Our UI!</p>
+    </div>
+  </div>
+  <!-- Chess Board -->
+  <div class="pl-5 py-4 tracking-[0.7em] font-mono text-2xl bg-slate-300 ">
+    rnbqkbnr<br>
+    pppppppp<br>
+    ________<br>
+    ________<br>
+    ________<br>
+    ________<br>
+    PPPPPPPP<br>
+    RNBQKBNR<br>
+  </div>
+
+</div>
+<!-- Preliminary Chessboard UI Sandbox STOP -->
+<div class="my-20" />
+</Layout>
