@@ -1,0 +1,26 @@
+---
+export const prerender = false;
+export const partial = true;
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function title(txt) {
+  return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+}
+
+const POKEMON_COUNT = 500;
+const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${getRandomInt(POKEMON_COUNT)}/`);
+const data = await response.json();
+const name = title(data.name);
+const sprite_url = data.sprites.front_default;
+---
+
+<div id="surprise" class="flex flex-col items-center">
+  <img 
+    src={sprite_url}
+    alt={name} width="240" height="240"
+  />
+  <span>It's {name}!</span>
+</div>
