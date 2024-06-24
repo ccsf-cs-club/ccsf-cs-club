@@ -1,0 +1,25 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Pokedex">
+<div class="hero bg-base-200 min-h-[80vh]">
+  <div class="hero-content text-center">
+    <div class="max-w-md flex flex-col">
+      <div id="surprise" class="flex flex-col items-center">
+        <img 
+          width="240" 
+          height="240" 
+          alt="Poké Ball" 
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Pok%C3%A9_Ball_icon.svg/240px-Pok%C3%A9_Ball_icon.svg.png" 
+          hx-get="/api/surprise_pokemon"
+          hx-target="#surprise"
+          hx-swap="outerHTML"
+        />
+        <span>Who's that Pokemon?</span>
+        <div class="h-24"/>
+      </div>
+    </div>
+  </div>
+</div>
+</Layout>

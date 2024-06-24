@@ -1,0 +1,79 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+<Layout title="Project">
+    <body>
+    <!-- Demonstrate Hitting a Third-Party API -->
+    <div class="flex flex-col bg-base-100 text-center text-base-content md:outline md:rounded-lg w-full mx-auto min-w-80 md:w-4/5 md:my-12">
+        <div class="bg-neutral flex flex-col mx-auto py-10 px-8 w-full">
+            <h2 class="text-2xl font-bold py-3 neutral-content">POKEMON MOVES API</h2>
+            <p>Enter Pokemon name or database ID to retrieve moves list.</p>
+            <div class="pt-4 flex justify-center flex-wrap min-w-60 w-3/4 mx-auto">
+                <input type="text" id="searchText" placeholder="Type here" class="input input-bordered input-md w-full mb-2 min-w-60 max-w-xs text-neutral-content" />
+                <div class="flex space-x-2 px-4">
+                    <button id="searchButton" class='btn btn-accent w-40'
+                    onclick="makeAPICall()">Search</button>
+                    <button class="btn btn-info"
+                    onclick="clearResult()">Reset</button>
+                </div>
+            </div>
+        </div>
+        <div class="result bg-base-100 px-2 py-8">
+            <img id="pokemonSprite" src="" width="384" height="384" class="mx-auto hidden outline-double rounded-lg">
+            <p id="displayResult" class="text-2xl font-bold my-6"/>
+            <ul id="moveList" class="grid grid-cols-3 gap-x-2"/>
+        </div>
+    </div>
+    </body>
+
+    <script is:inline>
+        document.getElementById("searchText").focus()
+        let searchText = document.getElementById("searchText")
+        searchText.addEventListener("keypress", function(event){
+            if(event.key ==="Enter"){
+                event.preventDefault();
+                document.getElementById("searchButton").click();
+            }
+        });
+    </script>
+    <script is:inline>
+        async function makeAPICall(){
+            let id_Or_Name= document.getElementById("searchText").value.toLowerCase();
+            let URL= `https://pokeapi.co/api/v2/pokemon/${id_Or_Name}`
+            const result = await fetch(URL)
+            
+            result.json().then(data=>{
+                console.log(data)
+                const resultSprite = document.getElementById("pokemonSprite");
+                if (data.sprites.front_default != undefined) {
+                    let spriteElement = document.getElementById("pokemonSprite");
+                    spriteElement.src = data.sprites.front_default;
+                    spriteElement.alt = data.name;
+                    spriteElement.classList.remove("hidden")
+                }
+                if (data.name != undefined) {
+                    const properName = data.name[0].toUpperCase() + data.name.slice(1)
+                    document.getElementById("displayResult").innerHTML = 
+                    `${properName} Moves List:`
+                }
+                let list = document.getElementById("moveList");
+                for(let move in data.moves){
+                    let li = document.createElement("li");
+                    li.className = "text-md btn btn-outline btn-accent-content max-w-96 mx-auto w-full my-1";
+                    li.innerText = data.moves[move].move.name;
+                    list.appendChild(li);
+                }
+            })
+            document.getElementById("searchText").focus()
+            clearResult()
+        }
+        function clearResult() {
+            document.getElementById("pokemonSprite").classList.add("hidden");
+            document.getElementById("displayResult").innerHTML = '';
+            document.getElementById("searchText").value = ''
+            document.getElementById("moveList").innerHTML = ''
+            console.clear()
+            document.getElementById("searchText").focus()
+        }     
+    </script>
+</Layout>
