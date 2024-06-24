@@ -10,7 +10,7 @@ function title(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
 
-const POKEMON_COUNT = 500;
+const POKEMON_COUNT = 600;
 const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${getRandomInt(POKEMON_COUNT)}/`);
 const data = await response.json();
 const name = title(data.name);
@@ -23,4 +23,7 @@ const sprite_url = data.sprites.front_default;
     alt={name} width="240" height="240"
   />
   <span>It's {name}!</span>
+  <div class="h-24">
+    <button class="btn btn-success btn-wide my-4" onClick="window.location.reload();">Again</button>
+  </div>
 </div>
