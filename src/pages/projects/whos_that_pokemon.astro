@@ -7,7 +7,9 @@ import Layout from "../../layouts/Layout.astro";
   <div class="hero-content text-center">
     <div class="max-w-md flex flex-col">
       <div id="surprise" class="flex flex-col items-center">
+      <div class="pokeball-container">
         <img 
+          class="pokeball-image"
           width="240" 
           height="240" 
           alt="Poké Ball" 
@@ -16,10 +18,31 @@ import Layout from "../../layouts/Layout.astro";
           hx-target="#surprise"
           hx-swap="outerHTML"
         />
-        <span>Who's that Pokemon?</span>
+        </div>
+        <span class="pokemon-text" >Who's that Pokemon?</span>
         <div class="h-24"/>
       </div>
     </div>
   </div>
 </div>
+ <style>
+    .pokeball-container {
+      display: inline-block;
+      border-radius: 100%; 
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+    .pokeball-container:hover {
+      box-shadow: 0 0 30px 5px #4affb8;
+    }
+    .pokeball-image {
+      display: block;
+      border-radius: 100%;
+    }
+    .pokemon-text {
+      margin-top: 20px; /*adjusts "who's that pokemon"*/
+      text-align: center; 
+    }
+  </style>
+
 </Layout>
