@@ -1,22 +1,26 @@
 ---
-import Navigation from "../components/Navigation.astro";
+import { Picture } from "astro:assets";
+import clubicon from "/workspaces/ccsf-cs-club/public/clubicon.png";
 ---
 
-<ul class="nav-bar flex p-1">
-  <Navigation href="/" title="Home" />
-  <Navigation href="/events" title="Events" />
-  <Navigation href="/projects" title="Projects" />
-  <Navigation href="/about" title="About" />
-  <Navigation href="https://discord.gg/nrsPNfwBMY" title="Discord" />
-</ul>
-
-<style>
-  @media only screen and (max-width: 799px) {
-    .nav-bar {
-      list-style: none;
-      padding: 1rem;
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
-</style>
+<div class="navbar">
+  <div class="flex-1">
+    <a href="/" class="btn btn-ghost text-xl"> &#123; CS&nbspClub &#125;;</a>
+  </div>
+  <div class="flex-none">
+    <ul class="menu menu-horizontal px-1">
+      <li><a href="/projects">Projects</a></li>
+      <li><a href="/about">About</a></li>
+      <li>
+        <details>
+          <summary> Events </summary>
+          <ul class="rounded-t-none bg-[#f9fbf3] p-2 dark:bg-[#13151a]">
+            <li><a href="/events/headline">Featured</a></li>
+            <li><a href="/events">Calendar</a></li>
+            <li><a href="/subscribe">Subscribe</a></li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+  </div>
+</div>

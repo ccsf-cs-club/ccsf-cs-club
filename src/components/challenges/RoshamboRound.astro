@@ -1,0 +1,36 @@
+---
+interface Props {
+  roundId: number;
+}
+
+const { roundId } = Astro.props;
+let cpuMove = roundId <= 33333 ? 0 : roundId <= 66666 ? 1 : 2;
+let cpuMoveText = ["Rock", "Paper", "Scissors"][cpuMove]
+let cpuMoveEmoji = ["✊", "✋", "✌️"][cpuMove]
+---
+
+<div class="flex flex-col">
+  <span class="emoji mx-auto">{cpuMoveEmoji}</span>
+  <select class="select m-auto w-3/5" autocomplete="off" name={roundId}>
+    <option disabled selected>{cpuMoveText}</option>
+    <option value=0>Rock</option>
+    <option value=1>Paper</option>
+    <option value=2>Scissors</option>
+  </select>
+</div>
+<style>
+  .emoji {
+    display: inline !important;
+    height: auto;
+    width: 50px; 
+     
+  }
+
+  span.emoji {
+    font-size: 60px;
+    vertical-align: middle;
+    line-height: 2;
+  }
+
+
+</style>

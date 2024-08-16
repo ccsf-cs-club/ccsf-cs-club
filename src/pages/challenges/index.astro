@@ -1,0 +1,39 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Meme from "~/components/Meme.astro";
+import Navbar from "~/components/Navbar.astro";
+import GoldCard from "~/components/GoldCard.astro";
+import Card from "~/components/Card.astro";
+---
+
+<Layout title="CCSF Computer Science Coding Challenges">
+  <main>
+    <h1 class="title-gradient my-6 text-center text-6xl font-bold">Challenges</h1>
+    <div class="m-auto w-4/5">
+      <Card
+        href="roshambo"
+        title="Roshambo"
+        body="Aug 15"
+      />
+    </div>
+    </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    color: white;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 1em;
+  }
+</style>

@@ -1,0 +1,120 @@
+---
+export const prerender = false;
+const name = Astro.url.searchParams.get('name') || 'ccsf-cs-club';
+const codename = Astro.url.searchParams.get('codeword') || 1337;
+
+import Layout from "~/layouts/Layout.astro";
+import RoshamboRound from "~/components/challenges/RoshamboRound.astro";
+
+function* range(start, end, step=1) {
+    for (let i = start; i < end; i+=step) {
+        yield i;
+    }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function roshambo(round, plr) {
+  if (round <= 33333) {
+    // Rock
+    return plr == 1 ? 1 : plr == 2 ? -1 : 0;
+  } else if (round <= 66666) {
+    // Paper
+    return plr == 2 ? 1 : plr == 0 ? -1 : 0;
+  } else {
+    // Scissor
+    return plr == 0 ? 1 : plr == 1 ? -1 : 0;
+  }
+}
+
+let num_matches = 12;
+let matches = [...range(0, num_matches, 1)].map((n) => getRandomInt(100000));
+
+if (Astro.request.method == "POST") {
+  try {
+    const data = await Astro.request.formData();
+    let wins = 0;
+    let losses = 0;
+    let ties = 0;
+    for (const t of data.entries()) {
+      const key = t[0];
+      if (key != "name" && key != "codename") {
+        const outcome = roshambo(key, t[1]);
+        if (outcome == 1) {
+          wins += 1;
+        } else if (outcome == -1) {
+          losses += 1;
+        } else {
+          ties += 1;
+        }
+      }
+    }
+    console.log(`${data.get("name")}:${data.get("codename")} W: ${wins}, L: ${losses}, D: ${ties}`);
+    // Post the results
+    import { supabase } from "~/lib/supabase";
+
+    const { error } = await supabase
+      .from('roshambo_matches')
+      .insert({ 
+        name: data.get("name"),
+        codename: data.get("codename"),
+        wins: wins,
+        losses: losses,
+        draws: ties,
+      })
+
+    console.log(error);
+    
+    
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }  
+}
+
+---
+
+<Layout title="CS Club - Roshambo Coding Challenges">
+  <main>
+    <h1 class="my-6 text-center text-3xl font-bold text-base-content">Rock-Paper-Scissors Challenge</h1>
+    <form id="roshambo" class="m-auto border text-base-content bg-base-300 text-center p-4 rounded-xl" method="post">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 grid-rows-4">
+        {matches.map((i) => <RoshamboRound roundId={i} />)}
+      </div>
+      <div class="credentials mt-8">
+        <input class="input input-ghost w-24 md:w-36" name="name" value={name}/>
+        <input type="number" class="input input-ghost key w-24 md:w-36" name="codename" type="text" autocomplete="off" value={codename} />
+      </div>
+      
+      <button class="btn btn-neutral btn-wide my-8">Play!</button>
+      <br /> 
+      <a class="btn btn-wide p-4 mx-auto no-animation btn-info" href="roshambo/leaderboard">Leaderboard</a>
+    </form>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1rem;
+    width: 800px;
+    max-width: calc(100% - 2rem);
+    color: white;
+    font-size: 20px;
+    line-height: 1.6;
+  }
+ 
+  @font-face {
+    font-family: 'password';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://jsbin-user-assets.s3.amazonaws.com/rafaelcastrocouto/password.ttf);
+  }
+
+  input.key {
+    font-family: 'password';
+  }
+</style>
