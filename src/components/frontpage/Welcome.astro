@@ -1,0 +1,92 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+<h2>Computer Science Club</h2>
+<div class="container">
+  <div class="circle-container">
+    <svg width="400" height="400">
+      <path id="curve" d="M 25 200 A 174 174 0 1 1 25 202"></path>
+      <text class="text">
+        <textPath href="#curve">
+          Workshops • Collaboration • Events • Skill Building • Hackathons •
+        </textPath>
+      </text>
+    </svg>
+    <img src="public/image.png" alt="Avatar" class="center-avatar">
+  </div>
+</div>
+
+<style>
+
+  
+  main{
+    background-color: rgb(26,21,18);
+    height: 100vh;
+    
+  }
+
+  h2{
+    font-family: "UnifrakturMaguntia", serif;
+    color: rgb(255,252,242);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    font-size: 12rem;
+    padding: 0;
+    line-height: 1; /* Adjusts line spacing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.3rem;
+    white-space: nowrap;
+  }
+  
+
+  #curve{
+    fill: transparent;
+  }
+  
+  .text{
+    font-size: 37.5px;
+    fill: rgb(255,252,242);
+    transform-origin: 50% 50%;
+    animation: rotate 15s linear infinite;
+
+  }
+
+  .circle-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  /* Style for the avatar to fit inside the circle */
+  .center-avatar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 310px; /* Adjust width to fit inside the circle */
+    height: 310px; /* Adjust height as needed */
+  }
+
+  .container {
+    display: flex;
+    align-items: center;       /* Keep centered vertically */
+    height: 85vh;             /* Take the full height of the viewport */
+    justify-content: center;/* Adjust this value to control right spacing */
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotateZ(0deg);
+    } to {
+      transform: rotateZ(360deg);
+    }
+  }
+
+</style>

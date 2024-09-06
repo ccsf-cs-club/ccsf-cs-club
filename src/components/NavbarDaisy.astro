@@ -5,22 +5,43 @@ import clubicon from "/workspaces/ccsf-cs-club/public/clubicon.png";
 
 <div class="navbar">
   <div class="flex-1">
-    <a href="/" class="btn btn-ghost text-xl"> &#123; CS&nbspClub &#125;;</a>
+    <a href="/" class="logoCsClub"> &#123; CS&nbspClub &#125;;</a>
   </div>
   <div class="flex-none">
-    <ul class="menu menu-horizontal px-1">
-      <li><a href="/projects">Projects</a></li>
+    <ul class="info">
       <li><a href="/about">About</a></li>
-      <li>
-        <details>
-          <summary> Events </summary>
-          <ul class="rounded-t-none bg-[#f9fbf3] p-2 dark:bg-[#13151a]">
-            <li><a href="/events/headline">Featured</a></li>
-            <li><a href="/events">Calendar</a></li>
-            <li><a href="/subscribe">Subscribe</a></li>
-          </ul>
-        </details>
-      </li>
+      <li><a href="/projects">Projects</a></li>
+      <li><a href="/events">Events</a></li>
+      <li><a href="/events">Contacts</a></li>
     </ul>
   </div>
 </div>
+
+<style>
+  .navbar {
+    background-color: transparent;
+  }
+
+  .logoCsClub {
+    position: absolute; 
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 1rem; 
+    font-size: 2rem; 
+    color: rgb(255,252,242);
+    margin-left: 10px;
+    font-family: "Texturina", serif; 
+  }
+  .info {
+  display: flex; /* Use Flexbox for horizontal layout */
+  gap: 4rem; /* Space between items */
+  list-style: none; /* Remove default list styling */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
+  margin-right: 10px;
+  font-family: "Texturina", serif; 
+  color: rgb(255,252,242); 
+  font-size: 1rem; 
+  }
+</style>
