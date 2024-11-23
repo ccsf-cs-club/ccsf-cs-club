@@ -1,0 +1,42 @@
+---
+interface Props {
+  title: string;  // required
+  author: string; // required
+  date: Date;    // required
+  linkedin?: string;  // optional (note the ?)
+  github?: string;    // optional
+  website?: string;   // optional
+  tags?: string[];    // optional
+}
+
+const { 
+  title,
+  author, 
+  date, 
+  linkedin, 
+  github, 
+  website, 
+  tags = [] // default value if not provided
+} = Astro.props;
+console.log(linkedin)
+console.log('All props:', Astro.props);
+---
+<div class="border-b-2 border-black mb-4">
+<h1 class="text-5xl text-center font-bold mb-2">{title}</h1>
+<div class="author-card">
+  <h3 class="pt-3 text-xl text-center font-semibold">{author}</h3>
+  
+  {linkedin && <a href={linkedin}>LinkedIn</a>}
+  {github && <a href={github}>GitHub</a>}
+  {website && <a href={website}>Website</a>}
+  
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+<div class="pt-12">
+<time class="text-base uppercase tracking-wider text-gray-500">{date.toLocaleDateString()}</time>
+</div>
+</div>
+</div>
