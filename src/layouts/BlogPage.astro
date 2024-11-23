@@ -1,0 +1,73 @@
+---
+import Layout from './Layout.astro';
+const { frontmatter } = Astro.props;
+---
+<Layout title={frontmatter.title}>
+<main class="m-auto w-[800px] p-4 text-xl">
+
+  <h1 class="text-4xl text-center font-bold mb-8">{frontmatter.title}</h1>
+    <article class="blog-content">
+      <slot />
+    </article>
+</main>
+</Layout>
+<style>
+  /* This will only target <p> tags inside .blog-content */
+  .blog-content {
+    margin: auto;
+    max-width: 45em;
+  }
+  .blog-content :global(p) {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    font-size: 1.25rem;
+  }
+  .blog-content :global(h1) {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 2rem 0 1.5rem;
+  }
+  
+  .blog-content :global(h2) {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 2rem 0 1.25rem;
+  }
+  
+  .blog-content :global(h3) {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 1.75rem 0 1rem;
+  }
+  
+  .blog-content :global(h4) {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 1.5rem 0 1rem;
+  }
+    /* List styles */
+  .blog-content :global(ul) {
+    list-style-type: disc;
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+  }
+
+  .blog-content :global(ol) {
+    list-style-type: decimal;
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+  }
+
+  .blog-content :global(li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    font-size: 1.25rem;
+  }
+
+  /* Nested list styles */
+  .blog-content :global(li > ul),
+  .blog-content :global(li > ol) {
+    margin: 0.5rem 0;
+  }
+</style>
+

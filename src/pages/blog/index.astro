@@ -1,0 +1,28 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const posts = await Astro.glob('./*.md');
+---
+<Layout title="CS Club Blog">
+    
+<main class="m-auto w-[800px] p-4 text-xl">
+    <h1 class="title-gradient my-6 text-center text-6xl font-bold">CS Club Blog</h1>
+    
+    <div class="grid gap-4">
+        {posts.map(post=> (
+            <article class="border p-4 rounded-lg">
+                <h2 class="text-2xl font-semibold">
+                    <a href={post.url}>{post.frontmatter.title}</a>
+                </h2>
+                {post.frontmatter.date && ( 
+                <time class="text-gray-500">
+                    {new Date(post.frontmatter.date).toLocaleDateString()}
+                </time>
+                )}
+                {post.frontmatter.description &&(
+                    <p class="mt-2">{post.frontmatter.description}</p>
+                )}
+            </article>
+        ))}
+    </div>
+</main>
+</Layout>
