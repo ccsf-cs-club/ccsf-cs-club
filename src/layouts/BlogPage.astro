@@ -1,11 +1,20 @@
 ---
 import Layout from './Layout.astro';
+import BlogTitle from '../components/BlogTitle.astro';
 const { frontmatter } = Astro.props;
+const date = new Date(frontmatter.date);
 ---
 <Layout title={frontmatter.title}>
-<main class="m-auto w-[800px] p-4 text-xl">
+<main class="m-auto w-full md:w-4/5 lg:w-3/5 p-4 text-xl">
 
-  <h1 class="text-4xl text-center font-bold mb-8">{frontmatter.title}</h1>
+  <BlogTitle
+  title={frontmatter.title}
+  author={frontmatter.author}
+  date={date}
+  linkedin={frontmatter.linkedin}
+  github={frontmatter.github}
+  website={frontmatter.website}
+/>
     <article class="blog-content">
       <slot />
     </article>
@@ -18,9 +27,12 @@ const { frontmatter } = Astro.props;
     max-width: 45em;
   }
   .blog-content :global(p) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     line-height: 1.6;
     font-size: 1.25rem;
+  }
+  .blog-content :global(strong) {
+    font-weight: 600;
   }
   .blog-content :global(h1) {
     font-size: 2.5rem;
@@ -29,19 +41,20 @@ const { frontmatter } = Astro.props;
   }
   
   .blog-content :global(h2) {
-    font-size: 2rem;
+
+    font-size: 2.1rem;
     font-weight: bold;
-    margin: 2rem 0 1.25rem;
+    margin: 4.5rem 0 1rem;
   }
   
   .blog-content :global(h3) {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    margin: 1.75rem 0 1rem;
+    margin: 2rem 0 1rem;
   }
   
   .blog-content :global(h4) {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: bold;
     margin: 1.5rem 0 1rem;
   }
@@ -54,15 +67,26 @@ const { frontmatter } = Astro.props;
 
   .blog-content :global(ol) {
     list-style-type: decimal;
-    margin: 1.5rem 0;
+    margin: 1.25rem 0;
     padding-left: 2rem;
   }
 
+  .blog-content :global(> ol > li) {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
   .blog-content :global(li) {
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     line-height: 1.6;
     font-size: 1.25rem;
   }
+
+  .blog-content :global(ul > li > p),
+  .blog-content :global(ol > li > p) {
+    margin-bottom: .75rem;
+}
 
   /* Nested list styles */
   .blog-content :global(li > ul),

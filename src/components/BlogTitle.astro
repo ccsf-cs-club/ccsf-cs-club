@@ -1,0 +1,56 @@
+---
+interface Props {
+  title: string;  // required
+  author: string; // required
+  date: Date;    // required
+  linkedin?: string;  // optional (note the ?)
+  github?: string;    // optional
+  website?: string;   // optional
+  tags?: string[];    // optional
+}
+
+const { 
+  title,
+  author, 
+  date, 
+  linkedin, 
+  github, 
+  website, 
+  tags = [] // default value if not provided
+} = Astro.props;
+import { Icon } from 'astro-icon/components'
+---
+<div class="border-b-2 border-black mb-4">
+<h1 class="text-4xl text-center font-bold mb-2">{title}</h1>
+
+<div class="author-card">
+  <div class="flex items-center justify-center gap-2">
+    <h3 class="text-xl font-semibold">{author}</h3>
+    {(linkedin || github || website) && <span class="text-2xl">·</span>}
+    {linkedin && (
+      <a href={linkedin} target="_blank" rel="noopener noreferrer" class="hover:opacity-80">
+        <Icon name="mdi:linkedin" class="w-6 h-6 text-blue-600"/>
+      </a>
+    )}
+    {github && (
+      <a href={github} target="_blank" rel="noopener noreferrer" class="hover:opacity-80">
+        <Icon name="mdi:github" class="w-6 h-6 dark:text-neutral-content text-black"/>
+      </a>
+    )}
+    {website && (
+      <a href={website} target="_blank" rel="noopener noreferrer" class="hover:opacity-80">
+        <Icon name="mdi:web" class="w-6 h-6 dark:text-neutral-content text-black"/>
+      </a>
+    )}
+  </div>
+</div>
+  
+  {tags.length > 0 && (
+    <div class="tags">
+      {tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+  )}
+<div class="pt-12">
+<time class="text-base uppercase tracking-wider text-gray-500">{date.toLocaleDateString()}</time>
+</div>
+</div>
