@@ -67,11 +67,17 @@ const date = new Date(frontmatter.date);
 
   .blog-content :global(ol) {
     list-style-type: decimal;
-    margin: 1.5rem 0;
+    margin: 1.25rem 0;
     padding-left: 2rem;
   }
 
+  .blog-content :global(> ol > li) {
+    margin-top: 3rem;
+    margin-bottom: 0.75rem;
+}
+
   .blog-content :global(li) {
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     line-height: 1.6;
     font-size: 1.25rem;
@@ -80,7 +86,7 @@ const date = new Date(frontmatter.date);
   /* Nested list styles */
   .blog-content :global(li > ul),
   .blog-content :global(li > ol) {
-    margin: 0.75rem 0;
+    margin-bottom: 0.75rem;
   }
 </style>
 
