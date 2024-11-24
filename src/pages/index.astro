@@ -2,26 +2,24 @@
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
 import GoldCard from "../components/GoldCard.astro";
-
 ---
-
 <Layout title="CS Club">
   <main>
     <h1 class="mt-12 text-[#23262d] dark:text-white">
       Welcome to <span class="text-gradient">CS&nbsp;Club</span>
     </h1>
-    <ul role="list" class="mb-8">
+    <ul role="list" class="mb-4">
       <GoldCard
         href="/events/headline"
         title=`Next General Meeting -`
         body="Come join us at our general meeting, and hang out!"
       />
     </ul>
-    <ul role="list" class="mb-8">
+    <ul role="list" class="mb-4">
       <Card
-        href="https://vena-the-wackadoodle.itch.io/bug-game"
-        title="Bug Game"
-        body="Check out our newly create Summer Gamejam project!"
+        href="/blog/first-post"
+        title="Hello CS Blog!"
+        body="Learn how to say 'Hello, World!' to tech in our blog series!"
       />
     </ul>
     <ul role="list" class="link-card-grid">
@@ -70,26 +68,42 @@ import GoldCard from "../components/GoldCard.astro";
   .link-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-    gap: 2rem;
+    gap: 1rem;
     padding: 0;
   }
 </style>
-<script>
 
-const start = Date.now();
+<script is:inline src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/weekOfYear.js"></script>
+<script is:inline>
+dayjs.extend(window.dayjs_plugin_weekOfYear);
+dayjs().format();
 function getNextDay(dayOfWeek) {
-  var resultDate = new Date(Date.now());
-  resultDate.setDate(
-    resultDate.getDate() + ((7 + dayOfWeek - resultDate.getDay()) % 7),
-  );
-  const dateTimeFormat = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
-
-  document.getElementById("MeetingDate").innerHTML = dateTimeFormat.format(resultDate);
+  var now = dayjs();
+  // Skip certain dates in the calendar
+  switch(now.year()) {
+    case 2024:
+      switch(now.week()) {
+        case 48: // Thanksgiving
+        case 52: // Christmas
+        case 53: // New Years
+          now = now.add(1, 'week');
+        break;
+      }
+      break;
+    case 2025:
+      switch(now.week()) {
+        case 1: // New Years
+        case 2: // Flex day
+        case 14: // Spring Break
+        case 21: // Memorial Day
+          now = now.add(1, 'week');
+        break;
+      }
+      break;
+  }
+  now = now.add(((7 + dayOfWeek - now.day()) % 7), 'day');
+  document.getElementById("MeetingDate").innerHTML = now.format("MMMM D, YYYY");
 }
-
-const nextMeetUpDate = getNextDay(5);
+const nextMeetUpDate = getNextDay(5); // Club meets every Friday
 </script>
