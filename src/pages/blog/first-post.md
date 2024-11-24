@@ -5,6 +5,8 @@ date: "2024-11-23"
 author: "Moof Soup"
 description: "Our first blog post introducing the CS Club blog"
 linkedin: "https://www.linkedin.com/in/tea-priel-13827a331/"
+github: "https://github.com/MoofSoup/"
+website: "https://github.com/MoofSoup/"
 ---
 Hey Chat! Im excited to announce our club's blog - a place for club members to share cool problems and learning moments. From going to events to solving cool problems, come to see the many faces of the CS Club community.
 
