@@ -72,7 +72,7 @@ const date = new Date(frontmatter.date);
   }
 
   .blog-content :global(> ol > li) {
-    margin-top: 3rem;
+    margin-top: 2.5rem;
     margin-bottom: 0.75rem;
 }
 
@@ -83,10 +83,15 @@ const date = new Date(frontmatter.date);
     font-size: 1.25rem;
   }
 
+  .blog-content :global(ul > li > p),
+  .blog-content :global(ol > li > p) {
+    margin-bottom: .75rem;
+}
+
   /* Nested list styles */
   .blog-content :global(li > ul),
   .blog-content :global(li > ol) {
-    margin-bottom: 0.75rem;
+    margin: 0.5rem 0;
   }
 </style>
 

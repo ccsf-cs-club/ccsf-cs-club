@@ -33,7 +33,7 @@ Want to share your own story or solution? Here's how:
    - Field Notes: Share a learning moment from an event or experience
    - Build Logs: Document an interesting technical solution
    - Speaker Spotlight: Share notes from our speaker sessions
-   
+
 2. **Talk to the Team:**
    - Reach out to John, Moof, Gev, or Ivan
    - Get a second set of eyes 
