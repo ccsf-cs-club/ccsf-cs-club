@@ -5,7 +5,7 @@ const { frontmatter } = Astro.props;
 const date = new Date(frontmatter.date);
 ---
 <Layout title={frontmatter.title}>
-<main class="m-auto w-[800px] p-4 text-xl">
+<main class="m-auto w-full md:w-4/5 lg:w-3/5 p-4 text-xl">
 
   <BlogTitle
   title={frontmatter.title}
