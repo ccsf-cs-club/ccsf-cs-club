@@ -14,7 +14,7 @@ website: "https://github.com/MoofSoup/"
 
 In early November, I was hunting for internships when I decided to see just how good Perplexity had gotten. I gave it a well crafted prompt, with the expectation it would give me disappointment and a few links - I got a spreadsheet. The first hint something was off was a small, spinning “loading wheel”, next to a tag saying “Reasoning: Beta”. I had never seen this before. 
 
-The prompt itself wasn’t random. When I wrote it I was sitting with John in the garden behind the library. He'd scored what I can only assume was a natural 20 on persuasion, because an email had landed him a dataset of 700 Bay Area companies hiring interns. I had filtered it down to 13 AI startups, because, well, those are the jobs I am looking for. In my opinion, that sounds like a great stress test for Perplexity.
+The prompt itself wasn’t random. When I wrote it I was sitting with John in the garden behind the library. He'd scored what I can only assume was a natural 20 on persuasion, because a request for sample data had landed him a dataset of 700 Bay Area companies hiring interns. I had filtered it down to 13 AI startups, because, well, those are the jobs I am looking for. In my opinion, that sounds like a great stress test for Perplexity.
 
 What happened next wasn’t normal. Instead of a list of 3 links, and an incomplete answer going over the first 2-3 companies, Perplexity went into overdrive. The spinning wheel felt like it was taking forever. When it finally stopped, there was a detailed spreadsheet, with 65 citations, giving me the exact structure I had asked for.
 
