@@ -1,0 +1,152 @@
+---
+interface Props {
+  name: string;
+  href: string;
+  number: string;
+  pokemonName: string;
+  type: string;
+  stat1_name: string
+  stat2_name: string
+  stat3_name: string
+  stat4_name: string
+  stat1: string;
+  stat2: string;
+  stat3: string;
+  stat4: string;
+}
+const { name, href, number, pokemonName, type, stat1_name, stat2_name, stat3_name, stat4_name, stat1, stat2, stat3, stat4 } = Astro.props;
+---
+
+<main>
+    <div class="icon-list">
+        <a href="" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/39/Pokeball.PNG" alt="Poké Ball">
+        </a>
+        <a href="https://github.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub">
+        </a>
+        <a href="https://linkedin.com" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn">
+        </a>
+    </div>
+    <div class="header">
+        <div class="names"> 
+            <h1 id="name">{name}</h1>
+            <p>{pokemonName}</p>
+        </div>
+        <h1 id="num">{number}</h1>
+    </div>
+    
+    <img class="pokemon-image" src={href}>
+    <div class="stats">
+        <div>
+            <p class="statName">{stat1_name}</p>
+            <p class="statName">{stat2_name}</p>
+            <p class="statName">{stat3_name}</p>
+            <p class="statName">{stat4_name}</p>
+        </div>
+        <div>
+            <p class="statNums">{stat1}</p>
+            <p class="statNums">{stat2}</p>
+            <p class="statNums">{stat3}</p>
+            <p class="statNums">{stat4}</p>
+        </div>
+    </div>
+</main>
+
+<style>
+
+    *{
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        
+    }
+    main {  
+        width: 300px;
+        height: 500px;
+        min-width: 300px;
+        padding: 0 1rem 1rem 1rem;
+        border: 2px solid white;    
+        border-radius: 10px;
+        background: linear-gradient(to bottom, red, white, red);
+        box-shadow: 1px 2px 3px white;
+    }
+
+    div {
+        border: none;
+    }
+    .names {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .icon-list {
+        display: flex;
+        gap: 15px; 
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 1rem;
+
+    }
+
+    .icon-list a img {
+        width: 20px;  
+        height: 20px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .icon-list a img:hover {
+        transform: scale(1.2); 
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 1px 2px 2px rgb(0, 0, 0);
+        padding: 0 1rem;
+        background: linear-gradient(to right, rgb(233, 157, 216), rgb(223, 220, 222), rgb(233, 157, 216));
+        margin-top: 1rem;
+    }
+
+    #name {
+        color: rgb(0, 0, 0);
+        font-weight: 800;
+        font-size: 22px;
+    }
+
+    #num {
+        font-size: 22px;
+        font-weight: 800;
+        color: rgb(2, 2, 116);
+        padding: 1rem;
+    }
+
+    .statName {
+        color: rgb(0, 0, 0);
+        font-weight: 600;
+    }
+
+    .statNums {
+        color: rgb(0, 0, 0);
+        font-weight: 600;
+    }
+
+    .pokemon-image {
+        border: 3px solid transparent;
+        border-radius: 10px;
+        background: linear-gradient(white, white) padding-box, 
+                    linear-gradient(45deg, red, orange, yellow, red) border-box;
+        padding: 5px; 
+    }
+
+</style>
