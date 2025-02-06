@@ -1,11 +1,12 @@
 ---
 interface Props {
+    //Your name
     name: string;
+    //To get image from website - https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pok%C3%A9mon)
     href: string;
-    number: string;
-    pokemonName: string;
-    type: string;
+    //This is your bio
     description: string;
+    // These are just stats name = whateber u want and stat = also whatever u want
     stat1_name: string
     stat2_name: string
     stat3_name: string
@@ -15,7 +16,7 @@ interface Props {
     stat3: string;
     stat4: string;
 }
-const { name, href, number, pokemonName, type, description, stat1_name, stat2_name, stat3_name, stat4_name, stat1, stat2, stat3, stat4 } = Astro.props;
+const { name, href, description, stat1_name, stat2_name, stat3_name, stat4_name, stat1, stat2, stat3, stat4 } = Astro.props;
 ---
 
 <main class="pokemon-card">
@@ -219,11 +220,13 @@ div {
 </style>
 
 <script>
-document.querySelector('.pokemon-card').addEventListener('click', function () {
-    const frontCard = this.querySelector('.card-front');
-    const backCard = this.querySelector('.card-back');
+document.querySelectorAll('.pokemon-card').forEach(card => {
+    card.addEventListener('click', function () {
+        const frontCard = this.querySelector('.card-front');
+        const backCard = this.querySelector('.card-back');
 
-    frontCard.classList.toggle('hidden');
-    backCard.classList.toggle('hidden');
+        frontCard.classList.toggle('hidden');
+        backCard.classList.toggle('hidden');
+    });
 });
 </script>
