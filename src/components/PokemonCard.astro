@@ -30,7 +30,6 @@ const { name, href, number, pokemonName, type, description, stat1_name, stat2_na
             <a href="https://linkedin.com" target="_blank">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn">
             </a>
-            <a class="flip-btn">🔄</a>
         </div>
         <div class="header">
             <div class="names"> 
@@ -66,8 +65,6 @@ const { name, href, number, pokemonName, type, description, stat1_name, stat2_na
             <a href="https://linkedin.com" target="_blank">
                 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn">
             </a>
-            <!-- need to find a better button -->
-            <a class="flip-btn">🔄</a>
         </div>
         <div class="header">
             <div class="names"> 
@@ -222,16 +219,11 @@ div {
 </style>
 
 <script>
-    document.querySelectorAll('.flip-btn').forEach(button => {
-    button.addEventListener('click', function () {
-        const card = this.closest('.pokemon-card');
-        const frontCard = card.querySelector('.card-front');
-        const backCard = card.querySelector('.card-back');
+document.querySelector('.pokemon-card').addEventListener('click', function () {
+    const frontCard = this.querySelector('.card-front');
+    const backCard = this.querySelector('.card-back');
 
-        frontCard.classList.toggle('hidden');
-        backCard.classList.toggle('hidden');
-        
-        
-    });
+    frontCard.classList.toggle('hidden');
+    backCard.classList.toggle('hidden');
 });
 </script>
