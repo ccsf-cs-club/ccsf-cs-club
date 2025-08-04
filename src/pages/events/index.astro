@@ -18,14 +18,24 @@ const upcomingEvents = sortedEvents.filter(event => event.data.status === 'upcom
 
 // Get completed events by year
 const completedEvents = sortedEvents.filter(event => event.data.status === 'completed');
-const eventsByYear = completedEvents.reduce((acc, event) => {
+
+// Get content by category
+const fieldNotes = sortedEvents.filter(event => event.data.category === 'field-notes');
+const buildLogs = sortedEvents.filter(event => event.data.category === 'build-logs');
+const speakerSpotlight = sortedEvents.filter(event => event.data.category === 'speaker-spotlight');
+
+// Get traditional events by year (excluding the new content categories)
+const traditionalEvents = completedEvents.filter(event => 
+  !['field-notes', 'build-logs', 'speaker-spotlight'].includes(event.data.category)
+);
+const eventsByYear = traditionalEvents.reduce((acc, event) => {
   const year = event.data.date.getFullYear();
   if (!acc[year]) {
     acc[year] = [];
   }
   acc[year].push(event);
   return acc;
-}, {} as Record<number, typeof completedEvents>);
+}, {} as Record<number, typeof traditionalEvents>);
 
 // Prepare events for calendar
 const calendarEvents = allEvents.map(event => ({
@@ -58,6 +68,74 @@ const currentYear = new Date().getFullYear();
     </div>
 
     <div class="container mx-auto px-4 py-12">
+      
+      <!-- Contributing to the Blog Section -->
+      <section class="mb-16 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+          ✍️ Contributing to the Blog
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-3xl mx-auto">
+          Want to share your own story or solution? Here's how:
+        </p>
+        
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <div class="text-center">
+            <div class="bg-blue-100 dark:bg-blue-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">📖</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Field Notes</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Share a learning moment from an event or experience
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="bg-green-100 dark:bg-green-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">🔧</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Build Logs</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Document an interesting technical solution
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="bg-purple-100 dark:bg-purple-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">🎤</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Speaker Spotlight</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Share notes from our speaker sessions
+            </p>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">How to Submit Your Content:</h4>
+          <ol class="text-gray-600 dark:text-gray-300 space-y-2">
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">1</span>
+              <span>Choose your category (Field Notes, Build Logs, or Speaker Spotlight)</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">2</span>
+              <span>Create a markdown file in the <code class="bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded text-sm">content/events</code> directory</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">3</span>
+              <span>Include required frontmatter: title, date, description, category, and author</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">4</span>
+              <span>Write your content in markdown format</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">5</span>
+              <span>Submit a pull request to the club's GitHub repository</span>
+            </li>
+          </ol>
+        </div>
+      </section>
       <!-- Upcoming Events Section -->
       {upcomingEvents.length > 0 && (
         <section class="mb-16">
@@ -101,6 +179,107 @@ const currentYear = new Date().getFullYear();
           </h2>
           <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredEvents.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+                content={event.body}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Blog Content Sections -->
+      
+      <!-- Field Notes Section -->
+      {fieldNotes.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              📖 Field Notes
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Read the lessons members learned "in the field" - from hackathons, industry events, and competitions. 
+              These aren't just recaps; they are stories about personal growth.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {fieldNotes.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+                content={event.body}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Build Logs Section -->
+      {buildLogs.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              🔧 Build Logs
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Join our members as they explore interesting technical solutions. 
+              See how academic topics fit into real world problems.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {buildLogs.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+                content={event.body}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Speaker Spotlight Section -->
+      {speakerSpotlight.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              🎤 Speaker Spotlight
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Insights and takeaways from our guest speaker series, preserving and sharing their knowledge 
+              with people who maybe couldn't make it that day, or with students who will join us in the future.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {speakerSpotlight.slice(0, 6).map((event) => (
               <EventCard
                 title={event.data.title}
                 date={event.data.date}
