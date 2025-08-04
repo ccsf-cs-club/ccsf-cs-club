@@ -1,367 +1,337 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { Picture } from "astro:assets";
-import aiuc1 from "../../assets/events/aiuc1.webp";
-import aiuc2 from "../../assets/events/aiuc2.webp";
-import aiuc3 from "../../assets/events/aiuc3.webp";
-import aiuc4 from "../../assets/events/aiuc4.webp";
-import aiuc5 from "../../assets/events/aiuc5.webp";
-import aiuc6 from "../../assets/events/aiuc6.png";
-import springfest from "../../assets/events/springfest.jpg";
-import springfest2 from "../../assets/events/springfest2.jpg";
-import Navbar from "../../components/Navbar.astro";
+import { getCollection } from "astro:content";
+import Calendar from "../../components/Calendar.astro";
+import EventCard from "../../components/EventCard.astro";
+
+// Get all events from content collection
+const allEvents = await getCollection('events');
+
+// Sort events by date (most recent first)
+const sortedEvents = allEvents.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Get featured events
+const featuredEvents = sortedEvents.filter(event => event.data.featured && event.data.status === 'completed');
+
+// Get upcoming events
+const upcomingEvents = sortedEvents.filter(event => event.data.status === 'upcoming');
+
+// Get completed events by year
+const completedEvents = sortedEvents.filter(event => event.data.status === 'completed');
+
+// Get content by category
+const fieldNotes = sortedEvents.filter(event => event.data.category === 'field-notes');
+const buildLogs = sortedEvents.filter(event => event.data.category === 'build-logs');
+const speakerSpotlight = sortedEvents.filter(event => event.data.category === 'speaker-spotlight');
+
+// Get traditional events by year (excluding the new content categories)
+const traditionalEvents = completedEvents.filter(event => 
+  !['field-notes', 'build-logs', 'speaker-spotlight'].includes(event.data.category)
+);
+const eventsByYear = traditionalEvents.reduce((acc, event) => {
+  const year = event.data.date.getFullYear();
+  if (!acc[year]) {
+    acc[year] = [];
+  }
+  acc[year].push(event);
+  return acc;
+}, {} as Record<number, typeof traditionalEvents>);
+
+// Prepare events for calendar
+const calendarEvents = allEvents.map(event => ({
+  title: event.data.title,
+  date: event.data.date,
+  endDate: event.data.endDate,
+  location: event.data.location,
+  category: event.data.category,
+}));
+
+const currentYear = new Date().getFullYear();
 ---
 
 <Layout title="CS Club Events">
-  <main class="text-[#23262d] dark:text-white">
-    <h1 class="title-gradient my-6 text-center text-6xl font-bold">Events</h1>
-    <p class="my-4">
-      A compilation of local, remote, free to little-cost tech events.
-    </p>
-    <p>Check out what the club's been up to:</p>
-    <iframe
-      class="mx-auto my-8"
-      src="https://calendar.google.com/calendar/embed?height=560&wkst=1&bgcolor=%2313151a&ctz=America%2FLos_Angeles&showTitle=0&showNav=0&showDate=0&showPrint=0&showCalendars=0&mode=AGENDA&src=1881ec874c6a0f1bd100fee554d4eb16f1a56e072e6c173892ad4e557ec95f66%40group.calendar.google.com&color=%23039BE5"
-      style="border-width:0"
-      width="100%"
-      height="560"
-      frameborder="0"
-      scrolling="no"></iframe>
-    <!-- <iframe src="https://calendar.google.com/calendar/embed?src=1881ec874c6a0f1bd100fee554d4eb16f1a56e072e6c173892ad4e557ec95f66%40group.calendar.google.com&ctz=America%2FLos_Angeles" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
-  
-  <!--
-  <div class="calendar">
-  <div class="datenav">
-    <button id="prevBtn">
-      <p><</p>
-    </button>
-    <div class="monthYear" id="monthYear"></div>
-    <button id="nextBtn">
-      <p>></p>
-    </button>
-  </div>
-  <div class="days">
-    <div class="day">Mon</div>
-    <div class="day">Tue</div>
-    <div class="day">Wed</div>
-    <div class="day">Thu</div>
-    <div class="day">Fri</div>
-    <div class="day">Sat</div>
-    <div class="day">Sun</div>
-  </div>
-  <div class="dates" id="dates" ><div class="date"></div></div>
-</div>
--->
-    
-    <h3 class="mt-6 text-3xl font-bold">Spring 2024</h3>
-    <br>
-<h5 class="mt-2 text-2xl font-bold"> Spring Fest 4/23</h5>
-    <p>
-    Spring Fest 2024 is an opportunity to showcase, attract new members, and have fun with us at our table. The event has a focus on game / engaging activities and will have free food. Drop by Table #3 and stick around to talk about the club while we demo a few projects.
-    </p>
- <div class="flex gap-2">
-        <Picture src={springfest} alt="1/29" width="360" />
-        <Picture src={springfest2} alt="1/30" width="360" />
-  </div>
-  
-  <br>
-
-  <h5 class="mt-2 text-2xl font-bold"> Game Dev Interest Group Meeting 3/15 & 3/22</h5>
-    <p>
-    Game development is a growing and popular sub-interest in CS. A group of our members interested in discussing the latest trends and inspirations
-    </p>
-  <br>
-
-   <h5 class="mt-2 text-2xl font-bold"> Industry Professionals Speaker Panel 3/13</h5>
-    <p>
-
-    Frank in his last semester as a CS, Math, and Data Science Major at CCSF organized a group of speakers to share their insight on March 13th from 12:00-1:30 PST in Batmale 413.
-    Panel includes a software engineer from OpenAI, who has been there since the company was small and just a start-up. An engineer from YouTube. A data scientist who works with a start-up that works with the city of SF and Seattle to improve transportation. And finally, we have a technical recruiter who works in fintech. 
-    <br>
-    <br>
-    <a href="/events/3-13flyer">Link to Flyer</a></li>
-    </p>
-  <br>
-
-   <h5 class="mt-2 text-2xl font-bold">Leetcode / Mock Interview Practice 3/8</h5>
-    <p>
-     Come join us for mock interviews so you can confidently implement interview strategies for questions such as “Tell me about yourself”, receiving feedback in the process.
-
-Also we will be learning leetcode, a platform for tech interview questions. If you are a beginner at Leetcode don’t worry we will teach you how it works, and why it is used a lot.
-    </p>
-
-    <br>
-   <h5 class="mt-2 text-2xl font-bold">Personal Portfolio/Resume Workshop 3/1</h5>
-    <p>
-      Come join us to learn the basics of using web frameworks, and get hands-on experience building a personal portfolio site! This is one of the best ways to stand out among the pack, and is definitely something hirers would look at
-    </p>
-    <br>
-    <h5 class="mt-2 text-2xl font-bold">Unity Day 2/13</h5>
-    <p>
-      Unity Day is a campus-wide event for students to come have fun, learn
-      about clubs and resource programs, and get to know one another. Our table
-      will have laptops for interested and prospecting club members to preview a
-      live site and shared projects.
-    </p>
-    <br>
-    <h5 class="mt-2 text-2xl font-bold">
-      Custom Keyboard Building Session 2/11
-    </h5>
-
-    <p>
-      A hands-on opportunity to assemble a keyboard of their choice. We
-      coordinated so sourcing the materials, allocating a budget, and having
-      experts present at the event support club members of all levels of
-      experience to join, learn, and have fun. Presentation slides from the
-      event can be found
-      <a
-        href="https://docs.google.com/presentation/d/1tc-U4HHvUQCQX7wYWQMWdfyXS723-mOh/edit?usp=sharing&ouid=104514190446739025286&rtpof=true&sd=true"
-      >
-        here.</a
-      >
-    </p>
-      <br>
-    <h5 class="mt-2 text-2xl font-bold">AI User Conference 1/29-1/31</h5>
-    <p>
-      During this three day event tailored for Marketers, Designers, and
-      Developers of AI, there were all kinds of activities and discussions to
-      optimize effeciency when using AI products. The event offered networking,
-      hands-on application workshops, best practices, and feature updates.
-    </p><br />
-    <!-- Photo Grid -->
-    <div class="grid justify-center gap-y-1">
-      <div class="flex gap-2">
-        <Picture src={aiuc1} alt="1/29" width="360" />
-        <Picture src={aiuc5} alt="1/30" width="360" />
-      </div>
-      <div class="flex">
-        <Picture src={aiuc6} alt="1/31" width="728" />
-      </div>
-      <div class="flex gap-1">
-        <Picture src={aiuc2} alt="1/30" width="240" />
-        <Picture src={aiuc3} alt="1/30" width="240" />
-        <Picture src={aiuc4} alt="1/30" width="240" />
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Hero Section -->
+    <div class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-16">
+      <div class="container mx-auto px-4 text-center">
+        <h1 class="text-5xl md:text-6xl font-bold mb-4">Events</h1>
+        <p class="text-xl md:text-2xl mb-6 max-w-3xl mx-auto">
+          Join our community events, workshops, and tech talks. From hands-on coding sessions to industry networking, there's something for everyone.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 text-sm">
+          <div class="bg-white/20 px-4 py-2 rounded-full">🎯 Workshops</div>
+          <div class="bg-white/20 px-4 py-2 rounded-full">🤝 Networking</div>
+          <div class="bg-white/20 px-4 py-2 rounded-full">🏆 Competitions</div>
+          <div class="bg-white/20 px-4 py-2 rounded-full">📚 Learning</div>
+        </div>
       </div>
     </div>
-    <br>
-    <h5 class="mt-2 text-2xl font-bold">
-      Joint Mathematics Meeting (JMM) 2024 1/3-1/6
-    </h5>
 
-    <p>
-      The largest gathering of mathematical and academic organizations hosted
-      annually by The American Mathematical Society (AMS). This year the four
-      day event was hosted in the Moscone Center, SF. The CS Club seized this
-      local opportunity to listen and absorb information on the guest speakers
-      notably, Terry Tao and Donald Knuth. There were hundreds of talks, panels,
-      minicourses, and poster sessions available to guests. Notes by attending
-      club members can be found on the Wiki[Link to be added].
-    </p>
-    <br>
-    <h3 class="mt-6 text-3xl font-bold">Fall 2023</h3>
+    <div class="container mx-auto px-4 py-12">
+      
+      <!-- Contributing to the Blog Section -->
+      <section class="mb-16 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
+          ✍️ Contributing to the Blog
+        </h2>
+        <p class="text-lg text-gray-600 dark:text-gray-300 text-center mb-8 max-w-3xl mx-auto">
+          Want to share your own story or solution? Here's how:
+        </p>
+        
+        <div class="grid md:grid-cols-3 gap-8 mb-8">
+          <div class="text-center">
+            <div class="bg-blue-100 dark:bg-blue-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">📖</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Field Notes</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Share a learning moment from an event or experience
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="bg-green-100 dark:bg-green-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">🔧</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Build Logs</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Document an interesting technical solution
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="bg-purple-100 dark:bg-purple-900 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <span class="text-2xl">🎤</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Speaker Spotlight</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm">
+              Share notes from our speaker sessions
+            </p>
+          </div>
+        </div>
+        
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">How to Submit Your Content:</h4>
+          <ol class="text-gray-600 dark:text-gray-300 space-y-2">
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">1</span>
+              <span>Choose your category (Field Notes, Build Logs, or Speaker Spotlight)</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">2</span>
+              <span>Create a markdown file in the <code class="bg-gray-200 dark:bg-gray-600 px-2 py-1 rounded text-sm">content/events</code> directory</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">3</span>
+              <span>Include required frontmatter: title, date, description, category, and author</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">4</span>
+              <span>Write your content in markdown format</span>
+            </li>
+            <li class="flex items-start">
+              <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-0.5 flex-shrink-0">5</span>
+              <span>Submit a pull request to the club's GitHub repository</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+      <!-- Upcoming Events Section -->
+      {upcomingEvents.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            🔥 Upcoming Events
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+            {upcomingEvents.map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-    <h5 class="mt-2 text-2xl font-bold">
-      Design Buddies: Founders, Inventors, & Creatives Social 11/21
-    </h5>
-    <p>
-      A networking and social event organized by <a
-        href="https://www.designbuddies.community">Design Buddies</a
-      > and <a href="https://www.betafi.co">BetaFi</a>. CS members met Grace
-      Ling, the founder of a community of 60K+ members to help designers land
-      jobs and improve their skills. They offer interactive spaces online,
-      through in-person events, and within their ‘talent collective’. An
-      impressive entrepreneurial spirit, combining creativity and a programming
-      background, and an inspiration to the CS Club vision.
-    </p>
+      <!-- Calendar Section -->
+      <section class="mb-16">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+          📅 Event Calendar
+        </h2>
+        <Calendar events={calendarEvents} />
+      </section>
 
-    <h5 class="mt-2 text-2xl font-bold">
-      AI: How to Build Products People Buy 11/16
-    </h5>
+      <!-- Featured Events Section -->
+      {featuredEvents.length > 0 && (
+        <section class="mb-16">
+          <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+            ⭐ Featured Events
+          </h2>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {featuredEvents.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-    <p>
-      Club members ventured into the AI entrepreneurship scene hosted by Healome
-      & the SF Founders Creative. This event highlighted how AI entrepeneurship
-      grapples with legal complexities such as liability and privacy, technical
-      challenges in model scope and data acquisition, and business research.
-      Notes on the Wiki[Link to be added].
-    </p>
+      <!-- Blog Content Sections -->
+      
+      <!-- Field Notes Section -->
+      {fieldNotes.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              📖 Field Notes
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Read the lessons members learned "in the field" - from hackathons, industry events, and competitions. 
+              These aren't just recaps; they are stories about personal growth.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {fieldNotes.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-    <h5 class="mt-2 text-2xl font-bold">
-      UC Law: 2023 Digital Media & Video Game Conference 11/15
-    </h5>
+      <!-- Build Logs Section -->
+      {buildLogs.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              🔧 Build Logs
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Join our members as they explore interesting technical solutions. 
+              See how academic topics fit into real world problems.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {buildLogs.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-    <p>
-      Leading attorneys and business executives in the digital media and video
-      game spaces at UC Law SF for robust discussion on a variety of topics sure
-      to engage and educate. Presented in an intimate setting, this one-day
-      conference also includes opportunities to meet,network and/or re-connect
-      with colleagues and friends, including a hosted lunch and evening
-      reception.
-    </p>
-<script>
+      <!-- Speaker Spotlight Section -->
+      {speakerSpotlight.length > 0 && (
+        <section class="mb-16">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+              🎤 Speaker Spotlight
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Insights and takeaways from our guest speaker series, preserving and sharing their knowledge 
+              with people who maybe couldn't make it that day, or with students who will join us in the future.
+            </p>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {speakerSpotlight.slice(0, 6).map((event) => (
+              <EventCard
+                title={event.data.title}
+                date={event.data.date}
+                endDate={event.data.endDate}
+                location={event.data.location}
+                description={event.data.description}
+                category={event.data.category}
+                images={event.data.images}
+                external_link={event.data.external_link}
+                tags={event.data.tags}
+                status={event.data.status}
+                featured={event.data.featured}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-    
-const monthYearElement = document.getElementById('monthYear');
-const datesElement = document.getElementById('dates');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-
-let currentDate = new Date();
-const updateCalendar = () => {
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-
-  const firstDay = new Date(currentYear, currentMonth, 0);
-  const lastDay = new Date(currentYear, currentMonth+1, 0);
-  const totalDays= lastDay.getDate();
-  const firstDayIndex= firstDay.getDay();
-  const lastDayIndex= lastDay.getDay();
-
-  const monthYearString = currentDate.toLocaleString('default', {month: 'long', year: 'numeric'});
-
-  monthYearElement.textContent = monthYearString;
-
-let datesHTML = '';
-
-for (let i = firstDayIndex; i> 0; i--){
-  const prevDate = new Date(currentYear,currentMonth,0- i +1);
-  datesHTML += `<div class="date inactive">${prevDate.getDate()}</div>`;
-}
-
-for(let i=1; i <= totalDays; i++){
-  const date = new Date(currentYear, currentMonth, i);
-  const activeClass = date.toDateString() === new Date().
-  toDateString() ? 'active' : '';
-  datesHTML += `<div class="date${activeClass}">${i}</div>`;
-}
-
-for(let i=1; i<= 7-lastDayIndex; i++){
-  const nextDate = new Date(currentYear, currentMonth+1,i);
-  datesHTML += `<div class="date inactive">${nextDate.getDate()}</div>`;
-}
-  datesElement.innerHTML = datesHTML;
-}
-
-prevBtn.addEventListener('click', () => {
-  currentDate.setMonth(currentDate.getMonth()-1);
-  updateCalendar();
-})
-
-nextBtn.addEventListener('click', () => {
-  currentDate.setMonth(currentDate.getMonth()+1);
-  updateCalendar();
-})
-
-updateCalendar();
-
-</script>
+      <!-- Event History Section -->
+      <section>
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+          📚 Event History
+        </h2>
+        
+        {Object.keys(eventsByYear)
+          .sort((a, b) => parseInt(b) - parseInt(a))
+          .map((year) => (
+            <div class="mb-12">
+              <h3 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center gap-3">
+                <span class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full">
+                  {year}
+                </span>
+                <span class="text-gray-400">({eventsByYear[year].length} events)</span>
+              </h3>
+              
+              <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {eventsByYear[year].map((event) => (
+                  <EventCard
+                    title={event.data.title}
+                    date={event.data.date}
+                    endDate={event.data.endDate}
+                    location={event.data.location}
+                    description={event.data.description}
+                    category={event.data.category}
+                    images={event.data.images}
+                    external_link={event.data.external_link}
+                    tags={event.data.tags}
+                    status={event.data.status}
+                    featured={event.data.featured}
+                  />
+                ))}
+              </div>
+            </div>
+          ))
+        }
+      </section>
+    </div>
   </main>
 </Layout>
-
-<style>
-  main {
-    margin: auto;
-    padding: 1rem;
-    width: 800px;
-    max-width: calc(100% - 2rem);
-    font-size: 20px;
-    line-height: 1.6;
-  }
-
-  h1 {
-    font-size: 4rem;
-    font-weight: 700;
-    line-height: 1;
-    text-align: center;
-    margin-bottom: 0.5em;
-  }
-
-  a {
-    color:purple;
-    font-weight: 600;
-  }
-
-.calendar{
-  width: 380px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  background: black;
-  border-radius: 10px;
-  box-shadow: 0 0 10px white;
-}
-
-.datenav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px;
-}
-
-.monthYear {
-  text-align: center;
-  font-weight: 600;
-}
-
-.datenav button{
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: black;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  box-shadow: 0 0 4px white;
-}
-
-.days{
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-}
-
-.day {
-  text-align: center;
-  padding: 5px;
-  color: grey;
-  font-weight: 500;
-}
-
-.dates {
-  display:grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
-}
-
-.date {
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 10px;
-  margin: auto;
-  cursor: pointer;
-  font-weight: 600;
-  border-radius: 50%;
-  width: 40px;
-  height:40px;
-  transition: 0.2s;
-}
-
-.date:hover,
-.date.active {
-  background: pink;
-  color: black;
-}
-
-.date.inactive {
-  color: white;
-}
-
-.date.inactive:hover{
-  color: black;
-}
-
-</style>
