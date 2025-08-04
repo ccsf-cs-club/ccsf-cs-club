@@ -80,30 +80,51 @@ dayjs.extend(window.dayjs_plugin_weekOfYear);
 dayjs().format();
 function getNextDay(dayOfWeek) {
   var now = dayjs();
-  // Skip certain dates in the calendar
-  switch(now.year()) {
+  
+  // Calculate the next meeting day - if today is the meeting day, use today
+  var daysToAdd = ((7 + dayOfWeek - now.day()) % 7);
+  if (daysToAdd === 0 && now.day() === dayOfWeek) {
+    // It's already the meeting day, use today
+    daysToAdd = 0;
+  } else if (daysToAdd === 0) {
+    // It's not the meeting day but the calculation returned 0, so add 7 days
+    daysToAdd = 7;
+  }
+  
+  var meetingDate = now.add(daysToAdd, 'day');
+  
+  // Check if the calculated date falls on a holiday and skip if needed
+  var skipDates = [];
+  
+  switch(meetingDate.year()) {
     case 2024:
-      switch(now.week()) {
+      switch(meetingDate.week()) {
         case 48: // Thanksgiving
         case 52: // Christmas
         case 53: // New Years
-          now = now.add(1, 'week');
+          skipDates.push(meetingDate.format('YYYY-MM-DD'));
         break;
       }
       break;
     case 2025:
-      switch(now.week()) {
-        case 1: // New Years
-        case 2: // Flex day
-        case 14: // Spring Break
-        case 21: // Memorial Day
-          now = now.add(1, 'week');
-        break;
-      }
+      // Specific dates for 2025 where CS Club doesn't meet
+      skipDates = [
+        '2025-08-01', // Before semester starts
+        '2025-08-08', // Before semester starts  
+        '2025-08-15', // Flex Day - Professional Development
+        '2025-08-29', // Labor Day Weekend
+        '2025-11-28', // Thanksgiving Holiday
+        '2025-12-19'  // Final Exams period
+      ];
       break;
   }
-  now = now.add(((7 + dayOfWeek - now.day()) % 7), 'day');
-  document.getElementById("MeetingDate").innerHTML = now.format("MMMM D, YYYY");
+  
+  // If the meeting date is in the skip list, find the next Friday that isn't skipped
+  while (skipDates.includes(meetingDate.format('YYYY-MM-DD'))) {
+    meetingDate = meetingDate.add(7, 'day'); // Move to next week
+  }
+  
+  document.getElementById("MeetingDate").innerHTML = meetingDate.format("MMMM D, YYYY");
 }
 const nextMeetUpDate = getNextDay(5); // Club meets every Friday
 </script>
