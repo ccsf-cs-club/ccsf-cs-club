@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/BlogPage.astro
 title: "Exactly As Planned: Field Notes, SCC Hacks"
-date: "11/28/24"
+date: "12/6/24"
 author: "Tea Priel"
 description: "Happy accidents and hairbrained schemes lead to a trophy at SCC Hacks"
 linkedin: "https://www.linkedin.com/in/tea-priel-13827a331/"
