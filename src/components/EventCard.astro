@@ -1,0 +1,192 @@
+---
+import { Picture } from "astro:assets";
+
+interface Props {
+  title: string;
+  date: Date;
+  endDate?: Date;
+  location?: string;
+  description: string;
+  category: string;
+  images?: string[];
+  external_link?: string;
+  tags?: string[];
+  status: string;
+  featured?: boolean;
+  content?: string;
+}
+
+interface EventWithContent extends Props {
+  content?: string;
+}
+
+const { 
+  title, 
+  date, 
+  endDate,
+  location, 
+  description, 
+  category, 
+  images = [], 
+  external_link, 
+  tags = [],
+  status,
+  featured = false,
+  content
+} = Astro.props;
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'long',
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+};
+
+const formatTime = (date: Date) => {
+  return date.toLocaleTimeString('en-US', { 
+    hour: 'numeric', 
+    minute: '2-digit',
+    hour12: true
+  });
+};
+
+const categoryStyles = {
+  workshop: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  social: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  conference: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+  meeting: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  competition: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  other: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+};
+
+const statusStyles = {
+  upcoming: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+};
+---
+
+<article class={`event-card bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] ${featured ? 'ring-2 ring-yellow-400' : ''}`}>
+  <!-- Event Images -->
+  {images.length > 0 && (
+    <div class="event-images">
+      {images.length === 1 ? (
+        <div class="aspect-video w-full">
+          <img 
+            src={`/src/assets/events/${images[0]}`} 
+            alt={title}
+            class="w-full h-full object-cover"
+          />
+        </div>
+      ) : (
+        <div class="grid grid-cols-2 gap-1 p-4">
+          {images.slice(0, 4).map((image, index) => (
+            <div class={`aspect-square ${images.length === 3 && index === 0 ? 'col-span-2' : ''}`}>
+              <img 
+                src={`/src/assets/events/${image}`} 
+                alt={`${title} - Image ${index + 1}`}
+                class="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          ))}
+          {images.length > 4 && (
+            <div class="aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+              <span class="text-gray-600 dark:text-gray-300 font-semibold">
+                +{images.length - 3} more
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )}
+
+  <div class="p-6">
+    <!-- Header with badges -->
+    <div class="flex flex-wrap items-center gap-2 mb-3">
+      <span class={`px-2 py-1 text-xs font-semibold rounded-full ${categoryStyles[category as keyof typeof categoryStyles] || categoryStyles.other}`}>
+        {category}
+      </span>
+      <span class={`px-2 py-1 text-xs font-semibold rounded-full ${statusStyles[status as keyof typeof statusStyles] || statusStyles.completed}`}>
+        {status}
+      </span>
+      {featured && (
+        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+          ⭐ Featured
+        </span>
+      )}
+    </div>
+
+    <!-- Event Title -->
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+      {title}
+    </h3>
+
+    <!-- Date and Location -->
+    <div class="text-sm text-gray-600 dark:text-gray-300 mb-3 space-y-1">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+        </svg>
+        <span>
+          {formatDate(date)}
+          {endDate && endDate.getTime() !== date.getTime() && ` - ${formatDate(endDate)}`}
+        </span>
+      </div>
+      {location && (
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+          </svg>
+          <span>{location}</span>
+        </div>
+      )}
+    </div>
+
+    <!-- Description -->
+    <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+      {description}
+    </p>
+
+    <!-- Content (if available) -->
+    {content && (
+      <div class="prose prose-sm dark:prose-invert mb-4">
+        <Fragment set:html={content} />
+      </div>
+    )}
+
+    <!-- Tags -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-1 mb-4">
+        {tags.map(tag => (
+          <span class="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded">
+            #{tag}
+          </span>
+        ))}
+      </div>
+    )}
+
+    <!-- External Link -->
+    {external_link && (
+      <div class="mt-4">
+        <a 
+          href={external_link}
+          class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 font-medium transition-colors"
+        >
+          Learn More
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          </svg>
+        </a>
+      </div>
+    )}
+  </div>
+</article>
+
+<style>
+  .event-card {
+    break-inside: avoid;
+  }
+</style>

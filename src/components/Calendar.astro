@@ -1,0 +1,180 @@
+---
+interface Event {
+  title: string;
+  date: Date;
+  endDate?: Date;
+  location?: string;
+  category: string;
+}
+
+interface Props {
+  events: Event[];
+  currentMonth?: Date;
+}
+
+const { events, currentMonth = new Date() } = Astro.props;
+
+// Get events for display
+const eventsInMonth = events.filter(event => {
+  const eventMonth = event.date.getMonth();
+  const eventYear = event.date.getFullYear();
+  return eventMonth === currentMonth.getMonth() && eventYear === currentMonth.getFullYear();
+});
+
+// Generate calendar data
+const year = currentMonth.getFullYear();
+const month = currentMonth.getMonth();
+const firstDay = new Date(year, month, 1);
+const lastDay = new Date(year, month + 1, 0);
+const daysInMonth = lastDay.getDate();
+const startingDayOfWeek = firstDay.getDay();
+
+const monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Create array of calendar cells
+const calendarCells = [];
+const totalCells = 42; // 6 rows × 7 days
+
+for (let i = 0; i < totalCells; i++) {
+  const dayNumber = i - startingDayOfWeek + 1;
+  
+  if (dayNumber > 0 && dayNumber <= daysInMonth) {
+    // Find events for this day
+    const dayEvents = eventsInMonth.filter(event => event.date.getDate() === dayNumber);
+    calendarCells.push({
+      day: dayNumber,
+      isCurrentMonth: true,
+      events: dayEvents,
+      isToday: new Date().toDateString() === new Date(year, month, dayNumber).toDateString()
+    });
+  } else {
+    calendarCells.push({
+      day: dayNumber > 0 ? dayNumber - daysInMonth : new Date(year, month, dayNumber).getDate(),
+      isCurrentMonth: false,
+      events: [],
+      isToday: false
+    });
+  }
+}
+
+const categoryColors = {
+  workshop: 'bg-blue-500',
+  social: 'bg-green-500',
+  conference: 'bg-purple-500',
+  meeting: 'bg-yellow-500',
+  competition: 'bg-red-500',
+  other: 'bg-gray-500'
+};
+---
+
+<div class="calendar-container bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
+  <!-- Calendar Header -->
+  <div class="calendar-header flex items-center justify-between mb-6">
+    <button id="prevMonth" class="calendar-nav-btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors">
+      ←
+    </button>
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white">
+      {monthNames[month]} {year}
+    </h2>
+    <button id="nextMonth" class="calendar-nav-btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors">
+      →
+    </button>
+  </div>
+
+  <!-- Day Names -->
+  <div class="grid grid-cols-7 gap-1 mb-2">
+    {dayNames.map(day => (
+      <div class="text-center text-sm font-semibold text-gray-600 dark:text-gray-300 py-2">
+        {day}
+      </div>
+    ))}
+  </div>
+
+  <!-- Calendar Grid -->
+  <div class="grid grid-cols-7 gap-1">
+    {calendarCells.map(cell => (
+      <div class={`calendar-cell min-h-[120px] p-2 border border-gray-200 dark:border-gray-600 rounded-lg ${
+        cell.isCurrentMonth 
+          ? 'bg-white dark:bg-gray-800' 
+          : 'bg-gray-50 dark:bg-gray-700 opacity-50'
+      } ${cell.isToday ? 'ring-2 ring-blue-500' : ''}`}>
+        <div class={`text-sm font-medium mb-1 ${
+          cell.isToday 
+            ? 'text-blue-600 dark:text-blue-400 font-bold' 
+            : cell.isCurrentMonth 
+              ? 'text-gray-800 dark:text-white' 
+              : 'text-gray-400 dark:text-gray-500'
+        }`}>
+          {cell.day}
+        </div>
+        
+        <!-- Events for this day -->
+        <div class="space-y-1">
+          {cell.events.map((event: Event) => (
+            <div class={`text-xs px-2 py-1 rounded text-white truncate ${
+              categoryColors[event.category as keyof typeof categoryColors] || categoryColors.other
+            }`} title={event.title}>
+              {event.title}
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Legend -->
+  <div class="mt-6 flex flex-wrap gap-4 justify-center">
+    {Object.entries(categoryColors).map(([category, color]) => (
+      <div class="flex items-center gap-2">
+        <div class={`w-3 h-3 rounded ${color}`}></div>
+        <span class="text-sm capitalize text-gray-600 dark:text-gray-300">{category}</span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<script>
+  // Calendar navigation functionality
+  let currentDate = new Date();
+  
+  function updateCalendar() {
+    // This would be handled by Astro's page navigation in a real implementation
+    // For now, we'll just log the navigation
+    console.log('Navigate to:', currentDate.getFullYear(), currentDate.getMonth());
+  }
+  
+  document.getElementById('prevMonth')?.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    updateCalendar();
+  });
+  
+  document.getElementById('nextMonth')?.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    updateCalendar();
+  });
+</script>
+
+<style>
+  .calendar-nav-btn {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  
+  .calendar-cell {
+    transition: all 0.2s ease;
+  }
+  
+  .calendar-cell:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+</style>
