@@ -8,76 +8,58 @@ description: "Insider insights from industry developers on what actually matters
 
 *Insider insights from a BAML x HumanLayer industry webinar*
 
-## The Wake-Up Call
+## The Unexpected Reality Check
 
-I attended what I thought would be a routine technical webinar on Claude Code. Instead, I got a behind-the-scenes look at how AI is quietly reshaping software careers—and why most CS students are preparing for jobs that won't exist.
+I signed up for what I thought would be a typical tech webinar about Claude Code. Instead, I ended up in a surprisingly candid conversation with industry developers about how AI is actually changing their day-to-day work.
 
-Here are the three skills industry developers say you actually need, plus how to prove you have them.
+Turns out, the skills that matter most aren't the ones anyone's talking about in CS classes.
 
-## 1. Specification Writing (The New Baseline Skill)
+## 1. Specification Writing
+*The new baseline skill that no one's teaching*
 
-**What's happening:** Companies are quietly shifting from "can you code?" to "can you write specs that produce working code?" But here's the problem—no one's teaching this skill.
+The shift is subtle but real: companies are moving from "can you code?" to "can you write specs that produce working code?" The problem? Spec-writing traditionally required senior-level experience, but now it's becoming entry-level baseline.
 
-**Why you should care:** Entry-level coding positions are disappearing while spec-writing traditionally required senior-level experience. The students who figure this out first will have a massive advantage in interviews.
+It's like being asked to be the architect before you've learned to lay bricks. Most CS programs still focus on implementation, but the developers in this webinar were clear—the ability to write crystal-clear specifications is becoming the differentiator.
 
-**How to get ahead:**
-- Take any complex project and write specs so clear that someone else could implement them without asking questions
-- Practice "rubber duck specification"—explain your approach so clearly that an AI could execute it perfectly
-- Start documenting your design decisions, not just your code
-- **Competitive edge:** Most candidates still only show implementation skills. Spec-writing skills will make you stand out immediately.
+Think "rubber duck specification"—explaining your approach so clearly that an AI (or junior dev) could execute it perfectly without asking follow-up questions.
 
-## 2. AI Code Evaluation (The Skill Everyone Needs But No One Has)
+## 2. AI Code Review
+*The skill everyone needs but no one has*
 
-**What's happening:** Teams are quietly struggling with AI-generated code quality. Most are doing "looks good to me" reviews because no one knows how to properly evaluate AI output. This is a massive blind spot.
+Here's the uncomfortable truth: most teams are doing "looks good to me" reviews on AI-generated code because nobody knows how to properly evaluate it. It's like having a really productive intern who might be brilliant or might be completely wrong, and you can't tell which.
 
-**Why you should care:** The developer who can systematically evaluate AI-generated code will be incredibly valuable. While everyone else is winging it, you'll have a framework.
+The developers on this webinar admitted they're basically winging it. Some teams are trying to create metrics, but then the AI just games whatever metrics they come up with. It's like trying to grade a test where the student can see all the answers.
 
-**How to get ahead:**
-- Build a checklist for AI code review that goes beyond "does it compile"
-- Learn to spot where AI typically fails: edge cases, security vulnerabilities, performance issues
-- Practice the difference between "passes tests" and "actually solves the business problem"
-- **Competitive edge:** While others treat AI as a black box, you'll be the person who can actually evaluate its output. That's a superpower in 2025.
+The gap here is huge. Most people treat AI as a black box, but someone who can actually evaluate its output? That's valuable.
 
-## 3. Context Efficiency (The Hidden Multiplier)
+## 3. Context Management
+*The hidden multiplier that changes everything*
 
-**What's happening:** Claude Code burns about 50% of its "memory" just on basic behavior. The other 50% is all you get for your actual work. Most developers don't know this and waste their limited space.
+Here's a technical detail that changes everything: Claude Code uses about 50% of its context window just to behave properly. The other 50% is all you get for your actual conversation. Most developers don't realize this and hit limits way sooner than they should.
 
-**Why you should care:** As companies start using multiple AI agents simultaneously, context efficiency becomes a multiplier. The developers who master this will be exponentially more productive.
+It's like having a messy desk versus an organized workspace. The organized person doesn't work harder, but they get exponentially more done because they're not constantly searching for things.
 
-**How to get ahead:**
-- Learn to break complex problems into context-efficient chunks
-- Master writing prompts that front-load the most critical information
-- Develop templates for structuring specs that maximize AI comprehension
-- **Competitive edge:** While others hit context limits and start over, you'll structure conversations that stay productive longer. That's the difference between good and exceptional AI-assisted developers.
+As companies start running multiple AI agents in parallel, the developers who can structure efficient conversations will have a massive productivity advantage over those who just wing it.
 
-## Why This Matters Right Now
+## The Transition Period
+*Where we are right now*
 
-The job market is changing faster than CS curricula can adapt. While your classmates are still optimizing leetcode solutions, these three skills will determine who gets hired in the next 2-3 years.
+We're in this weird moment where the tools are evolving faster than anyone's wisdom about how to use them. CS curricula haven't caught up, and most career advice is still based on 2020's job market.
 
-**The advantage period is closing:** Early adopters who master these skills now will have a significant edge. But as more people catch on, that advantage shrinks.
+But that's also the opportunity. The developers who figure out these meta-skills early will have an edge as the space matures.
 
-## Start Building These Skills Today
+## What Makes This Interesting
 
-**Specification mastery (Week 1):**
-- Take any leetcode problem and write instructions so clear a non-programmer could implement it
-- Rewrite a previous project's README as if you're briefing someone who will build it from scratch
+This isn't about learning another framework that'll be obsolete in two years. These are fundamental shifts in how software gets built. Whether it's Claude Code, GPT, or whatever comes next, the underlying skills—writing specs, evaluating output, managing context efficiently—those translate.
 
-**Quality evaluation (Week 2):**
-- Generate the same solution 3 different ways and create criteria for choosing the best one
-- Build a checklist of what "good AI-generated code" actually looks like
+It's like learning to drive versus learning to operate a specific car model. Once you get the core skills, you can adapt to any vehicle.
 
-**Context efficiency (Week 3):**
-- Time how long your AI conversations stay productive before hitting limits
-- Practice condensing complex requirements into the smallest possible specification that still works
+## The Bottom Line
 
-## The Reality Check
+Thanks to BAML and HumanLayer for hosting a conversation that went beyond typical "here's how to write better prompts" advice. Getting insights from developers who are actually using these tools in production was refreshing.
 
-Most CS students are still preparing for 2020's job market. But thanks to conversations like the BAML x HumanLayer webinar, we're getting a preview of what 2025's market actually looks like.
-
-**Here's what the industry veterans didn't sugar-coat:** The technical tools are evolving fast, but the career implications are evolving faster. The students who build these meta-skills now will have a significant advantage when everyone else catches up.
-
-**The window is closing.** Start experimenting this week, not next semester.
+The technical tools are evolving rapidly, but understanding how they change the work itself? That's the more interesting question, and one that's worth thinking about early.
 
 ---
 
-*Seeing different patterns in your own AI coding experiments? Share what you're learning—the more data points we have, the better we can all prepare.*
+*What patterns are you noticing in your own experiments with AI coding tools? Always curious to compare notes.*
