@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/BlogPage.astro
 title: "AI Coding Tools Are Changing CS Careers: What Students Need to Know"
-date: "2025-01-15"
+date: "2025-08-05"
 author: "CS Club Member"
 description: "Field notes from an industry webinar on how AI coding assistants are reshaping software development"
 ---
@@ -99,7 +99,3 @@ The webinar highlighted some emerging solutions to these challenges:
 Big thanks to the BAML and HumanLayer teams for hosting such a thoughtful discussion and creating space for these deeper questions about where AI-assisted development is headed. The conversation went well beyond technical tips into the structural changes happening in our field.
 
 The tools are evolving faster than our wisdom about how to use them. That's both an opportunity and a responsibility.
-
----
-
-*Want to discuss this? Find me after the next meeting—I'm curious what patterns others are seeing and what we should be preparing for as this space evolves.*
