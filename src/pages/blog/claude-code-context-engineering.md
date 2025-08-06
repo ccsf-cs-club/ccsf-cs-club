@@ -2,7 +2,7 @@
 layout: ../../layouts/BlogPage.astro
 title: "3 AI Coding Skills No One's Teaching (But Everyone Needs)"
 date: "2025-08-05"
-author: "CS Club Member"
+author: "John Chen"
 description: "Insider insights from industry developers on what actually matters for your career"
 ---
 
