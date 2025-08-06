@@ -38,41 +38,65 @@ Companies like Arize are building entire platforms around one idea: you can't fi
 2. **Evaluate continuously** - Use AI to evaluate AI
 3. **Build in guardrails** - Human checkpoints for critical decisions
 
-## Try This Weekend: Your First Observable AI Project
+## Try This Weekend: Add Observability to CrewAI
 
-You can start building observable systems now. This adds to your data structures knowledge—a skill that makes existing projects stand out.
+You can start building observable multi-agent systems now. This adds to your data structures knowledge—a skill that makes existing projects stand out.
 
-Here's how to upgrade your next project:
+Here's how to build an observable CrewAI workflow:
 
 ### Prerequisites
 
-If you've never built an AI agent, start with [LangChain's quickstart](https://python.langchain.com/docs/get_started/quickstart).
+If you've never used CrewAI, start with their [quickstart guide](https://docs.crewai.com/getting-started/start-here). You'll need a simple multi-agent workflow.
 
-### The Upgrade (2 hours)
+### The CrewAI + Phoenix Setup (One Day)
 
-1. **Install Phoenix** (Arize's free tool):
+1. **Install both tools**:
    
    ```bash
-   pip install arize-phoenix
+   pip install arize-phoenix crewai
    phoenix serve
    ```
-2. **Add tracking to your existing project**:
+2. **Create an observable CrewAI workflow**:
    
    ```python
+   import os
+   from crewai import Agent, Task, Crew
    from phoenix.trace import TracingContext
    
+   # Define agents
+   researcher = Agent(
+       role='Researcher',
+       goal='Find accurate information',
+       backstory='Expert at finding reliable sources'
+   )
+   
+   writer = Agent(
+       role='Writer', 
+       goal='Write clear summaries',
+       backstory='Skilled at technical writing'
+   )
+   
+   # Define task
+   task = Task(
+       description='Research and write about Python vs JavaScript',
+       agent=researcher
+   )
+   
+   # Create crew with tracing
    with TracingContext():
-       # Your existing agent code
-       response = agent.chat("Your query")
+       crew = Crew(agents=[researcher, writer], tasks=[task])
+       result = crew.kickoff()
    ```
-3. **Open localhost:6006** and watch your agent's decision tree in real-time
-4. Ask your agent something ambiguous like "What's the best programming language?" You'll see 6-8 internal decisions you never knew about.
+3. **Open localhost:6006** and watch your multi-agent workflow in real-time
+4. **The revelation**: You'll see every agent decision, tool call, and handoff between agents. Now imagine debugging "why did my research agent ignore the latest data?" without this visibility.
 
-### What to Build
+### CrewAI Projects That Stand Out
 
-Don't just make another chatbot. Build something that shows you understand production challenges:
+Don't just run the tutorial. Build multi-agent workflows that show production thinking:
 
-- A study buddy that traces why it recommended certain resources
+- **Research crew**: One agent gathers sources, another verifies credibility, third writes summary
+- **Code review crew**: One agent analyzes code, another checks tests, third suggests improvements  
+- **Content creation crew**: Researcher + writer + editor agents with full decision tracing
 
 ## What to Put on Your Resume
 
@@ -96,13 +120,13 @@ This isn't instead of learning algorithms—it's adding production thinking to w
 
 ## Your Action Plan
 
-**This Weekend (2-3 hours):**
+**This Weekend (One Day):**
 
-1. Take an existing AI project (or build simple "hello world")
-2. Add Phoenix tracing (20 minutes)
-3. Run 10 prompts and study traces
-4. Find one surprising decision
-5. Document findings in README
+1. Set up CrewAI with a simple multi-agent workflow
+2. Add Phoenix tracing to the entire crew
+3. Run 5 different multi-agent tasks
+4. Study how agents hand off work to each other
+5. Document one surprising agent decision in README
 
 **Next Month:**
 
@@ -123,9 +147,52 @@ These questions appear in new grad interviews because companies learned "AI work
 ## Resources to Actually Use
 
 - **Start Here**: [Phoenix quickstart](https://docs.arize.com/phoenix) - 20 minutes to your first trace
+- **CrewAI Setup**: [CrewAI quickstart](https://docs.crewai.com/getting-started/start-here) - Multi-agent workflows
+- **Advanced Models**: See below for OpenAI GPT OSS 120B on Bedrock
 - **Level Up**: [LangSmith tutorials](https://www.langchain.com/langsmith) - Production-grade tracing
 - **Deep Dive**: [Weights & Biases AI course](https://wandb.ai/) - Free with student email
-- **Context**: [CrewAI Documentation](https://docs.crewai.com/) - See real-world agent orchestration patterns
+
+## Access OpenAI GPT OSS 120B on AWS Bedrock Today
+
+Want to use cutting-edge models in your CrewAI workflows? AWS now provides access to OpenAI's GPT OSS 120B model through Bedrock:
+
+**Quick Setup:**
+1. **AWS Account**: Sign up for AWS if you don't have an account
+2. **Request Access**: Go to AWS Bedrock console and request model access for OpenAI GPT OSS 120B
+3. **Configure CrewAI**: Update your CrewAI agents to use Bedrock as the LLM provider
+
+```python
+import boto3
+from crewai import Agent
+from langchain_aws import BedrockLLM
+
+# Configure Bedrock client
+bedrock = boto3.client(
+    service_name='bedrock-runtime',
+    region_name='us-east-1'  # or your preferred region
+)
+
+# Use with CrewAI
+llm = BedrockLLM(
+    model_id="openai.gpt-oss-120b-v1",
+    client=bedrock
+)
+
+researcher = Agent(
+    role='Researcher',
+    goal='Find accurate information',
+    backstory='Expert researcher',
+    llm=llm  # Use the 120B model
+)
+```
+
+**Why This Matters:**
+- **120B parameters** vs typical 7B-70B models
+- **Better reasoning** for complex multi-agent workflows
+- **Enterprise-grade** infrastructure through AWS
+- **Cost predictability** vs OpenAI API pricing
+
+This combination (CrewAI + Phoenix + 120B on Bedrock) gives you production-scale multi-agent systems with full observability.
 
 The companies investing in agent observability today will define how AI gets built tomorrow.
 
