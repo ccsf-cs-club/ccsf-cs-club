@@ -1,6 +1,12 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 const posts = await Astro.glob('./*.md');
+// Sort posts by date, most recent first
+const sortedPosts = posts.sort((a, b) => {
+    const dateA = new Date(a.frontmatter.date);
+    const dateB = new Date(b.frontmatter.date);
+    return dateB.getTime() - dateA.getTime();
+});
 ---
 <Layout title="CS Club Blog">
     
@@ -8,7 +14,7 @@ const posts = await Astro.glob('./*.md');
     <h1 class="title-gradient my-6 text-center text-6xl font-bold">CS Club Blog</h1>
     
     <div class="grid gap-4">
-        {posts.map(post=> (
+        {sortedPosts.map(post=> (
             <article class="border p-4 rounded-lg">
                 <h2 class="text-2xl font-semibold">
                     <a href={post.url}>{post.frontmatter.title}</a>
