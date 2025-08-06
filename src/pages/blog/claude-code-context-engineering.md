@@ -1,48 +1,50 @@
 ---
 layout: ../../layouts/BlogPage.astro
-title: "What I Learned About Claude Code That Changed How I Think About My CS Career"
+title: "AI Coding Tools Are Changing CS Careers: What Students Need to Know"
 date: "2025-01-15"
 author: "CS Club Member"
-description: "Field notes from a BAML x HumanLayer context engineering webinar that got unexpectedly deep"
+description: "Field notes from an industry webinar on how AI coding assistants are reshaping software development"
 ---
 
-*Field notes from a BAML x HumanLayer context engineering webinar that got unexpectedly deep*
+*Field notes from a BAML x HumanLayer industry webinar that got unexpectedly deep*
 
 ## The Setup
 
-Last week I attended a webinar on context engineering hosted by BAML and HumanLayer—two companies building tools in the AI development space. What started as a technical deep-dive on "how Claude Code works under the hood" turned into a fascinating discussion about how AI coding tools are reshaping not just our workflows, but the entire structure of software development careers.
+Last week I attended a webinar on AI-assisted development hosted by BAML and HumanLayer—two companies building tools that help developers work with AI coding assistants. What started as a technical session on "how Claude Code works" turned into a wake-up call about how these tools are reshaping software development careers.
 
-The session brought together developers who've been experimenting with Claude Code in production, and their insights went way beyond typical "here's how to write better prompts" advice. Shoutout to the BAML and HumanLayer teams for creating space for these deeper conversations about where this technology is headed.
+The session brought together working developers who've been using Claude Code and similar tools in real projects. Their insights went way beyond "here's how to write better prompts"—they talked about fundamental changes happening in how we work, what skills matter, and what employers are looking for.
 
-## The TL;DR That Matters
+## The Reality Check
 
-If you're using Claude Code (or thinking about it), you're not just adopting a new tool—you're entering a landscape where the rules of software development are changing faster than anyone can keep up with. And some of those changes might not be great for your career trajectory.
+AI coding tools like Claude Code aren't just making development faster—they're fundamentally changing what it means to be a software engineer. For CS students, this shift is happening right as you're learning the foundations of the field.
 
-## The "Everyone Does This" Trap
+## What Most People Are Doing Wrong
 
-**What everyone's doing:** Writing giant prompts with all the specs, copy-pasting results, maybe turning it into markdown docs, then compacting the conversation when it gets too long.
+**The common approach:** Write a huge prompt describing everything you want, copy-paste the AI's response, maybe save it as documentation, then start over when the conversation gets too long.
 
-**Why this doesn't scale:** Try running multiple Claude Code instances in parallel on different parts of your project (something several webinar participants mentioned experimenting with). Suddenly your "obvious" approach becomes a coordination nightmare. It's like the difference between riding a bike and directing traffic.
+**Why this fails at scale:** Imagine trying to use this approach on a team project with multiple developers working on different features. One webinar participant described it perfectly: "It's like the difference between riding a bike and directing traffic."
 
-**The deeper problem:** We're all reinventing the same wheel, badly. As one participant noted, everyone reported completely different knowledge management systems, different MCPs, some using TDD, others eschewing tests entirely. There's no standard playbook yet, so everyone's developing their own quirky workflow that might not transfer to your next team.
+**The real problem:** Everyone is inventing their own workflow from scratch. Some people use Test-Driven Development (writing tests first), others skip tests entirely. Some have elaborate systems for managing conversation history, others just wing it. There's no standard approach yet, which means the workflow you develop in school might not work at your first job.
 
-## The New Job Market Reality
+## How This Changes Your Career Path
 
-Here's what's happening that career counselors aren't talking about yet:
+Here's what career counselors aren't talking about yet:
 
-**The skill shift:** "Good engineer" increasingly means "writes specs that produce working code" rather than "writes working code." But here's the catch—traditional entry-level positions where you learn to write good specs are disappearing.
+**The skill shift:** Being a "good engineer" increasingly means being able to write clear specifications that produce working code, rather than writing all the code yourself. Think of it like being an architect who designs buildings versus a construction worker who lays every brick. But here's the problem: entry-level jobs where you learn to write good specifications are becoming rare.
 
-**The access problem:** Getting good at AI-assisted development requires practice, but not everyone has equal access to experiment. As the webinar discussion highlighted, there's a "privilege to practice this new instrument" that's creating new forms of technical inequality.
+**The practice gap:** Getting good at AI-assisted development requires experimentation time. Not every student has access to paid AI tools or the time to practice with them extensively. This creates an inequality where some students graduate with AI-assisted development experience and others don't.
 
-**The measurement crisis:** How do you prove you're good at this on a resume? GitHub contributions become misleading when AI wrote most of the code. Leetcode becomes irrelevant when the interview becomes "write a prompt that implements binary search and passes our coding standards."
+**The portfolio problem:** How do you show potential employers you're skilled when AI wrote significant portions of your projects? Your GitHub activity becomes misleading. LeetCode practice becomes less relevant when interviews shift to "write a prompt that generates a binary search algorithm that passes our coding standards."
 
-## What Actually Works (So Far)
+## What's Actually Working (So Far)
 
-**Spec-driven development** emerged as the consensus approach from webinar participants, but nobody agrees what that means yet. Think of it like the early days of React—everyone knows it's important, but best practices are still forming.
+**Specification-first development:** The consensus from industry developers was to start with detailed specifications before generating any code. But nobody agrees on what that looks like yet. It's like the early days of React—everyone knows it's important, but best practices are still forming.
 
-**The context management game:** One of the key technical insights shared was that Claude Code uses about half its context window just for baseline behavior and scaffolding. The other half is your conversation. Getting good means learning to maximize that conversation space efficiently.
+**Example:** Instead of asking "write me a shopping cart," you'd write: "Create a ShoppingCart class that stores items with quantities, calculates totals including tax, and throws specific errors for invalid operations like negative quantities."
 
-**Quality control is broken:** Multiple participants noted the lack of frameworks for evaluating AI-generated code at scale. Most teams are doing "yup, looks like code to me" reviews, which is... concerning. As one attendee put it, "any KPI we come up with gets gamed and becomes meaningless."
+**Managing conversation limits:** Claude Code can only remember so much of your conversation. About half its "memory" is used for basic instructions, leaving the other half for your actual work. Learning to work within these limits efficiently is becoming a key skill.
+
+**Quality control is a mess:** Multiple participants noted that most teams are just eyeballing AI-generated code and saying "looks good to me." There aren't established frameworks for properly reviewing AI-generated code at scale, which should concern everyone.
 
 ## The Uncomfortable Questions
 
@@ -52,13 +54,23 @@ Here's what's happening that career counselors aren't talking about yet:
 
 **The collaboration weirdness:** Instead of pair programming, you're basically playing a guessing game until you say the magic words that make Claude do what you want. As one participant noted, it feels less like collaboration and more like the AI is "interrogating and baiting the operator."
 
-## What This Means for You
+## Practical Advice for CS Students
 
-**If you're a student:** Don't just learn to code—learn to spec, design, and evaluate. The implementation might be automated, but someone still needs to know if it's good.
+**Start practicing specifications now:** Take your next coding assignment and write a detailed specification before you code anything. Include data types, error conditions, performance requirements, and edge cases. Then try implementing it both with and without AI assistance.
 
-**If you're job hunting:** Start thinking about how to demonstrate design and specification skills, not just coding ability.
+**Build a hybrid portfolio:** Create projects that showcase both AI-assisted work and traditional coding. Be transparent about which parts used AI help. Document your decision-making process and how you verified the AI-generated code.
 
-**If you're on a team:** Push for standards and shared practices. The Wild West phase won't last forever, and teams that establish good patterns early will have an advantage.
+**Learn to evaluate code, not just write it:** Practice code review skills. Can you spot bugs, security issues, or performance problems in code you didn't write? This skill becomes critical when AI is generating first drafts.
+
+**Experiment with AI tools deliberately:** Don't just use them to complete assignments faster. Try different approaches, document what works and what doesn't, and think about how they fit into larger development workflows.
+
+## For Industry Mentors and Employers
+
+**Update your interview process:** Consider how to evaluate candidates who've used AI assistance extensively. Focus on design thinking, problem decomposition, and code evaluation skills rather than just implementation ability.
+
+**Provide AI tool access:** Consider giving interns and junior developers access to AI coding tools, but with structured learning objectives around specification writing and code review.
+
+**Establish team standards:** Don't let everyone develop their own AI workflow. Invest in creating shared practices for AI-assisted development before the chaos gets worse.
 
 ## The Bigger Picture
 
@@ -74,12 +86,13 @@ The webinar highlighted some emerging solutions to these challenges:
 - Various approaches to multiplexing Claude Code instances for parallel development
 - Emerging frameworks for spec-driven development workflows
 
-## Action Items for CS Club Members
+## Next Steps for Our CS Club
 
-1. **Experiment deliberately:** Try Claude Code on a side project, but document what works and what doesn't
-2. **Practice specification:** Take a coding problem and write a spec that someone else (human or AI) could implement from
-3. **Study the ecosystem:** Tools are emerging rapidly—stay aware of what's coming
-4. **Discuss with peers:** What standards should we advocate for? What practices feel sustainable?
+1. **Workshop series:** Let's organize sessions where members practice writing specifications and then implement them with AI assistance
+2. **Portfolio review:** Share projects and discuss how to document AI-assisted work honestly and effectively
+3. **Industry connections:** Invite local developers to discuss how their teams are handling AI-assisted development
+4. **Tool exploration:** Try different AI coding tools together and compare approaches
+5. **Standard development:** Work together to develop best practices that we can take to our internships and first jobs
 
 ## Thanks & Next Steps
 
