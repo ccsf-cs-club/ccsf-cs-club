@@ -1,0 +1,104 @@
+---
+interface Props {
+  activeTab: 'all' | 'build-together' | 'hackathons' | 'community';
+}
+
+const { activeTab = 'all' } = Astro.props;
+
+const tabs = [
+  { id: 'all', label: 'All Events' },
+  { id: 'build-together', label: 'Build Together' },
+  { id: 'hackathons', label: 'Hackathons' },
+  { id: 'community', label: 'Community' }
+];
+---
+
+<nav class="mb-8" role="tablist">
+  <div class="tabs tabs-bordered">
+    {tabs.map((tab) => (
+      <button 
+        type="button"
+        role="tab"
+        data-tab={tab.id}
+        aria-selected={activeTab === tab.id}
+        class={`tab tab-bordered ${activeTab === tab.id ? 'tab-active' : ''}`}
+      >
+        {tab.label}
+      </button>
+    ))}
+  </div>
+</nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('[data-tab]');
+    const masonryGrid = document.querySelector('.masonry-grid');
+    const allEventCards = document.querySelectorAll('[data-track]');
+
+    function filterEvents(activeTab) {
+      if (!masonryGrid) return;
+      
+      // Get all masonry items (preserve original DOM elements)
+      const allMasonryItems = masonryGrid.querySelectorAll('.masonry-item');
+      
+      allMasonryItems.forEach(item => {
+        const eventCard = item.querySelector('[data-track]');
+        const track = eventCard?.getAttribute('data-track');
+        
+        if (activeTab === 'all' || track === activeTab) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Force layout recalculation
+      requestAnimationFrame(() => {
+        masonryGrid.style.columns = masonryGrid.style.columns;
+      });
+    }
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        
+        // Update button states
+        tabButtons.forEach(btn => {
+          btn.setAttribute('aria-selected', 'false');
+          btn.classList.remove('tab-active');
+        });
+        
+        button.setAttribute('aria-selected', 'true');
+        button.classList.add('tab-active');
+        
+        // Filter events
+        filterEvents(tabId);
+      });
+    });
+
+    // Handle keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.target.matches('[data-tab]')) {
+        const currentTab = e.target;
+        const tabsArray = Array.from(tabButtons);
+        const currentIndex = tabsArray.indexOf(currentTab);
+        
+        let nextIndex = currentIndex;
+        
+        if (e.key === 'ArrowLeft') {
+          nextIndex = currentIndex > 0 ? currentIndex - 1 : tabsArray.length - 1;
+          e.preventDefault();
+        } else if (e.key === 'ArrowRight') {
+          nextIndex = currentIndex < tabsArray.length - 1 ? currentIndex + 1 : 0;
+          e.preventDefault();
+        }
+        
+        if (nextIndex !== currentIndex) {
+          tabsArray[nextIndex].focus();
+          tabsArray[nextIndex].click();
+        }
+      }
+    });
+  });
+</script>
+

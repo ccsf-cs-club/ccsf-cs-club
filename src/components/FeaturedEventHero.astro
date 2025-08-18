@@ -1,0 +1,128 @@
+---
+interface Badge {
+  type: 'policy' | 'online' | 'in-person' | 'community' | 'luma';
+  label: string;
+}
+
+interface CallToAction {
+  luma_url?: string;
+  custom_url?: string;
+  custom_label?: string;
+  type?: 'luma' | 'custom' | 'none';
+}
+
+interface Props {
+  title: string;
+  description: string;
+  badges: Badge[];
+  call_to_action?: CallToAction;
+  dateRange: string;
+  illustration?: string;
+}
+
+const { 
+  title, 
+  description, 
+  badges, 
+  call_to_action,
+  dateRange,
+  illustration = 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=400&h=400&fit=crop&auto=format&q=80'
+} = Astro.props;
+
+const getBadgeStyles = (type: Badge['type']) => {
+  const styles = {
+    policy: 'badge-error',
+    online: 'badge-warning',
+    'in-person': 'badge-success',
+    community: 'badge-warning',
+    luma: 'badge-error'
+  };
+  return styles[type] || 'badge-neutral';
+};
+---
+
+<section class="card bg-base-100 shadow-2xl border border-base-200 hover:border-primary/30 transition-colors duration-300">
+  <div class="card-body lg:grid lg:grid-cols-3 lg:gap-8">
+    <!-- Content Area -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Section Header -->
+      <div>
+        <h2 class="text-lg font-semibold text-base-content/60 mb-2">
+          Featured Event
+        </h2>
+      </div>
+
+      <!-- Badge System -->
+      <div class="flex flex-wrap gap-2">
+        {badges.map((badge) => (
+          <span class={`badge badge-lg ${getBadgeStyles(badge.type)}`}>
+            {badge.label}
+          </span>
+        ))}
+      </div>
+
+      <!-- Event Title -->
+      <h3 class="card-title text-3xl lg:text-4xl">
+        {title}
+      </h3>
+
+      <!-- Description -->
+      <p class="text-lg text-base-content/70">
+        {description}
+      </p>
+
+      <!-- Action Area -->
+      <div class="card-actions justify-between items-center">
+        <!-- CTA Button -->
+        {call_to_action && call_to_action.type !== 'none' && (
+          <>
+            {call_to_action.luma_url && (
+              <a 
+                href={call_to_action.luma_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary btn-lg"
+              >
+                RSVP on Luma
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            )}
+            {call_to_action.custom_url && (
+              <a 
+                href={call_to_action.custom_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary btn-lg"
+              >
+                {call_to_action.custom_label || 'Learn More'}
+                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            )}
+          </>
+        )}
+
+        <!-- Date Range -->
+        <div class="text-sm text-base-content/60 font-medium">
+          {dateRange}
+        </div>
+      </div>
+    </div>
+
+    <!-- Illustration Area -->
+    <div class="lg:col-span-1 flex items-start justify-center p-4">
+      <div class="w-full max-w-xs aspect-square rounded-3xl overflow-hidden shadow-lg">
+        <img 
+          src={illustration}
+          alt="Cute penguin coding at laptop in an igloo"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
