@@ -1,0 +1,84 @@
+---
+interface Badge {
+  type: 'in-person' | 'online' | 'hybrid';
+  label: string;
+}
+
+interface Props {
+  title: string;
+  badge: Badge;
+  icon?: string;
+  schedule?: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  badge,
+  icon = 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=80&h=80&fit=crop&auto=format&q=80',
+  schedule,
+  description
+} = Astro.props;
+
+const getBadgeStyles = (type: Badge['type']) => {
+  const styles = {
+    'in-person': 'badge-success',
+    'online': 'badge-warning',
+    'hybrid': 'badge-info'
+  };
+  return styles[type];
+};
+---
+
+<div class="card bg-base-100 shadow-lg border border-base-200 hover:border-primary/30 transition-colors duration-300" data-track="community">
+  <div class="card-body">
+    <div class="flex items-start gap-4">
+      <!-- Icon Area -->
+      <div class="flex-shrink-0">
+        <div class="avatar">
+          <div class="w-12 rounded-full">
+            <img 
+              src={icon}
+              alt="Cute penguin session icon"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="flex-grow min-w-0">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-grow">
+            <!-- Title -->
+            <h3 class="card-title text-lg mb-2">
+              {title}
+            </h3>
+
+            <!-- Schedule -->
+            {schedule && (
+              <p class="text-sm text-base-content/60 mb-2">
+                {schedule}
+              </p>
+            )}
+
+            <!-- Description -->
+            {description && (
+              <p class="text-sm text-base-content/70">
+                {description}
+              </p>
+            )}
+          </div>
+
+          <!-- Badge -->
+          <div class="flex-shrink-0">
+            <span class={`badge ${getBadgeStyles(badge.type)}`}>
+              {badge.label}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

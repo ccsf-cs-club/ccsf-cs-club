@@ -1,0 +1,173 @@
+---
+interface ArchiveEvent {
+  title: string;
+  badge: {
+    type: string;
+    label: string;
+    color: 'red' | 'blue' | 'yellow' | 'green' | 'gray';
+  };
+  date?: string;
+  description?: string;
+}
+
+interface Props {
+  events: ArchiveEvent[];
+  isCollapsed?: boolean;
+}
+
+const { events, isCollapsed = true } = Astro.props;
+
+const getBadgeStyles = (color: ArchiveEvent['badge']['color']) => {
+  const styles = {
+    red: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+    blue: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    yellow: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+    green: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    gray: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+  };
+  return styles[color];
+};
+---
+
+<section class="card bg-base-100 shadow border border-base-300">
+  <details class="archive-details" open={!isCollapsed}>
+    <summary class="cursor-pointer p-6 hover:bg-base-200 transition-colors select-none">
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold text-base-content/70 flex items-center gap-2">
+          <span class="text-base-content/50">📚</span>
+          Archive
+          <span class="text-sm font-normal text-base-content/50">
+            ({events.length} events)
+          </span>
+        </h2>
+        <div class="archive-chevron transition-transform duration-200">
+          <svg class="w-5 h-5 text-base-content/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+      </div>
+    </summary>
+
+    <div class="archive-content border-t border-base-300">
+      {events.length > 0 ? (
+        <ul class="divide-y divide-base-200">
+          {events.map((event) => (
+            <li class="p-4 hover:bg-base-200 transition-colors">
+              <div class="flex items-center justify-between gap-4">
+                <div class="flex-grow min-w-0">
+                  <div class="flex items-center gap-3 mb-1">
+                    <h3 class="text-sm font-medium text-base-content truncate">
+                      {event.title}
+                    </h3>
+                    <span class={`badge badge-xs ${getBadgeStyles(event.badge.color)}`}>
+                      {event.badge.label}
+                    </span>
+                  </div>
+                  {event.description && (
+                    <p class="text-xs text-base-content/60 line-clamp-2">
+                      {event.description}
+                    </p>
+                  )}
+                </div>
+                {event.date && (
+                  <div class="text-xs text-base-content/50 flex-shrink-0">
+                    {event.date}
+                  </div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div class="p-8 text-center">
+          <div class="text-base-content/40 mb-2">
+            <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+          </div>
+          <p class="text-sm text-base-content/50">
+            No archived events yet
+          </p>
+        </div>
+      )}
+    </div>
+  </details>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelectorAll('.archive-details');
+    
+    details.forEach(detail => {
+      const chevron = detail.querySelector('.archive-chevron');
+      
+      detail.addEventListener('toggle', () => {
+        if ((detail as any).open) {
+          chevron?.classList.remove('rotate-180');
+        } else {
+          chevron?.classList.add('rotate-180');
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .archive-details[open] .archive-chevron {
+    transform: rotate(180deg);
+  }
+
+  .archive-details summary {
+    list-style: none;
+  }
+
+  .archive-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .archive-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Smooth expand/collapse animation */
+  .archive-content {
+    overflow: hidden;
+  }
+
+  .archive-details:not([open]) .archive-content {
+    animation: collapse 0.2s ease-out forwards;
+  }
+
+  .archive-details[open] .archive-content {
+    animation: expand 0.2s ease-out forwards;
+  }
+
+  @keyframes collapse {
+    from {
+      opacity: 1;
+      max-height: 500px;
+    }
+    to {
+      opacity: 0;
+      max-height: 0;
+    }
+  }
+
+  @keyframes expand {
+    from {
+      opacity: 0;
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      max-height: 500px;
+    }
+  }
+</style>

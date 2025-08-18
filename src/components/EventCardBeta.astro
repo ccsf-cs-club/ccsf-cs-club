@@ -1,0 +1,110 @@
+---
+interface Badge {
+  type: 'luma' | 'date' | 'community' | 'online' | 'in-person';
+  label: string;
+  color: 'red' | 'blue' | 'yellow' | 'green';
+}
+
+interface CallToAction {
+  luma_url?: string;
+  custom_url?: string;
+  custom_label?: string;
+  type?: 'luma' | 'custom' | 'none';
+}
+
+interface Props {
+  title: string;
+  description: string;
+  badge: Badge;
+  illustration?: string;
+  call_to_action?: CallToAction;
+  cardSize?: 'standard' | 'compact';
+  track?: 'build-together' | 'hackathons' | 'community' | 'all';
+}
+
+const { 
+  title, 
+  description, 
+  badge,
+  illustration = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400&h=300&fit=crop&auto=format&q=80',
+  call_to_action,
+  track = 'all'
+} = Astro.props;
+
+const getBadgeStyles = (color: Badge['color']) => {
+  const styles = {
+    red: 'badge-error',
+    blue: 'badge-info', 
+    yellow: 'badge-warning',
+    green: 'badge-success'
+  };
+  return styles[color];
+};
+
+// Remove custom card classes - use pure DaisyUI
+---
+
+<article 
+  class="card bg-base-100 shadow-xl border border-base-200 hover:border-primary/30 transition-colors duration-300"
+  data-track={track}
+>
+  <!-- Badge positioned absolutely -->
+  <div class="relative">
+    <!-- Illustration Area -->
+    <div class="aspect-[4/3] relative overflow-hidden rounded-t-xl">
+      <img 
+        src={illustration}
+        alt={`${title} illustration`}
+        class="w-full h-full object-cover"
+        loading="lazy"
+      />
+      
+      <!-- Badge overlay -->
+      <div class="absolute top-3 left-3">
+        <span class={`badge badge-lg ${getBadgeStyles(badge.color)}`}>
+          {badge.label}
+        </span>
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="card-body">
+      <!-- Title and Description -->
+      <h3 class="card-title">
+        {title}
+      </h3>
+      <p class="text-base-content/70">
+        {description}
+      </p>
+
+      <!-- Action Buttons -->
+      <div class="card-actions justify-end">
+        {call_to_action && call_to_action.type !== 'none' && (
+          <>
+            {call_to_action.luma_url && (
+              <a 
+                href={call_to_action.luma_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary btn-sm"
+              >
+                RSVP on Luma
+              </a>
+            )}
+            {call_to_action.custom_url && (
+              <a 
+                href={call_to_action.custom_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-primary btn-sm"
+              >
+                {call_to_action.custom_label || 'Learn More'}
+              </a>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+</article>
+
