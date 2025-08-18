@@ -1,0 +1,27 @@
+---
+import CyberCard from "./CyberCard.astro";
+---
+
+<section id="events-section" class="bg-base-100">
+    <h2 id="events-projects-title" class="text-4xl font-orbitron font-bold text-center mb-8 text-primary">EVENTS</h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary min-h-[60px]">Accessing event logs and schematics. Engage with our latest cyber-gatherings.</p>
+
+    <h3 class="text-3xl font-orbitron font-semibold mb-4 text-secondary">Recent Events</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <CyberCard
+            title="AI User Conference 2024"
+            body="A deep dive into the latest AI advancements and applications."
+            href="/events/ai-user-conference-2024" 
+        />
+        <CyberCard
+            title="Custom Keyboard Building Workshop"
+            body="Learn to assemble and customize your own mechanical keyboard."
+            href="/events/custom-keyboard-building-2024" 
+        />
+        <CyberCard
+            title="Directed Graphs & Task Planning"
+            body="Exploring algorithms for efficient task management and graph traversal."
+            href="/events/directed-graphs-task-planning-2024" 
+        />
+    </div>
+</section>

@@ -1,0 +1,31 @@
+---
+const { title, body, href, class: className, preTitle } = Astro.props;
+---
+
+<a href={href} class={`card w-full bg-base-100 shadow-xl border border-primary transition-all duration-300 ${className || ''}`} style="background-image: linear-gradient(to top, rgba(var(--b1), 0.1), transparent);">
+  <div class="card-body text-left">
+    {preTitle && <p class="text-sm font-share-tech-mono text-secondary mb-2 pulse-text" set:html={preTitle}></p>}
+    <h2 class="card-title text-primary font-orbitron transition-all duration-300 text-2xl">{title}</h2>
+    <p class="font-share-tech-mono text-secondary" set:html={body}></p>
+    <div class="card-actions justify-end">
+      <button class="btn btn-ghost">→</button>
+    </div>
+  </div>
+</a>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 0 20px var(--fallback-s, oklch(var(--s))), inset 0 0 10px var(--fallback-s, oklch(var(--s))); /* White glow */
+        border-color: var(--fallback-s, oklch(var(--s))); /* Border turns white */
+    }
+
+    .pulse-text {
+        animation: pulse-glow 1s infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+        from { text-shadow: 0 0 2px var(--fallback-p, oklch(var(--p))); }
+        to { text-shadow: 0 0 8px var(--fallback-p, oklch(var(--p))), 0 0 12px var(--fallback-p, oklch(var(--p))); }
+    }
+</style>

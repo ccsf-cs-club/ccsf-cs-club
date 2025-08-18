@@ -1,0 +1,104 @@
+---
+import WelcomeSection from "../components/preview/WelcomeSection.astro";
+import EventsSection from "../components/preview/EventsSection.astro";
+import ProjectsSection from "../components/preview/ProjectsSection.astro";
+import BlogSection from "../components/preview/BlogSection.astro";
+import WhyJoinSection from "../components/preview/WhyJoinSection.astro";
+import NavbarDaisy from "../components/NavbarDaisy.astro";
+---
+
+<html lang="en" data-theme="ccsf-cyberpunk">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Homepage Redesign Preview - DaisyUI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style is:global>
+        body {
+            background-color: var(--fallback-b1, oklch(var(--b1))); /* Ensure base background color */
+            overflow-x: hidden;
+            position: relative; /* Needed for pseudo-elements */
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                linear-gradient(to right, rgba(var(--fallback-p, oklch(var(--p))), 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(var(--fallback-p, oklch(var(--p))), 0.05) 1px, transparent 1px);
+            background-size: 40px 40px; /* Size of the grid cells */
+            z-index: -2; /* Below content and section glows */
+            animation: grid-pan 20s linear infinite;
+        }
+
+        @keyframes grid-pan {
+            from { background-position: 0 0; }
+            to { background-position: -40px -40px; }
+        }
+
+        section {
+            position: relative;
+            padding: 40px;
+            margin: 40px auto; /* Centering the sections */
+            max-width: 1024px; /* Reduced max-width */
+            border: 2px solid var(--fallback-p, oklch(var(--p))); /* Use primary color for border */
+            box-shadow: 0 0 15px var(--fallback-p, oklch(var(--p))), inset 0 0 5px var(--fallback-p, oklch(var(--p)));
+            border-radius: 8px;
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, oklch(var(--p) / 0.1), transparent); /* More noticeable linear gradient using primary color */
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            background: linear-gradient(45deg, var(--fallback-p, oklch(var(--p))), transparent, var(--fallback-p, oklch(var(--p))));
+            z-index: -1;
+            filter: blur(10px);
+            opacity: 0.3;
+            animation: border-glow 3s infinite alternate;
+        }
+
+        @keyframes border-glow {
+            from { opacity: 0.3; transform: scale(1); }
+            to { opacity: 0.6; transform: scale(1.02); }
+        }
+    </style>
+</head>
+<body>
+    <NavbarDaisy />
+    <main class="container mx-auto px-4 py-16">
+        <WelcomeSection />
+        <EventsSection />
+        <ProjectsSection />
+        <BlogSection />
+        <WhyJoinSection />
+    </main>
+    <script is:inline>
+        function typeWriter(elementId, text, speed = 100) { /* Increased speed to 100ms */
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            let i = 0;
+            element.innerHTML = ''; // Clear content before typing
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            typeWriter('welcome-title', 'WELCOME TO CCSF CS CLUB');
+            // Removed typing effect for other sections
+        });
+    </script>
+</body>
+</html>

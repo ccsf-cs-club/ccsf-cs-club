@@ -1,0 +1,23 @@
+---
+import CyberCard from "./CyberCard.astro";
+---
+
+<section id="welcome-section" class="text-center bg-base-200">
+    <h2 id="welcome-title" class="text-5xl font-orbitron font-bold mb-4 text-primary min-h-[100px]"></h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary">Initiating connection to the digital frontier. Prepare for knowledge transfer and skill augmentation.</p>
+
+    <div class="flex flex-col md:flex-row items-stretch justify-center gap-4">
+        <CyberCard
+            title="Next General Meeting"
+            body="<span id='meeting-date' class='text-primary'></span> at Batmale Hall ACRC 2pm - 5pm every Friday."
+            href="/events/headline" 
+            class="flex-1"
+        />
+        <CyberCard
+            title="Join Our Discord!"
+            body="Connect with fellow students, share knowledge, and get real-time updates."
+            href="https://discord.gg/nrsPNfwBMY" 
+            class="flex-1"
+        />
+    </div>
+</section>

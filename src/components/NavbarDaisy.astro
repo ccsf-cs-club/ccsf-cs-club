@@ -3,7 +3,7 @@ import { Picture } from "astro:assets";
 import clubicon from "/workspaces/ccsf-cs-club/public/clubicon.png";
 ---
 
-<div class="navbar">
+<div class="navbar fixed top-0 w-full z-50 bg-base-100">
   <div class="flex-1">
     <a href="/" class="btn btn-ghost text-xl"> &#123; CS&nbspClub &#125;;</a>
   </div>
@@ -12,7 +12,7 @@ import clubicon from "/workspaces/ccsf-cs-club/public/clubicon.png";
       <li>
         <details>
           <summary> Posts </summary>
-          <ul class="rounded-t-none bg-[#f9fbf3] p-2 dark:bg-[#13151a]">
+          <ul class="rounded-t-none bg-[#f9fbf3] p-2 dark:bg-[#13151a] z-50">
             <li><a href="/events/headline">Announcements</a></li>
             <li><a href="/blog">Blog</a></li>
             <li><a href="/events">Calendar</a></li>

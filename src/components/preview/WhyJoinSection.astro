@@ -1,0 +1,43 @@
+---
+import FeatureBlock from "./FeatureBlock.astro";
+---
+
+<section id="why-join-section" class="text-center bg-base-200">
+    <h2 id="why-join-title" class="text-4xl font-orbitron font-bold mb-4 text-primary">WHY JOIN US?</h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary">Enhance your skills, collaborate on exciting projects, and connect with a vibrant community.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <FeatureBlock
+            icon="&#128187;" /* Computer */
+            title="Skill Enhancement"
+            description="Hands-on workshops, coding sessions, and expert-led tutorials to sharpen your technical abilities."
+        />
+        <FeatureBlock
+            icon="&#128172;" /* Speech Bubble */
+            title="Networking Opportunities"
+            description="Connect with industry professionals, alumni, and peers for mentorship and career growth."
+        />
+        <FeatureBlock
+            icon="&#128640;" /* Rocket */
+            title="Real-World Projects"
+            description="Build your portfolio by contributing to exciting club projects and hackathons."
+        />
+        <FeatureBlock
+            icon="&#128218;" /* Book */
+            title="Knowledge Sharing"
+            description="Learn from experienced members and share your own insights in a collaborative environment."
+        />
+        <FeatureBlock
+            icon="&#127881;" /* Party Popper */
+            title="Fun & Community"
+            description="Participate in social events, game nights, and build lasting friendships."
+        />
+        <FeatureBlock
+            icon="&#128161;" /* Lightbulb */
+            title="Innovation Hub"
+            description="Explore new technologies, experiment with cutting-edge ideas, and foster creativity."
+        />
+    </div>
+
+    <a href="/subscribe" class="btn btn-primary btn-lg">Join Now!</a>
+</section>

@@ -1,0 +1,27 @@
+---
+import CyberCard from "./CyberCard.astro";
+---
+
+<section id="projects-section" class="bg-base-100">
+    <h2 id="events-projects-title" class="text-4xl font-orbitron font-bold text-center mb-8 text-primary">PROJECTS</h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary min-h-[60px]">Accessing project schematics. Engage with our latest technological constructs.</p>
+
+    <h3 class="text-3xl font-orbitron font-semibold mt-8 mb-4 text-secondary">Club Projects</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <CyberCard
+            title="Pokemon Bio API Playground"
+            body="An interactive platform to explore Pokémon data and build custom queries."
+            href="/projects/pokemon_bio" 
+        />
+        <CyberCard
+            title="Rainbow Walk Simulation"
+            body="Visualize random walk algorithms with vibrant, dynamic paths."
+            href="/projects/rainbow_walk" 
+        />
+        <CyberCard
+            title="Who's That Pokémon Game"
+            body="Test your Pokémon knowledge in this interactive guessing game."
+            href="/projects/whos_that_pokemon" 
+        />
+    </div>
+</section>

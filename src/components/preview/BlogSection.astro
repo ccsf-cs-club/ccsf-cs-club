@@ -1,0 +1,31 @@
+---
+import TerminalSearch from "./TerminalSearch.astro";
+import CyberCard from "./CyberCard.astro";
+---
+
+<section id="blog-section" class="text-center">
+    <h2 id="blog-title" class="text-4xl font-orbitron font-bold mb-4 text-primary">OUR BLOG</h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary">Explore insights into the digital realm and beyond with our latest articles.</p>
+    
+    <TerminalSearch />
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <CyberCard
+            title="Anki: Spaced Repetition for Programmers"
+            body="Learn how to use Anki for efficient learning and retention in programming."
+            href="/blog/anki" 
+        />
+        <CyberCard
+            title="Claude Code Context Engineering"
+            body="Dive into advanced techniques for engineering context in AI code generation."
+            href="/blog/claude-code-context-engineering" 
+        />
+        <CyberCard
+            title="Production AI Agent Observability"
+            body="Understand the challenges and solutions for observing AI agents in production."
+            href="/blog/production-ai-agent-observability" 
+        />
+    </div>
+
+    <a href="/blog" class="btn btn-primary mt-8">View All Blog Posts</a>
+</section>

@@ -1,0 +1,50 @@
+---
+import CyberCard from "./CyberCard.astro";
+---
+
+<section id="events-projects-section" class="bg-base-100">
+    <h2 id="events-projects-title" class="text-4xl font-orbitron font-bold text-center mb-8 text-primary">EVENTS & PROJECTS</h2>
+    <p class="text-lg mb-8 font-share-tech-mono text-secondary">Accessing event logs and project schematics. Engage with our latest cyber-gatherings and technological constructs.</p>
+
+    <div class="p-6 rounded-box bg-base-200 mb-8 border border-primary">
+        <h3 class="text-3xl font-orbitron font-semibold mb-4 text-secondary">Recent Events</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CyberCard
+                title="AI User Conference 2024"
+                body="A deep dive into the latest AI advancements and applications."
+                href="/events/ai-user-conference-2024" 
+            />
+            <CyberCard
+                title="Custom Keyboard Building Workshop"
+                body="Learn to assemble and customize your own mechanical keyboard."
+                href="/events/custom-keyboard-building-2024" 
+            />
+            <CyberCard
+                title="Directed Graphs & Task Planning"
+                body="Exploring algorithms for efficient task management and graph traversal."
+                href="/events/directed-graphs-task-planning-2024" 
+            />
+        </div>
+    </div>
+
+    <div class="p-6 rounded-box bg-base-300 border border-primary">
+        <h3 class="text-3xl font-orbitron font-semibold mt-8 mb-4 text-secondary">Club Projects</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CyberCard
+                title="Pokemon Bio API Playground"
+                body="An interactive platform to explore Pokémon data and build custom queries."
+                href="/projects/pokemon_bio" 
+            />
+            <CyberCard
+                title="Rainbow Walk Simulation"
+                body="Visualize random walk algorithms with vibrant, dynamic paths."
+                href="/projects/rainbow_walk" 
+            />
+            <CyberCard
+                title="Who's That Pokémon Game"
+                body="Test your Pokémon knowledge in this interactive guessing game."
+                href="/projects/whos_that_pokemon" 
+            />
+        </div>
+    </div>
+</section>

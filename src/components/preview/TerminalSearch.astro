@@ -1,0 +1,51 @@
+---
+---
+
+<div class="form-control w-full max-w-md mx-auto">
+  <label class="label">
+    <span class="label-text text-primary font-share-tech-mono"></span>
+  </label>
+  <input type="text" placeholder="search blog posts..." class="input input-bordered input-primary w-full font-share-tech-mono" id="terminal-search-input" />
+  <div class="label">
+    <span class="label-text-alt text-secondary" id="terminal-output"></span>
+  </div>
+</div>
+
+<script is:inline>
+    const searchInput = document.getElementById('terminal-search-input');
+    const terminalOutput = document.getElementById('terminal-output');
+
+    if (searchInput && terminalOutput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    terminalOutput.textContent = `Searching for: ${query}...`;
+                    // In a real application, you would perform a search here
+                    console.log(`Terminal Search: ${query}`);
+                    searchInput.value = ''; // Clear input
+                } else {
+                    terminalOutput.textContent = 'Command not recognized.';
+                }
+            }
+        });
+
+        // Simulate initial prompt
+        terminalOutput.textContent = 'Ready.';
+    }
+</script>
+
+<style>
+    .input-primary {
+        border-color: oklch(var(--p));
+        color: oklch(var(--s));
+        background-color: oklch(var(--b1));
+    }
+    .input-primary::placeholder {
+        color: oklch(var(--s) / 0.6);
+    }
+    .input-primary:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px oklch(var(--p) / 0.5);
+    }
+</style>
