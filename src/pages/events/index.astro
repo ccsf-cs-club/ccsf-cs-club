@@ -4,11 +4,8 @@ import EventTabs from "../../components/EventTabs.astro";
 import FeaturedEventHero from "../../components/FeaturedEventHero.astro";
 import EventCardBeta from "../../components/EventCardBeta.astro";
 import OngoingSessionCard from "../../components/OngoingSessionCard.astro";
-import type { EventsData } from "../api/events";
-
-// Fetch events data from API endpoint
-const eventsResponse = await fetch(new URL('/api/events', Astro.url.origin));
-const eventsData: EventsData = await eventsResponse.json();
+// Import events data directly (for build-time)
+import { eventsData } from '../api/events';
 
 const { featured, upcoming, campus } = eventsData;
 ---

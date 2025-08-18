@@ -52,7 +52,7 @@ export interface EventsData {
   campus: CampusEvent[];
 }
 
-const eventsData: EventsData = {
+export const eventsData: EventsData = {
   featured: {
     title: "Fall 2025 General Meetings",
     description: "Hello CCSF! Join us for our weekly general meetings this semester! We'll showcase summer projects, do icebreakers with new members, plan recruitment materials, and organize Unity Day. Two consecutive weeks to kick off an amazing semester!",
