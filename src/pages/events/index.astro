@@ -7,7 +7,7 @@ import OngoingSessionCard from "../../components/OngoingSessionCard.astro";
 import type { EventsData } from "../api/events";
 
 // Fetch events data from API endpoint
-const eventsResponse = await fetch(`${Astro.url.origin}/api/events`);
+const eventsResponse = await fetch(new URL('/api/events', Astro.url.origin));
 const eventsData: EventsData = await eventsResponse.json();
 
 const { featured, upcoming, campus } = eventsData;

@@ -102,7 +102,7 @@ const getBadgeStyles = (color: ArchiveEvent['badge']['color']) => {
       const chevron = detail.querySelector('.archive-chevron');
       
       detail.addEventListener('toggle', () => {
-        if (detail.open) {
+        if ((detail as any).open) {
           chevron?.classList.remove('rotate-180');
         } else {
           chevron?.classList.add('rotate-180');

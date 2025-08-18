@@ -31,15 +31,14 @@ const tabs = [
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const tabButtons = document.querySelectorAll('[data-tab]');
-    const masonryGrid = document.querySelector('.masonry-grid');
-    const allEventCards = document.querySelectorAll('[data-track]');
+    const tabButtons = document.querySelectorAll('[data-tab]') as NodeListOf<HTMLButtonElement>;
+    const masonryGrid = document.querySelector('.masonry-grid') as HTMLElement;
 
-    function filterEvents(activeTab) {
+    function filterEvents(activeTab: string) {
       if (!masonryGrid) return;
       
       // Get all masonry items (preserve original DOM elements)
-      const allMasonryItems = masonryGrid.querySelectorAll('.masonry-item');
+      const allMasonryItems = masonryGrid.querySelectorAll('.masonry-item') as NodeListOf<HTMLElement>;
       
       allMasonryItems.forEach(item => {
         const eventCard = item.querySelector('[data-track]');
@@ -78,8 +77,8 @@ const tabs = [
 
     // Handle keyboard navigation
     document.addEventListener('keydown', (e) => {
-      if (e.target.matches('[data-tab]')) {
-        const currentTab = e.target;
+      if (e.target && (e.target as HTMLElement).matches('[data-tab]')) {
+        const currentTab = e.target as HTMLButtonElement;
         const tabsArray = Array.from(tabButtons);
         const currentIndex = tabsArray.indexOf(currentTab);
         
