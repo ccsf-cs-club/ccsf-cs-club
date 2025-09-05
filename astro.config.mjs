@@ -7,6 +7,7 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   integrations: [tailwind(), icon()],
-  adapter: netlify()
+  adapter: netlify(),
+  output: 'hybrid' // Enable server-side rendering for API routes while keeping most pages static
 });
 

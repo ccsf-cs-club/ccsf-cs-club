@@ -2,6 +2,8 @@ import type { APIRoute } from 'astro';
 import { z } from 'zod';
 import { getDatabase } from '../../lib/db';
 
+export const prerender = false;
+
 // Rate limiting store (in production, use Redis or similar)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
