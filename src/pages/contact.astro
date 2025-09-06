@@ -29,7 +29,7 @@ import Layout from "../layouts/Layout.astro";
     <div id="response-message" class="mt-4"></div>
   </main>
   <script>
-    const form = document.getElementById('contact-form');
+    const form = document.getElementById('contact-form') as HTMLFormElement;
     const responseMessage = document.getElementById('response-message');
 
     form.addEventListener('submit', async (e) => {
