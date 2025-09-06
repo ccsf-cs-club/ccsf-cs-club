@@ -44,7 +44,7 @@ import Layout from "../../layouts/Layout.astro";
             
             result.json().then(data=>{
                 console.log(data)
-                const resultSprite = document.getElementById("pokemonSprite");
+                // Removed unused resultSprite variable
                 if (data.sprites.front_default != undefined) {
                     let spriteElement = document.getElementById("pokemonSprite");
                     spriteElement.src = data.sprites.front_default;
