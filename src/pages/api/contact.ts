@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 
 const sql = postgres(import.meta.env.DATABASE_URL, { ssl: 'require' });
 
-export const post: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const { name, email, message } = await request.json();
 
