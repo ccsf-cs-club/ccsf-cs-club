@@ -9,7 +9,8 @@ nominationEndDate: 2024-02-28
 status: "completed"
 featured: true
 electionType: "leadership"
-votingMethod: "single-choice"
+votingMethod: "star"
+maxScore: 5
 voterEligibility:
   requireMembership: true
   minimumMembershipDays: 30
@@ -60,7 +61,13 @@ Jordan brings three years of club experience and has been instrumental in organi
 
 ## Voting Process
 
-All current club members with at least 30 days of membership are eligible to vote. Voting will be conducted online through our secure voting platform.
+All current club members with at least 30 days of membership are eligible to vote. We use **STAR voting** (Score Then Automatic Runoff):
+
+1. **Score Round**: Rate each candidate from 0 (worst) to 5 (best)
+2. **Automatic Runoff**: The two highest-scored candidates advance to a runoff
+3. **Winner**: The candidate preferred by more voters wins
+
+Voting will be conducted online through our secure voting platform.
 
 ## Timeline
 

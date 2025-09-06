@@ -7,7 +7,8 @@ endDate: 2024-02-17
 status: "voting"
 featured: true
 electionType: "projects"
-votingMethod: "ranked-choice"
+votingMethod: "star"
+maxScore: 5
 voterEligibility:
   requireMembership: true
   minimumMembershipDays: 0
@@ -65,11 +66,12 @@ Help us select the theme for our 2024 Annual Hackathon! This year's event will b
 
 ## Voting System
 
-We're using **ranked-choice voting** for this election. Rank the themes in order of your preference:
-1. Your first choice gets the most weight
-2. Your second choice gets medium weight  
-3. Continue ranking as desired
-4. You don't need to rank all options
+We're using **STAR voting** (Score Then Automatic Runoff) for this election:
+1. **Score Round**: Rate each theme from 0 (worst) to 5 (best)
+2. **Automatic Runoff**: The two highest-scored themes advance to a runoff
+3. **Winner**: The finalist preferred by more voters wins
+
+You can give the same score to multiple themes if you like them equally!
 
 ## Theme Options
 

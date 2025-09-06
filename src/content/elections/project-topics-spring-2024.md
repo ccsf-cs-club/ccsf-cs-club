@@ -7,8 +7,8 @@ endDate: 2024-01-22
 status: "completed"
 featured: false
 electionType: "topics"
-votingMethod: "multi-choice"
-maxChoices: 3
+votingMethod: "star"
+maxScore: 5
 voterEligibility:
   requireMembership: true
   minimumMembershipDays: 0
@@ -59,7 +59,7 @@ author: "Project Committee"
 
 ## Project Topic Selection
 
-Help us decide which project topics the club should focus on during Spring 2024! You can vote for up to 3 different project categories that interest you most.
+Help us decide which project topics the club should focus on during Spring 2024! Using STAR voting, rate each project from 0 (not interested) to 5 (very interested).
 
 ## Available Project Topics
 
@@ -84,8 +84,8 @@ Build Internet of Things devices using microcontrollers, sensors, and cloud conn
 ## Voting Instructions
 
 1. Review all project options carefully
-2. Select up to 3 projects that interest you most  
-3. Submit your votes by January 22, 2024
+2. Rate each project from 0-5 based on your interest level
+3. Submit your scores by January 22, 2024
 4. Results will be announced on January 23, 2024
 
-The top 3 voted projects will become our focus areas for the semester!
+The top-scoring projects through STAR voting will become our focus areas for the semester!

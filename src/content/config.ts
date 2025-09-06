@@ -36,9 +36,9 @@ const electionsCollection = defineCollection({
     status: z.enum(['draft', 'nomination', 'voting', 'completed', 'cancelled']).default('draft'),
     featured: z.boolean().default(false),
     electionType: z.enum(['leadership', 'topics', 'projects']),
-    votingMethod: z.enum(['single-choice', 'multi-choice', 'ranked-choice', 'score-based']).default('single-choice'),
+    votingMethod: z.enum(['star', 'single-choice', 'multi-choice', 'ranked-choice', 'score-based']).default('star'),
     maxChoices: z.number().min(1).optional(),
-    maxScore: z.number().min(1).max(10).optional(),
+    maxScore: z.number().min(0).max(5).default(5),
     voterEligibility: z.object({
       requireMembership: z.boolean().default(true),
       minimumMembershipDays: z.number().min(0).default(0),
