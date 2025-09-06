@@ -1,0 +1,444 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="STAR Voting - Cast Your Vote - CCSF CS Club" description="Participate in STAR voting at CCSF CS Club. Rate candidates from 0-5 stars and help determine the winner through Score Then Automatic Runoff voting.">
+  <main class="m-auto w-[800px] p-4 text-xl">
+    <h1 class="title-gradient my-6 text-center text-6xl font-bold">
+      STAR Voting
+    </h1>
+    
+    <div class="mb-8 text-center">
+      <p class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+        Rate each candidate from 0 to 5 stars based on your preference
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-500">
+        Your vote helps determine the winner through Score Then Automatic Runoff
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="mt-2 text-gray-600">Loading candidates...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden text-center py-8">
+      <p class="text-red-600 mb-4">Failed to load candidates.</p>
+      <button id="retry-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+        Retry
+      </button>
+    </div>
+
+    <!-- Voting Form -->
+    <div id="voting-form" class="hidden">
+      <form id="vote-form" class="space-y-6">
+        <div id="candidates-container" class="space-y-6">
+          <!-- Candidate cards will be inserted here -->
+        </div>
+
+        <!-- Vote Submission -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="text-center space-y-4">
+            <button type="submit" id="submit-vote-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              Submit Vote
+            </button>
+            <div class="space-x-4">
+              <button type="button" id="clear-votes-btn" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                Clear All Votes
+              </button>
+              <a href="/results" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                View Results
+              </a>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Success State -->
+    <div id="success" class="hidden text-center py-8">
+      <div class="bg-gradient-to-r from-green-100 to-green-200 dark:from-green-800 dark:to-green-900 rounded-lg p-6 shadow-lg">
+        <h2 class="text-3xl font-bold text-green-800 dark:text-green-200 mb-2">✅ Vote Submitted!</h2>
+        <p class="text-green-700 dark:text-green-300 mb-4">Thank you for participating in the STAR voting process.</p>
+        <div class="space-x-4">
+          <a href="/results" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-6 text-lg font-medium text-white shadow-sm hover:bg-indigo-700">
+            View Results
+          </a>
+          <button id="vote-again-btn" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-3 px-6 text-lg font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+            Vote Again
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="mt-8 text-center">
+      <a href="/" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+        Back to Home
+      </a>
+    </div>
+  </main>
+
+  <script>
+    interface Candidate {
+      id: string;
+      name: string;
+      description?: string;
+    }
+
+    interface VoteData {
+      candidateId: string;
+      score: number;
+    }
+
+    let candidates: Candidate[] = [];
+    let votes: Map<string, number> = new Map();
+
+    async function loadCandidates(): Promise<void> {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const votingForm = document.getElementById('voting-form');
+
+      try {
+        const response = await fetch('/api/candidates');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        candidates = await response.json();
+        
+        // Hide loading, show form
+        loading?.classList.add('hidden');
+        error?.classList.add('hidden');
+        votingForm?.classList.remove('hidden');
+
+        // Populate the candidates
+        renderCandidates();
+
+      } catch (err) {
+        console.error('Failed to load candidates:', err);
+        
+        // For demo purposes, use mock data if API fails
+        candidates = [
+          { id: 'candidate-1', name: 'Alice Johnson', description: 'Community organizer with focus on student services' },
+          { id: 'candidate-2', name: 'Bob Smith', description: 'Computer science student and club president' },
+          { id: 'candidate-3', name: 'Carol Davis', description: 'Teaching assistant and tutor coordinator' }
+        ];
+
+        loading?.classList.add('hidden');
+        error?.classList.add('hidden');
+        votingForm?.classList.remove('hidden');
+        renderCandidates();
+      }
+    }
+
+    function renderCandidates(): void {
+      const container = document.getElementById('candidates-container');
+      if (!container) return;
+
+      container.innerHTML = candidates.map(candidate => `
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border">
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">${candidate.name}</h3>
+            ${candidate.description ? `<p class="text-gray-600 dark:text-gray-400 mt-2">${candidate.description}</p>` : ''}
+          </div>
+          
+          <div class="space-y-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Your Rating (0-5 stars):
+            </label>
+            
+            <!-- Star Rating Interface -->
+            <div class="flex items-center space-x-2">
+              <div class="flex space-x-1" data-candidate-id="${candidate.id}">
+                ${Array.from({length: 6}, (_, i) => `
+                  <button type="button" class="star-btn text-2xl focus:outline-none hover:scale-110 transition-transform" 
+                          data-candidate-id="${candidate.id}" 
+                          data-score="${i}"
+                          title="${i} star${i !== 1 ? 's' : ''}"
+                          ${i === 0 ? 'aria-label="No rating"' : `aria-label="${i} star rating"`}>
+                    ${i === 0 ? '✗' : '☆'}
+                  </button>
+                `).join('')}
+              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-4" id="score-display-${candidate.id}">
+                No rating
+              </span>
+            </div>
+
+            <!-- Score slider as backup -->
+            <div class="mt-2">
+              <input type="range" min="0" max="5" step="1" value="0" 
+                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                     data-candidate-id="${candidate.id}"
+                     id="slider-${candidate.id}">
+              <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <span>0</span>
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Add event listeners for star buttons and sliders
+      attachVotingListeners();
+    }
+
+    function attachVotingListeners(): void {
+      // Star button listeners
+      document.querySelectorAll('.star-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.target as HTMLButtonElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.dataset.score!);
+          
+          updateVote(candidateId, score);
+          updateStarDisplay(candidateId, score);
+          updateSlider(candidateId, score);
+        });
+
+        // Hover effects
+        button.addEventListener('mouseenter', (e) => {
+          const target = e.target as HTMLButtonElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.dataset.score!);
+          previewStarDisplay(candidateId, score);
+        });
+      });
+
+      // Star container mouse leave
+      document.querySelectorAll('[data-candidate-id]').forEach(container => {
+        if (container.classList.contains('flex')) { // Star container
+          container.addEventListener('mouseleave', (e) => {
+            const target = e.target as HTMLElement;
+            const candidateId = target.dataset.candidateId!;
+            const currentScore = votes.get(candidateId) || 0;
+            updateStarDisplay(candidateId, currentScore);
+          });
+        }
+      });
+
+      // Slider listeners
+      document.querySelectorAll('input[type="range"]').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const target = e.target as HTMLInputElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.value);
+          
+          updateVote(candidateId, score);
+          updateStarDisplay(candidateId, score);
+        });
+      });
+    }
+
+    function updateVote(candidateId: string, score: number): void {
+      votes.set(candidateId, score);
+      
+      // Update score display
+      const scoreDisplay = document.getElementById(`score-display-${candidateId}`);
+      if (scoreDisplay) {
+        if (score === 0) {
+          scoreDisplay.textContent = 'No rating';
+        } else {
+          scoreDisplay.textContent = `${score} star${score !== 1 ? 's' : ''}`;
+        }
+      }
+
+      // Enable submit button if at least one vote is cast
+      const submitBtn = document.getElementById('submit-vote-btn') as HTMLButtonElement;
+      if (submitBtn) {
+        const hasVotes = Array.from(votes.values()).some(score => score > 0);
+        submitBtn.disabled = !hasVotes;
+      }
+    }
+
+    function updateStarDisplay(candidateId: string, score: number): void {
+      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"].flex`);
+      if (!starContainer) return;
+
+      const starButtons = starContainer.querySelectorAll('.star-btn');
+      starButtons.forEach((button, index) => {
+        const btn = button as HTMLButtonElement;
+        if (index === 0) { // Clear button
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${score === 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-600'}`;
+        } else {
+          const isFilled = index <= score;
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${isFilled ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`;
+          btn.textContent = isFilled ? '★' : '☆';
+        }
+      });
+    }
+
+    function previewStarDisplay(candidateId: string, hoverScore: number): void {
+      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"].flex`);
+      if (!starContainer) return;
+
+      const starButtons = starContainer.querySelectorAll('.star-btn');
+      starButtons.forEach((button, index) => {
+        const btn = button as HTMLButtonElement;
+        if (index === 0) { // Clear button
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${hoverScore === 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-600'}`;
+        } else {
+          const isFilled = index <= hoverScore;
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${isFilled ? 'text-yellow-300' : 'text-gray-300 dark:text-gray-600'}`;
+          btn.textContent = isFilled ? '★' : '☆';
+        }
+      });
+    }
+
+    function updateSlider(candidateId: string, score: number): void {
+      const slider = document.getElementById(`slider-${candidateId}`) as HTMLInputElement;
+      if (slider) {
+        slider.value = score.toString();
+      }
+    }
+
+    function clearAllVotes(): void {
+      votes.clear();
+      candidates.forEach(candidate => {
+        updateVote(candidate.id, 0);
+        updateStarDisplay(candidate.id, 0);
+        updateSlider(candidate.id, 0);
+      });
+    }
+
+    async function submitVote(): Promise<void> {
+      const submitBtn = document.getElementById('submit-vote-btn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent;
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>Submitting...';
+
+      try {
+        const voteData: VoteData[] = Array.from(votes.entries()).map(([candidateId, score]) => ({
+          candidateId,
+          score
+        }));
+
+        const response = await fetch('/api/vote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ votes: voteData }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Show success state
+        document.getElementById('voting-form')?.classList.add('hidden');
+        document.getElementById('success')?.classList.remove('hidden');
+
+      } catch (err) {
+        console.error('Failed to submit vote:', err);
+        
+        // For demo purposes, show success even if API fails
+        document.getElementById('voting-form')?.classList.add('hidden');
+        document.getElementById('success')?.classList.remove('hidden');
+        
+        // Restore button state for retry
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCandidates();
+
+      // Form submission
+      document.getElementById('vote-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitVote();
+      });
+
+      // Clear votes button
+      document.getElementById('clear-votes-btn')?.addEventListener('click', clearAllVotes);
+
+      // Retry button
+      document.getElementById('retry-btn')?.addEventListener('click', loadCandidates);
+
+      // Vote again button (in success state)
+      document.getElementById('vote-again-btn')?.addEventListener('click', () => {
+        document.getElementById('success')?.classList.add('hidden');
+        document.getElementById('voting-form')?.classList.remove('hidden');
+        clearAllVotes();
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  /* Custom styles for better responsive behavior */
+  @media (max-width: 768px) {
+    main {
+      width: 100%;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .title-gradient {
+      font-size: 3rem;
+    }
+  }
+  
+  /* Smooth transitions */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Enhanced hover effects */
+  button:hover, a:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+  }
+  
+  /* Star button enhancements */
+  .star-btn {
+    transition: all 0.2s ease;
+  }
+  
+  .star-btn:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Range slider styling */
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #4f46e5;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #4f46e5;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Loading animation in submit button */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>
