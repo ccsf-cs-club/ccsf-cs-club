@@ -3,16 +3,17 @@ import NavbarDaisy from "../components/NavbarDaisy.astro";
 
 interface Props {
   title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = "CCSF CS Club - City College of San Francisco Computer Science Club" } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en" class="bg-[#f7f3e6] dark:bg-[#13151a]">
   <head> 
     <meta charset="UTF-8" />
-    <meta name="description" content="CCSF CS Club" />
+    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
