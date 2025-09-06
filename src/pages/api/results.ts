@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getDatabase } from '../../lib/db';
+import { getVoteResults, getStarResults, healthCheck } from '../../lib/db';
 import { getCandidatesForElection } from '../../lib/elections';
 
 export const prerender = false;
@@ -127,15 +127,13 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
     }
 
-    const db = getDatabase();
-    
     // Get candidate metadata from election or fallback to legacy
     const candidateMetadata = await getCandidateMetadata(electionSlug || undefined);
 
     // Get results based on format
     if (format === 'star') {
       // STAR voting results with runoff calculation
-      const starResults = await db.getStarResults(electionSlug || undefined);
+      const starResults = await getStarResults(electionSlug || undefined);
       
       // Filter by candidate if specified
       const filteredResults = candidateFilter 
@@ -192,7 +190,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 
     } else {
       // Simple score totals without runoff
-      const simpleResults = await db.getVoteResults(electionSlug || undefined);
+      const simpleResults = await getVoteResults(electionSlug || undefined);
       
       // Filter by candidate if specified
       const filteredResults = candidateFilter 
@@ -288,10 +286,8 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const db = getDatabase();
-    
     // Test database connectivity and basic query performance
-    const isHealthy = await db.healthCheck();
+    const isHealthy = await healthCheck();
     
     if (!isHealthy) {
       return new Response(JSON.stringify({
@@ -306,8 +302,8 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Test vote results retrieval (legacy and election-scoped)
     const [legacySimpleResults, legacyStarResults] = await Promise.all([
-      db.getVoteResults().catch(() => []),
-      db.getStarResults().catch(() => [])
+      getVoteResults().catch(() => []),
+      getStarResults().catch(() => [])
     ]);
 
     const processingTime = Date.now() - startTime;

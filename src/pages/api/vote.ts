@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
-import { getDatabase } from '../../lib/db';
+import { upsertVote, getVotesByVoter } from '../../lib/db';
 import { getElectionBySlug, validateCandidateId, canVoteInElection } from '../../lib/elections';
 
 export const prerender = false;
@@ -224,8 +224,7 @@ export const POST: APIRoute = async ({ request }) => {
       }
     }
 
-    // Database operations
-    const db = getDatabase();
+    // Database operations using Prisma
 
     if (isBatch) {
       // Handle batch vote submission
@@ -234,12 +233,12 @@ export const POST: APIRoute = async ({ request }) => {
       
       for (const vote of batchData.votes) {
         // Validate candidate exists in election if election is specified
-        if (election) {
-          const candidateExists = await validateCandidateId(election.slug, vote.candidate_id);
+        if (election && batchData.election) {
+          const candidateExists = election.candidates?.some(c => c.id === vote.candidate_id);
           if (!candidateExists) {
             results.push({
               success: false,
-              error: `Candidate '${vote.candidate_id}' not found in election '${election.slug}'`,
+              error: `Candidate '${vote.candidate_id}' not found in election '${batchData.election}'`,
               candidate_id: vote.candidate_id
             });
             continue;
@@ -256,7 +255,7 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         try {
-          const savedVote = await db.upsertVote({
+          const savedVote = await upsertVote({
             voter_id: batchData.voter_id,
             candidate_id: vote.candidate_id,
             score: vote.score,
@@ -306,11 +305,11 @@ export const POST: APIRoute = async ({ request }) => {
       const singleData = validData as z.infer<typeof voteSchema>;
       
       // Validate candidate exists in election if election is specified
-      if (election) {
-        const candidateExists = await validateCandidateId(election.slug, singleData.candidate_id);
+      if (election && singleData.election) {
+        const candidateExists = election.candidates?.some(c => c.id === singleData.candidate_id);
         if (!candidateExists) {
           return new Response(JSON.stringify({
-            error: `Candidate '${singleData.candidate_id}' not found in election '${election.slug}'`
+            error: `Candidate '${singleData.candidate_id}' not found in election '${singleData.election}'`
           }), {
             status: 400,
             headers: { 'Content-Type': 'application/json' }
@@ -329,7 +328,7 @@ export const POST: APIRoute = async ({ request }) => {
         });
       }
 
-      const savedVote = await db.upsertVote({
+      const savedVote = await upsertVote({
         voter_id: singleData.voter_id,
         candidate_id: singleData.candidate_id,
         score: singleData.score,
@@ -423,8 +422,12 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
     }
 
-    const db = getDatabase();
-    const votes = await db.getVotesByVoter(voterId, electionSlug || undefined);
+    const votes = await getVotesByVoter(voterId);
+    
+    // Filter by election if specified
+    const filteredVotes = electionSlug 
+      ? votes.filter(vote => vote.election_id === electionSlug)
+      : votes;
 
     const processingTime = Date.now() - startTime;
     console.info(`Vote history retrieved for voter: ${voterId}${electionSlug ? ` in election: ${electionSlug}` : ''} from IP: ${clientIP} in ${processingTime}ms`);
@@ -433,8 +436,15 @@ export const GET: APIRoute = async ({ request, url }) => {
       success: true,
       voter_id: voterId,
       election: electionSlug || null,
-      votes: votes,
-      total_votes: votes.length
+      votes: filteredVotes.map(vote => ({
+        id: vote.id,
+        voter_id: vote.voter_id,
+        candidate_id: vote.candidate_id,
+        score: vote.score,
+        election_id: vote.election_id,
+        created_at: vote.created_at
+      })),
+      total_votes: filteredVotes.length
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

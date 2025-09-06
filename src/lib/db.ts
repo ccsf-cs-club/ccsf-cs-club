@@ -350,3 +350,24 @@ export function getDatabase(): DatabaseConnection {
 }
 
 export { DatabaseConnection };
+
+// Convenience function exports for API routes
+export function upsertVote(voteData: CreateVoteData): Promise<Vote> {
+  return getDatabase().upsertVote(voteData);
+}
+
+export function getVoteResults(electionId?: string): Promise<VoteResult[]> {
+  return getDatabase().getVoteResults(electionId);
+}
+
+export function getStarResults(electionId?: string): Promise<StarResult[]> {
+  return getDatabase().getStarResults(electionId);
+}
+
+export function getVotesByVoter(voterId: string, electionId?: string): Promise<Vote[]> {
+  return getDatabase().getVotesByVoter(voterId, electionId);
+}
+
+export function healthCheck(): Promise<boolean> {
+  return getDatabase().healthCheck();
+}

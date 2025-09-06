@@ -1,5 +1,52 @@
-import { PrismaClient } from '../../generated/prisma';
-import type { User, Contact, Vote, Election, Candidate } from '../../generated/prisma';
+import { PrismaClient } from '../../generated/prisma'
+
+// Define types manually based on schema
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: Date;
+};
+
+export type Contact = {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: Date;
+};
+
+export type Vote = {
+  id: number;
+  voterId: string;
+  candidateId: string;
+  electionId: string | null;
+  score: number;
+  createdAt: Date;
+};
+
+export type Election = {
+  id: string;
+  slug: string;
+  title: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
+  settings: any;
+  createdAt: Date;
+  updatedAt: Date;
+  candidates?: Candidate[];
+  votes?: Vote[];
+};
+
+export type Candidate = {
+  id: string;
+  electionId: string;
+  candidateId: string;
+  name: string;
+  description: string | null;
+  order: number;
+};
 
 export type CreateUserData = {
   name: string;
@@ -439,11 +486,10 @@ class PrismaConnection {
 
 let prismaInstance: PrismaConnection | null = null;
 
-export function getPrismaClient(): PrismaConnection {
-  if (!prismaInstance) {
-    prismaInstance = new PrismaConnection();
-  }
-  return prismaInstance;
+const prisma = new PrismaClient();
+
+export function getPrismaClient(): typeof prisma {
+  return prisma;
 }
 
 // Type-safe database operations
@@ -484,4 +530,3 @@ export const systemOperations = {
 };
 
 export { PrismaConnection };
-export type { User, Contact, Vote, Election, Candidate };
