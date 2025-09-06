@@ -113,7 +113,7 @@ describe('finalRoundScore handling validation', () => {
     edgeCases.forEach(({ finalRoundScore, expected }) => {
       const result = (typeof finalRoundScore === 'number' && !isNaN(finalRoundScore)) 
         ? finalRoundScore.toFixed(2)
-        : finalRoundScore?.toFixed?.(2) || 'N/A';
+        : (typeof finalRoundScore === 'number' ? finalRoundScore.toFixed(2) : 'N/A');
       expect(result).toBe(expected);
     });
   });

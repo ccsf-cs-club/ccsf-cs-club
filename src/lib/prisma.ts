@@ -1,5 +1,5 @@
-import { PrismaClient } from '../generated/prisma';
-import type { User, Contact, Vote } from '../generated/prisma';
+import { PrismaClient } from '../../generated/prisma';
+import type { User, Contact, Vote } from '../../generated/prisma';
 
 export type CreateUserData = {
   name: string;
@@ -270,4 +270,5 @@ export const systemOperations = {
   disconnect: () => getPrismaClient().disconnect()
 };
 
-export { PrismaConnection, User, Contact, Vote };
+export { PrismaConnection };
+export type { User, Contact, Vote };
