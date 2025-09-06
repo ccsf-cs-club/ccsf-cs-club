@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { z } from 'zod';
-import { getDatabase } from '../../lib/db';
+import { upsertVote, getVotesByVoter } from '../../lib/db';
+import { getElectionBySlug, validateCandidateId, canVoteInElection } from '../../lib/elections';
 
 export const prerender = false;
 
@@ -26,7 +27,12 @@ const voteSchema = z.object({
   score: z.coerce.number()
     .int('Score must be an integer')
     .min(0, 'Score must be between 0 and 5')
-    .max(5, 'Score must be between 0 and 5')
+    .max(5, 'Score must be between 0 and 5'),
+  election: z.string()
+    .min(1, 'Election slug is required')
+    .max(255, 'Election slug must be less than 255 characters')
+    .trim()
+    .optional()
 });
 
 // Validation schema for batch vote submission
@@ -46,7 +52,12 @@ const batchVoteSchema = z.object({
       .max(5, 'Score must be between 0 and 5')
   }))
   .min(1, 'At least one vote is required')
-  .max(50, 'Cannot submit more than 50 votes at once')
+  .max(50, 'Cannot submit more than 50 votes at once'),
+  election: z.string()
+    .min(1, 'Election slug is required')
+    .max(255, 'Election slug must be less than 255 characters')
+    .trim()
+    .optional()
 });
 
 function getClientIP(request: Request): string {
@@ -57,9 +68,10 @@ function getClientIP(request: Request): string {
   return forwardedFor?.split(',')[0] || realIP || connectingIP || 'unknown';
 }
 
-function checkRateLimit(clientIP: string): { allowed: boolean; resetTime?: number } {
+function checkRateLimit(clientIP: string, electionId?: string): { allowed: boolean; resetTime?: number } {
   const now = Date.now();
-  const key = `rate_limit:${clientIP}`;
+  // Include election in rate limit key to allow per-election limits if needed
+  const key = electionId ? `rate_limit:${clientIP}:${electionId}` : `rate_limit:${clientIP}`;
   const record = rateLimitStore.get(key);
 
   if (!record || now > record.resetTime) {
@@ -76,8 +88,8 @@ function checkRateLimit(clientIP: string): { allowed: boolean; resetTime?: numbe
   return { allowed: true };
 }
 
-function createDeduplicationKey(clientIP: string, voterId: string, candidateId: string): string {
-  return `${clientIP}:${voterId}:${candidateId}`;
+function createDeduplicationKey(clientIP: string, voterId: string, candidateId: string, electionId?: string): string {
+  return electionId ? `${clientIP}:${voterId}:${candidateId}:${electionId}` : `${clientIP}:${voterId}:${candidateId}`;
 }
 
 function checkDeduplication(deduplicationKey: string): any | null {
@@ -111,8 +123,33 @@ export const POST: APIRoute = async ({ request }) => {
   const userAgent = request.headers.get('user-agent') || 'unknown';
 
   try {
+    // Parse request data early to get election for rate limiting
+    const contentType = request.headers.get('content-type') || '';
+    let rawData: any;
+
+    if (contentType.includes('application/json')) {
+      rawData = await request.json();
+    } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
+      const formData = await request.formData();
+      rawData = {
+        voter_id: formData.get('voter_id')?.toString() || '',
+        candidate_id: formData.get('candidate_id')?.toString() || '',
+        score: formData.get('score')?.toString() || '',
+        election: formData.get('election')?.toString() || undefined
+      };
+    } else {
+      return new Response(JSON.stringify({
+        error: 'Unsupported content type. Use application/json or form data.'
+      }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const requestElectionSlug = rawData.election || rawData.votes?.[0]?.election;
+    
     // Rate limiting check
-    const rateLimitCheck = checkRateLimit(clientIP);
+    const rateLimitCheck = checkRateLimit(clientIP, requestElectionSlug);
     if (!rateLimitCheck.allowed) {
       const resetTime = rateLimitCheck.resetTime ? new Date(rateLimitCheck.resetTime).toISOString() : 'unknown';
       
@@ -135,27 +172,7 @@ export const POST: APIRoute = async ({ request }) => {
       console.warn(`Suspicious user agent from IP: ${clientIP}, UA: ${userAgent}`);
     }
 
-    // Parse request data
-    const contentType = request.headers.get('content-type') || '';
-    let rawData: any;
-
-    if (contentType.includes('application/json')) {
-      rawData = await request.json();
-    } else if (contentType.includes('application/x-www-form-urlencoded') || contentType.includes('multipart/form-data')) {
-      const formData = await request.formData();
-      rawData = {
-        voter_id: formData.get('voter_id')?.toString() || '',
-        candidate_id: formData.get('candidate_id')?.toString() || '',
-        score: formData.get('score')?.toString() || ''
-      };
-    } else {
-      return new Response(JSON.stringify({
-        error: 'Unsupported content type. Use application/json or form data.'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    // Request data already parsed above for rate limiting
 
     // Determine if this is a batch or single vote
     const isBatch = rawData.votes && Array.isArray(rawData.votes);
@@ -179,9 +196,35 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const validData = validationResult.data;
+    
+    // Election validation and candidate validation
+    let election = null;
+    const electionSlug = validData.election || (validData as any).votes?.[0]?.election;
+    
+    if (electionSlug) {
+      election = await getElectionBySlug(electionSlug);
+      if (!election) {
+        return new Response(JSON.stringify({
+          error: `Election '${electionSlug}' not found`
+        }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      // Check if voting is allowed
+      const votingCheck = canVoteInElection(election, validData.voter_id);
+      if (!votingCheck.canVote) {
+        return new Response(JSON.stringify({
+          error: votingCheck.reason || 'Voting not allowed in this election'
+        }), {
+          status: 403,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
 
-    // Database operations
-    const db = getDatabase();
+    // Database operations using Prisma
 
     if (isBatch) {
       // Handle batch vote submission
@@ -189,7 +232,20 @@ export const POST: APIRoute = async ({ request }) => {
       const results = [];
       
       for (const vote of batchData.votes) {
-        const deduplicationKey = createDeduplicationKey(clientIP, batchData.voter_id, vote.candidate_id);
+        // Validate candidate exists in election if election is specified
+        if (election && batchData.election) {
+          const candidateExists = election.candidates?.some(c => c.id === vote.candidate_id);
+          if (!candidateExists) {
+            results.push({
+              success: false,
+              error: `Candidate '${vote.candidate_id}' not found in election '${batchData.election}'`,
+              candidate_id: vote.candidate_id
+            });
+            continue;
+          }
+        }
+        
+        const deduplicationKey = createDeduplicationKey(clientIP, batchData.voter_id, vote.candidate_id, batchData.election);
         const existingResponse = checkDeduplication(deduplicationKey);
         
         if (existingResponse) {
@@ -199,10 +255,11 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         try {
-          const savedVote = await db.upsertVote({
+          const savedVote = await upsertVote({
             voter_id: batchData.voter_id,
             candidate_id: vote.candidate_id,
-            score: vote.score
+            score: vote.score,
+            election_id: batchData.election
           });
 
           const response = {
@@ -246,7 +303,21 @@ export const POST: APIRoute = async ({ request }) => {
     } else {
       // Handle single vote submission
       const singleData = validData as z.infer<typeof voteSchema>;
-      const deduplicationKey = createDeduplicationKey(clientIP, singleData.voter_id, singleData.candidate_id);
+      
+      // Validate candidate exists in election if election is specified
+      if (election && singleData.election) {
+        const candidateExists = election.candidates?.some(c => c.id === singleData.candidate_id);
+        if (!candidateExists) {
+          return new Response(JSON.stringify({
+            error: `Candidate '${singleData.candidate_id}' not found in election '${singleData.election}'`
+          }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+      }
+      
+      const deduplicationKey = createDeduplicationKey(clientIP, singleData.voter_id, singleData.candidate_id, singleData.election);
       const existingResponse = checkDeduplication(deduplicationKey);
       
       if (existingResponse) {
@@ -257,10 +328,11 @@ export const POST: APIRoute = async ({ request }) => {
         });
       }
 
-      const savedVote = await db.upsertVote({
+      const savedVote = await upsertVote({
         voter_id: singleData.voter_id,
         candidate_id: singleData.candidate_id,
-        score: singleData.score
+        score: singleData.score,
+        election_id: singleData.election
       });
 
       const response = {
@@ -312,8 +384,11 @@ export const GET: APIRoute = async ({ request, url }) => {
   const clientIP = getClientIP(request);
 
   try {
+    const voterId = url.searchParams.get('voter_id');
+    const electionSlug = url.searchParams.get('election');
+    
     // Rate limiting check
-    const rateLimitCheck = checkRateLimit(clientIP);
+    const rateLimitCheck = checkRateLimit(clientIP, electionSlug || undefined);
     if (!rateLimitCheck.allowed) {
       const resetTime = rateLimitCheck.resetTime ? new Date(rateLimitCheck.resetTime).toISOString() : 'unknown';
       
@@ -328,8 +403,6 @@ export const GET: APIRoute = async ({ request, url }) => {
         }
       });
     }
-
-    const voterId = url.searchParams.get('voter_id');
     
     if (!voterId) {
       return new Response(JSON.stringify({
@@ -349,17 +422,29 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
     }
 
-    const db = getDatabase();
-    const votes = await db.getVotesByVoter(voterId);
+    const votes = await getVotesByVoter(voterId);
+    
+    // Filter by election if specified
+    const filteredVotes = electionSlug 
+      ? votes.filter(vote => vote.election_id === electionSlug)
+      : votes;
 
     const processingTime = Date.now() - startTime;
-    console.info(`Vote history retrieved for voter: ${voterId} from IP: ${clientIP} in ${processingTime}ms`);
+    console.info(`Vote history retrieved for voter: ${voterId}${electionSlug ? ` in election: ${electionSlug}` : ''} from IP: ${clientIP} in ${processingTime}ms`);
 
     return new Response(JSON.stringify({
       success: true,
       voter_id: voterId,
-      votes: votes,
-      total_votes: votes.length
+      election: electionSlug || null,
+      votes: filteredVotes.map(vote => ({
+        id: vote.id,
+        voter_id: vote.voter_id,
+        candidate_id: vote.candidate_id,
+        score: vote.score,
+        election_id: vote.election_id,
+        created_at: vote.created_at
+      })),
+      total_votes: filteredVotes.length
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

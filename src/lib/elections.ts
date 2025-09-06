@@ -1,5 +1,5 @@
 import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
-import { electionOperations, candidateOperations, type CreateElectionData, type CreateCandidateData } from './prisma';
+// Removed Prisma dependencies - using content collections only
 
 export type ElectionContent = CollectionEntry<'elections'>;
 export type ElectionCandidate = ElectionContent['data']['candidates'][0];
@@ -188,72 +188,16 @@ export function getElectionStatus(election: ElectionContent): ElectionStatus {
 }
 
 /**
- * Sync election content to database
+ * Sync election content to database - REMOVED
+ * Elections now work purely with Astro content collections
  */
-export async function syncElectionToDatabase(election: ElectionContent): Promise<void> {
-  try {
-    const { data, slug } = election;
-    
-    // Validate election before syncing
-    const validation = await validateElectionStatus(election);
-    if (!validation.isValid) {
-      throw new Error(`Election validation failed: ${validation.errors.join(', ')}`);
-    }
-
-    // Prepare election data for database
-    const electionData: CreateElectionData = {
-      id: slug,
-      slug: data.slug || slug,
-      title: data.title,
-      status: data.status,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      settings: {
-        electionType: data.electionType,
-        votingMethod: data.votingMethod,
-        maxChoices: data.maxChoices,
-        maxScore: data.maxScore,
-        voterEligibility: data.voterEligibility,
-        resultsDisplay: data.resultsDisplay,
-        settings: data.settings,
-        featured: data.featured,
-        tags: data.tags,
-        author: data.author,
-        description: data.description,
-        nominationStartDate: data.nominationStartDate,
-        nominationEndDate: data.nominationEndDate
-      }
-    };
-
-    // Create or update election
-    await electionOperations.create(electionData);
-
-    // Sync candidates
-    for (const candidate of data.candidates) {
-      const candidateData: CreateCandidateData = {
-        id: `${slug}-${candidate.id}`,
-        electionId: slug,
-        candidateId: candidate.id,
-        name: candidate.name,
-        description: candidate.description,
-        order: candidate.order || 0
-      };
-
-      await candidateOperations.create(candidateData);
-    }
-
-  } catch (error) {
-    console.error(`Failed to sync election "${election.slug}" to database:`, error);
-    throw new Error(`Database sync failed for election: ${election.slug}`);
-  }
-}
+// export async function syncElectionToDatabase() - removed for Neon-only approach
 
 /**
- * Get election configuration including database data
+ * Get election configuration from content collections only
  */
 export async function getElectionConfiguration(slug: string): Promise<{
   content: ElectionContent;
-  database: any; // Election from database
   status: ElectionStatus;
   validation: ElectionValidationResult;
 } | null> {
@@ -270,12 +214,8 @@ export async function getElectionConfiguration(slug: string): Promise<{
     // Validate election
     const validation = await validateElectionStatus(content);
 
-    // Get database record
-    const database = await electionOperations.getBySlug(slug);
-
     return {
       content,
-      database,
       status,
       validation
     };

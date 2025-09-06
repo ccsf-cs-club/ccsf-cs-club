@@ -1,5 +1,52 @@
-import { PrismaClient } from '../../generated/prisma';
-import type { User, Contact, Vote, Election, Candidate } from '../../generated/prisma';
+import { PrismaClient } from '../../generated/prisma'
+
+// Define types manually based on schema
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: Date;
+};
+
+export type Contact = {
+  id: number;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: Date;
+};
+
+export type Vote = {
+  id: number;
+  voterId: string;
+  candidateId: string;
+  electionId: string | null;
+  score: number;
+  createdAt: Date;
+};
+
+export type Election = {
+  id: string;
+  slug: string;
+  title: string;
+  status: string;
+  startDate: Date;
+  endDate: Date;
+  settings: any;
+  createdAt: Date;
+  updatedAt: Date;
+  candidates?: Candidate[];
+  votes?: Vote[];
+};
+
+export type Candidate = {
+  id: string;
+  electionId: string;
+  candidateId: string;
+  name: string;
+  description: string | null;
+  order: number;
+};
 
 export type CreateUserData = {
   name: string;
@@ -439,49 +486,14 @@ class PrismaConnection {
 
 let prismaInstance: PrismaConnection | null = null;
 
-export function getPrismaClient(): PrismaConnection {
-  if (!prismaInstance) {
-    prismaInstance = new PrismaConnection();
-  }
-  return prismaInstance;
+const prisma = new PrismaClient();
+
+export function getPrismaClient(): typeof prisma {
+  return prisma;
 }
 
-// Type-safe database operations
-export const userOperations = {
-  create: (data: CreateUserData) => getPrismaClient().createUser(data),
-  checkEmailExists: (email: string) => getPrismaClient().checkEmailExists(email),
-  count: () => getPrismaClient().getUserCount()
-};
-
-export const contactOperations = {
-  create: (data: CreateContactData) => getPrismaClient().createContact(data)
-};
-
-export const voteOperations = {
-  upsert: (data: CreateVoteData) => getPrismaClient().upsertVote(data),
-  getResults: (electionId?: string) => getPrismaClient().getVoteResults(electionId),
-  getStarResults: (electionId?: string) => getPrismaClient().getStarResults(electionId),
-  getByVoter: (voterId: string) => getPrismaClient().getVotesByVoter(voterId)
-};
-
-export const electionOperations = {
-  create: (data: CreateElectionData) => getPrismaClient().createElection(data),
-  getById: (id: string) => getPrismaClient().getElection(id),
-  getBySlug: (slug: string) => getPrismaClient().getElectionBySlug(slug),
-  getActive: () => getPrismaClient().getActiveElections(),
-  updateStatus: (id: string, status: string) => getPrismaClient().updateElectionStatus(id, status)
-};
-
-export const candidateOperations = {
-  create: (data: CreateCandidateData) => getPrismaClient().createCandidate(data),
-  getByElection: (electionId: string) => getPrismaClient().getCandidatesByElection(electionId),
-  validate: (electionId: string, candidateId: string) => getPrismaClient().validateCandidate(electionId, candidateId)
-};
-
-export const systemOperations = {
-  healthCheck: () => getPrismaClient().healthCheck(),
-  disconnect: () => getPrismaClient().disconnect()
-};
+// NOTE: Database operations have been moved to src/lib/db.ts using Neon
+// This file is kept minimal for type exports only
+// All actual database operations should use the Neon-based functions from db.ts
 
 export { PrismaConnection };
-export type { User, Contact, Vote, Election, Candidate };

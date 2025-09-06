@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
-import { getDatabase } from '../../lib/db';
+import { getVoteResults, getStarResults, healthCheck } from '../../lib/db';
+import { getCandidatesForElection } from '../../lib/elections';
 
 export const prerender = false;
 
-// Static candidate data for mapping IDs to names  
-const candidates = [
+// Legacy static candidate data for backward compatibility
+const legacyCandidates = [
   {
     id: 'web-development',
     name: 'Web Development',
@@ -37,6 +38,25 @@ const candidates = [
   }
 ];
 
+// Function to get candidate data from election or fallback to legacy
+async function getCandidateMetadata(electionSlug?: string) {
+  if (electionSlug) {
+    try {
+      const candidates = await getCandidatesForElection(electionSlug);
+      return candidates.map(candidate => ({
+        id: candidate.id,
+        name: candidate.name,
+        description: candidate.description,
+        category: candidate.category,
+        order: candidate.order
+      }));
+    } catch (error) {
+      console.warn(`Failed to load candidates for election ${electionSlug}, falling back to legacy`);
+    }
+  }
+  return legacyCandidates;
+}
+
 // Rate limiting store (in production, use Redis or similar)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
@@ -50,9 +70,10 @@ function getClientIP(request: Request): string {
   return forwardedFor?.split(',')[0] || realIP || connectingIP || 'unknown';
 }
 
-function checkRateLimit(clientIP: string): { allowed: boolean; resetTime?: number } {
+function checkRateLimit(clientIP: string, electionId?: string): { allowed: boolean; resetTime?: number } {
   const now = Date.now();
-  const key = `rate_limit:${clientIP}`;
+  // Include election in rate limit key for per-election rate limiting if needed
+  const key = electionId ? `rate_limit:${clientIP}:${electionId}` : `rate_limit:${clientIP}`;
   const record = rateLimitStore.get(key);
 
   if (!record || now > record.resetTime) {
@@ -74,8 +95,14 @@ export const GET: APIRoute = async ({ request, url }) => {
   const clientIP = getClientIP(request);
 
   try {
+    // Parse query parameters
+    const format = url.searchParams.get('format') || 'star'; // 'star' or 'simple'
+    const includeDetails = url.searchParams.get('include_details') === 'true';
+    const candidateFilter = url.searchParams.get('candidate_id');
+    const electionSlug = url.searchParams.get('election');
+    
     // Rate limiting check
-    const rateLimitCheck = checkRateLimit(clientIP);
+    const rateLimitCheck = checkRateLimit(clientIP, electionSlug || undefined);
     if (!rateLimitCheck.allowed) {
       const resetTime = rateLimitCheck.resetTime ? new Date(rateLimitCheck.resetTime).toISOString() : 'unknown';
       
@@ -91,11 +118,6 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
     }
 
-    // Parse query parameters
-    const format = url.searchParams.get('format') || 'star'; // 'star' or 'simple'
-    const includeDetails = url.searchParams.get('include_details') === 'true';
-    const candidateFilter = url.searchParams.get('candidate_id');
-
     if (format && !['star', 'simple'].includes(format)) {
       return new Response(JSON.stringify({
         error: 'Invalid format. Use "star" or "simple".'
@@ -105,12 +127,13 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
     }
 
-    const db = getDatabase();
+    // Get candidate metadata from election or fallback to legacy
+    const candidateMetadata = await getCandidateMetadata(electionSlug || undefined);
 
     // Get results based on format
     if (format === 'star') {
       // STAR voting results with runoff calculation
-      const starResults = await db.getStarResults();
+      const starResults = await getStarResults(electionSlug || undefined);
       
       // Filter by candidate if specified
       const filteredResults = candidateFilter 
@@ -119,12 +142,12 @@ export const GET: APIRoute = async ({ request, url }) => {
 
       // Transform to match frontend expectations
       const candidatesWithResults = filteredResults.map(result => {
-        const candidate = candidates.find(c => c.id === result.candidate_id);
+        const candidate = candidateMetadata.find(c => c.id === result.candidate_id);
         return {
           candidate: candidate || {
             id: result.candidate_id,
             name: result.candidate_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-            description: 'CS Topic'
+            description: electionSlug ? 'Election Candidate' : 'CS Topic'
           },
           averageScore: result.average_score,
           totalStars: result.total_score,
@@ -135,11 +158,12 @@ export const GET: APIRoute = async ({ request, url }) => {
 
       // Find winner candidate object
       const winnerResult = filteredResults.find(result => result.winner);
-      const winnerCandidate = winnerResult ? candidates.find(c => c.id === winnerResult.candidate_id) : null;
+      const winnerCandidate = winnerResult ? candidateMetadata.find(c => c.id === winnerResult.candidate_id) : null;
 
       const response = {
         success: true,
         format: 'star',
+        election: electionSlug || null,
         timestamp: new Date().toISOString(),
         candidates: candidatesWithResults.sort((a, b) => b.averageScore - a.averageScore),
         totalCandidates: candidatesWithResults.length,
@@ -148,7 +172,8 @@ export const GET: APIRoute = async ({ request, url }) => {
         metadata: includeDetails ? {
           explanation: 'STAR voting uses score totals to select top 2 candidates, then automatic runoff between them based on pairwise preferences.',
           scoring_range: '0-5 stars per candidate',
-          runoff_method: 'Automatic runoff between top 2 candidates by total score'
+          runoff_method: 'Automatic runoff between top 2 candidates by total score',
+          election_info: electionSlug ? `Results for election: ${electionSlug}` : 'Legacy results (no election specified)'
         } : undefined
       };
 
@@ -165,7 +190,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 
     } else {
       // Simple score totals without runoff
-      const simpleResults = await db.getVoteResults();
+      const simpleResults = await getVoteResults(electionSlug || undefined);
       
       // Filter by candidate if specified
       const filteredResults = candidateFilter 
@@ -174,12 +199,12 @@ export const GET: APIRoute = async ({ request, url }) => {
 
       // Transform to match frontend expectations
       const candidatesWithResults = filteredResults.map(result => {
-        const candidate = candidates.find(c => c.id === result.candidate_id);
+        const candidate = candidateMetadata.find(c => c.id === result.candidate_id);
         return {
           candidate: candidate || {
             id: result.candidate_id,
             name: result.candidate_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-            description: 'CS Topic'
+            description: electionSlug ? 'Election Candidate' : 'CS Topic'
           },
           averageScore: result.average_score,
           totalStars: result.total_score,
@@ -189,11 +214,12 @@ export const GET: APIRoute = async ({ request, url }) => {
       });
 
       // Winner is first (highest scoring) candidate
-      const winnerCandidate = filteredResults.length > 0 ? candidates.find(c => c.id === filteredResults[0].candidate_id) : null;
+      const winnerCandidate = filteredResults.length > 0 ? candidateMetadata.find(c => c.id === filteredResults[0].candidate_id) : null;
 
       const response = {
         success: true,
         format: 'simple',
+        election: electionSlug || null,
         timestamp: new Date().toISOString(),
         candidates: candidatesWithResults.sort((a, b) => b.totalStars - a.totalStars),
         totalCandidates: candidatesWithResults.length,
@@ -202,7 +228,8 @@ export const GET: APIRoute = async ({ request, url }) => {
         metadata: includeDetails ? {
           explanation: 'Simple scoring results ranked by total score points.',
           scoring_range: '0-5 stars per candidate',
-          ranking_method: 'Highest total score wins'
+          ranking_method: 'Highest total score wins',
+          election_info: electionSlug ? `Results for election: ${electionSlug}` : 'Legacy results (no election specified)'
         } : undefined
       };
 
@@ -242,7 +269,7 @@ export const POST: APIRoute = async ({ request }) => {
   const clientIP = getClientIP(request);
 
   try {
-    // Rate limiting check
+    // Rate limiting check (using default rate limit for health checks)
     const rateLimitCheck = checkRateLimit(clientIP);
     if (!rateLimitCheck.allowed) {
       const resetTime = rateLimitCheck.resetTime ? new Date(rateLimitCheck.resetTime).toISOString() : 'unknown';
@@ -259,10 +286,8 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    const db = getDatabase();
-    
     // Test database connectivity and basic query performance
-    const isHealthy = await db.healthCheck();
+    const isHealthy = await healthCheck();
     
     if (!isHealthy) {
       return new Response(JSON.stringify({
@@ -275,10 +300,10 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    // Test vote results retrieval
-    const [simpleResults, starResults] = await Promise.all([
-      db.getVoteResults().catch(() => []),
-      db.getStarResults().catch(() => [])
+    // Test vote results retrieval (legacy and election-scoped)
+    const [legacySimpleResults, legacyStarResults] = await Promise.all([
+      getVoteResults().catch(() => []),
+      getStarResults().catch(() => [])
     ]);
 
     const processingTime = Date.now() - startTime;
@@ -288,9 +313,10 @@ export const POST: APIRoute = async ({ request }) => {
       timestamp: new Date().toISOString(),
       processing_time_ms: processingTime,
       available_formats: ['star', 'simple'],
-      current_candidates: simpleResults.length,
-      star_algorithm_working: starResults.length > 0,
-      version: '1.0.0'
+      current_candidates: legacySimpleResults.length,
+      star_algorithm_working: legacyStarResults.length > 0,
+      supports_election_scoped_voting: true,
+      version: '2.0.0'
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
