@@ -24,3 +24,6 @@ pnpm-debug.log*
 .netlify
 
 /generated/prisma
+
+# Playwright screenshots and test artifacts
+.playwright-mcp/

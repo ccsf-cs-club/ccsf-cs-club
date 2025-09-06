@@ -1,0 +1,455 @@
+---
+import { getCollection } from 'astro:content';
+import { getElectionConfiguration, canVoteInElection } from '../../lib/elections';
+import Layout from '../../layouts/Layout.astro';
+import StarRating from '../../components/StarRating.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const elections = await getCollection('elections');
+  return elections.map((election) => ({
+    params: { slug: election.slug },
+    props: { election },
+  }));
+}
+
+const { slug } = Astro.params;
+const { election } = Astro.props;
+
+if (!election) {
+  return Astro.redirect('/404');
+}
+
+const electionConfig = await getElectionConfiguration(slug);
+if (!electionConfig) {
+  return Astro.redirect('/404');
+}
+
+const { content, status, validation } = electionConfig;
+const { Content } = await content.render();
+const votingAllowed = canVoteInElection(content);
+
+// Group candidates by category
+const candidatesByCategory = content.data.candidates.reduce((acc, candidate) => {
+  const category = candidate.category || 'Uncategorized';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(candidate);
+  return acc;
+}, {} as Record<string, typeof content.data.candidates>);
+
+// Sort candidates within each category by order
+Object.values(candidatesByCategory).forEach(candidates => {
+  candidates.sort((a, b) => (a.order || 0) - (b.order || 0));
+});
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'voting': return 'bg-green-100 text-green-800 border-green-200';
+    case 'nomination': return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
+    case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+    case 'draft': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    default: return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+};
+
+const title = `${content.data.title} | Elections | CCSF CS Club`;
+---
+
+<Layout title={title} description={content.data.description}>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+      
+      <!-- Election Header -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-4">
+              <span class={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusBadgeClass(status.phase)}`}>
+                {status.phase.charAt(0).toUpperCase() + status.phase.slice(1)}
+              </span>
+              {content.data.featured && (
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium border border-yellow-200">
+                  Featured
+                </span>
+              )}
+            </div>
+            
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              {content.data.title}
+            </h1>
+            
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-6">
+              {content.data.description}
+            </p>
+
+            <!-- Election Metadata -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Icon name="mdi:calendar" class="w-5 h-5" />
+                <span>
+                  <strong>Voting:</strong> {formatDate(content.data.startDate)} - {formatDate(content.data.endDate)}
+                </span>
+              </div>
+              
+              {content.data.nominationStartDate && content.data.nominationEndDate && (
+                <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <Icon name="mdi:account-plus" class="w-5 h-5" />
+                  <span>
+                    <strong>Nominations:</strong> {formatDate(content.data.nominationStartDate)} - {formatDate(content.data.nominationEndDate)}
+                  </span>
+                </div>
+              )}
+              
+              <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Icon name="mdi:vote" class="w-5 h-5" />
+                <span>
+                  <strong>Method:</strong> {content.data.votingMethod.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  {content.data.maxScore && ` (0-${content.data.maxScore} stars)`}
+                </span>
+              </div>
+              
+              <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <Icon name="mdi:account-group" class="w-5 h-5" />
+                <span>
+                  <strong>Type:</strong> {content.data.electionType.charAt(0).toUpperCase() + content.data.electionType.slice(1)}
+                </span>
+              </div>
+            </div>
+
+            {status.daysRemaining !== null && status.isActive && (
+              <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+                <div class="flex items-center gap-2">
+                  <Icon name="mdi:timer" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <span class="font-medium text-blue-800 dark:text-blue-300">
+                    {status.daysRemaining} day{status.daysRemaining !== 1 ? 's' : ''} remaining
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <!-- Election Content -->
+      <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div class="prose prose-lg dark:prose-invert max-w-none">
+          <Content />
+        </div>
+      </div>
+
+      <!-- Voting Interface -->
+      {status.canVote && votingAllowed.canVote ? (
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <Icon name="mdi:vote" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Cast Your Vote</h2>
+          </div>
+
+          <form id="voting-form" class="space-y-8">
+            <input type="hidden" name="election" value={content.slug} />
+            
+            {Object.entries(candidatesByCategory).map(([category, candidates]) => (
+              <div class="space-y-4">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-600 pb-2">
+                  {category}
+                </h3>
+                
+                <div class="grid gap-6">
+                  {candidates.map((candidate) => (
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-6 transition-all duration-200 hover:shadow-md">
+                      <div class="flex flex-col lg:flex-row lg:items-center gap-6">
+                        <div class="flex-1">
+                          <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            {candidate.name}
+                          </h4>
+                          <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            {candidate.description}
+                          </p>
+                          
+                          {candidate.qualifications && candidate.qualifications.length > 0 && (
+                            <div class="mb-4">
+                              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Qualifications:</p>
+                              <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                {candidate.qualifications.map((qual) => (
+                                  <li class="flex items-start gap-2">
+                                    <Icon name="mdi:check-circle" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                    {qual}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {candidate.platform && (
+                            <div class="mb-4">
+                              <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Platform:</p>
+                              <p class="text-sm text-gray-600 dark:text-gray-400">{candidate.platform}</p>
+                            </div>
+                          )}
+
+                          {candidate.external_link && (
+                            <a 
+                              href={candidate.external_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium"
+                            >
+                              <Icon name="mdi:open-in-new" class="w-4 h-4" />
+                              Learn More
+                            </a>
+                          )}
+                        </div>
+                        
+                        <div class="flex-shrink-0">
+                          <div class="text-center">
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Your Rating</p>
+                            <StarRating 
+                              value={0}
+                              maxStars={content.data.maxScore}
+                              onChange={`updateVote_${candidate.id.replace(/[^a-zA-Z0-9]/g, '_')}`}
+                              size="lg"
+                            />
+                            <input 
+                              type="hidden" 
+                              name={`vote_${candidate.id}`} 
+                              value="0"
+                              data-candidate-id={candidate.id}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {content.data.settings.requireComment && (
+              <div class="space-y-2">
+                <label for="comment" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Comment (required)
+                </label>
+                <textarea
+                  id="comment"
+                  name="comment"
+                  rows="4"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Share your thoughts about this election..."
+                ></textarea>
+              </div>
+            )}
+
+            <div class="flex flex-col sm:flex-row gap-4 items-start">
+              <button
+                type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2"
+              >
+                <Icon name="mdi:send" class="w-5 h-5" />
+                Submit Vote
+              </button>
+              
+              {content.data.settings.allowAbstention && (
+                <button
+                  type="button"
+                  id="abstain-btn"
+                  class="bg-gray-500 hover:bg-gray-600 text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+                >
+                  Abstain from Voting
+                </button>
+              )}
+              
+              <div id="vote-status" class="hidden">
+                <div class="text-sm text-gray-600 dark:text-gray-400">
+                  <span id="vote-count">0</span> of {content.data.candidates.length} candidates rated
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-2xl p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <Icon name="mdi:information" class="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+            <h2 class="text-xl font-semibold text-yellow-800 dark:text-yellow-300">
+              {status.canVote ? 'Voting Restricted' : 'Voting Not Available'}
+            </h2>
+          </div>
+          <p class="text-yellow-700 dark:text-yellow-300">
+            {votingAllowed.reason || 
+             (status.phase === 'completed' ? 'This election has ended.' :
+              status.phase === 'nomination' ? 'Currently in nomination phase.' :
+              status.phase === 'draft' ? 'This election has not started yet.' :
+              'Voting is not currently available.')}
+          </p>
+          
+          {status.daysRemaining !== null && !status.canVote && status.phase !== 'completed' && (
+            <p class="text-yellow-600 dark:text-yellow-400 mt-2">
+              Voting {status.phase === 'draft' ? 'starts' : 'ends'} in {status.daysRemaining} day{status.daysRemaining !== 1 ? 's' : ''}.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  </div>
+
+  <script is:inline>
+    // Create update functions for each candidate
+    const candidates = document.querySelectorAll('[data-candidate-id]');
+    
+    candidates.forEach(input => {
+      const candidateId = input.dataset.candidateId;
+      const safeCandidateId = candidateId.replace(/[^a-zA-Z0-9]/g, '_');
+      
+      window[`updateVote_${safeCandidateId}`] = function(rating) {
+        input.value = rating;
+        updateVoteStatus();
+      };
+    });
+    
+    function updateVoteStatus() {
+      const voteInputs = document.querySelectorAll('[name^="vote_"]');
+      const votedCount = Array.from(voteInputs).filter(input => parseInt(input.value) > 0).length;
+      
+      const statusEl = document.getElementById('vote-status');
+      const countEl = document.getElementById('vote-count');
+      
+      if (statusEl && countEl) {
+        countEl.textContent = votedCount;
+        if (votedCount > 0) {
+          statusEl.classList.remove('hidden');
+        } else {
+          statusEl.classList.add('hidden');
+        }
+      }
+    }
+
+    // Form submission handling
+    const votingForm = document.getElementById('voting-form');
+    if (votingForm) {
+      votingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(votingForm);
+        const votes = {};
+        
+        // Collect vote data
+        for (const [key, value] of formData.entries()) {
+          if (key.startsWith('vote_')) {
+            const candidateId = key.replace('vote_', '');
+            votes[candidateId] = parseInt(value) || 0;
+          }
+        }
+        
+        const submitData = {
+          election: formData.get('election'),
+          votes: votes,
+          comment: formData.get('comment') || ''
+        };
+        
+        // Convert votes object to API format
+        const voteArray = Object.entries(votes).map(([candidateId, score]) => ({
+          candidate_id: candidateId,
+          score: parseInt(score) || 0
+        })).filter(vote => vote.score > 0); // Only submit non-zero votes
+        
+        if (voteArray.length === 0) {
+          alert('Please rate at least one candidate before submitting.');
+          return;
+        }
+        
+        const apiData = {
+          voter_id: 'anonymous_' + Date.now(), // In production, get from authentication
+          votes: voteArray,
+          election: formData.get('election')
+        };
+        
+        try {
+          const response = await fetch('/api/vote', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(apiData)
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            alert(`Your votes have been submitted successfully! (${result.successful_votes} votes recorded)`);
+            // Optionally redirect or update UI
+            window.location.reload();
+          } else {
+            alert(`Error submitting votes: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Error submitting votes:', error);
+          alert('An error occurred while submitting your votes. Please try again.');
+        }
+      });
+    }
+
+    // Abstain button handling
+    const abstainBtn = document.getElementById('abstain-btn');
+    if (abstainBtn) {
+      abstainBtn.addEventListener('click', async () => {
+        if (!confirm('Are you sure you want to abstain from this election? This will be recorded as your official response.')) {
+          return;
+        }
+        
+        const electionSlug = document.querySelector('[name="election"]').value;
+        
+        // For abstention, we create a single vote with score 0 for all candidates
+        // This is a limitation of the current API structure
+        const candidates = document.querySelectorAll('[data-candidate-id]');
+        const abstainVotes = Array.from(candidates).map(input => ({
+          candidate_id: input.dataset.candidateId,
+          score: 0
+        }));
+        
+        const apiData = {
+          voter_id: 'anonymous_abstain_' + Date.now(),
+          votes: abstainVotes,
+          election: electionSlug
+        };
+        
+        try {
+          const response = await fetch('/api/vote', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(apiData)
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            alert('Your abstention has been recorded.');
+            window.location.reload();
+          } else {
+            alert(`Error recording abstention: ${result.error}`);
+          }
+        } catch (error) {
+          console.error('Error recording abstention:', error);
+          alert('An error occurred while recording your abstention. Please try again.');
+        }
+      });
+    }
+  </script>
+</Layout>

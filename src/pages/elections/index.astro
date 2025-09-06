@@ -1,0 +1,380 @@
+---
+import { getAllElections } from '../../lib/elections';
+import Layout from '../../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+
+const electionsData = await getAllElections();
+
+// Sort elections by status priority and date
+const sortedElections = electionsData.sort((a, b) => {
+  const statusPriority = {
+    'voting': 0,
+    'nomination': 1, 
+    'draft': 2,
+    'completed': 3,
+    'cancelled': 4
+  };
+  
+  const aPriority = statusPriority[a.status.phase] || 5;
+  const bPriority = statusPriority[b.status.phase] || 5;
+  
+  if (aPriority !== bPriority) {
+    return aPriority - bPriority;
+  }
+  
+  // Sort by start date (most recent first for active, reverse for completed)
+  if (a.status.phase === 'completed' || a.status.phase === 'cancelled') {
+    return b.content.data.endDate.getTime() - a.content.data.endDate.getTime();
+  }
+  
+  return a.content.data.startDate.getTime() - b.content.data.startDate.getTime();
+});
+
+// Group elections by status
+const activeElections = sortedElections.filter(e => e.status.isActive);
+const upcomingElections = sortedElections.filter(e => e.status.phase === 'draft');
+const completedElections = sortedElections.filter(e => e.status.phase === 'completed');
+const cancelledElections = sortedElections.filter(e => e.status.phase === 'cancelled');
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'short', 
+    day: 'numeric'
+  });
+};
+
+const formatDateRange = (start: Date, end: Date) => {
+  const startStr = formatDate(start);
+  const endStr = formatDate(end);
+  
+  if (startStr === endStr) {
+    return startStr;
+  }
+  
+  return `${startStr} - ${endStr}`;
+};
+
+const getStatusBadgeClass = (status: string) => {
+  switch (status) {
+    case 'voting': return 'bg-green-100 text-green-800 border-green-200 shadow-sm';
+    case 'nomination': return 'bg-blue-100 text-blue-800 border-blue-200 shadow-sm';
+    case 'completed': return 'bg-gray-100 text-gray-800 border-gray-200';
+    case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
+    case 'draft': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    default: return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
+};
+
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'voting': return 'mdi:vote';
+    case 'nomination': return 'mdi:account-plus';
+    case 'completed': return 'mdi:check-circle';
+    case 'cancelled': return 'mdi:cancel';
+    case 'draft': return 'mdi:clock';
+    default: return 'mdi:help-circle';
+  }
+};
+
+const title = 'Elections | CCSF CS Club';
+const description = 'Participate in CS Club elections and voting. View active elections, upcoming votes, and completed results.';
+---
+
+<Layout title={title} description={description}>
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+      
+      <!-- Page Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          CS Club Elections
+        </h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Make your voice heard! Participate in club elections and voting to help shape our community and activities.
+        </p>
+      </div>
+
+      <!-- Active Elections -->
+      {activeElections.length > 0 && (
+        <section class="mb-12">
+          <div class="flex items-center gap-3 mb-6">
+            <Icon name="mdi:vote" class="w-8 h-8 text-green-600 dark:text-green-400" />
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+              Active Elections
+            </h2>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              {activeElections.length}
+            </span>
+          </div>
+          
+          <div class="grid gap-6 lg:grid-cols-2">
+            {activeElections.map(({ content, status }) => (
+              <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+                <div class="p-6">
+                  <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                      <span class={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusBadgeClass(status.phase)} animate-pulse`}>
+                        <Icon name={getStatusIcon(status.phase)} class="w-4 h-4 inline mr-1" />
+                        {status.phase.charAt(0).toUpperCase() + status.phase.slice(1)}
+                      </span>
+                      {content.data.featured && (
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium border border-yellow-200">
+                          <Icon name="mdi:star" class="w-4 h-4 inline mr-1" />
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    {status.daysRemaining !== null && (
+                      <div class="text-right">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                          {status.daysRemaining} day{status.daysRemaining !== 1 ? 's' : ''} left
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                    {content.data.title}
+                  </h3>
+                  
+                  <p class="text-gray-600 dark:text-gray-300 mb-4 line-clamp-2">
+                    {content.data.description}
+                  </p>
+                  
+                  <div class="space-y-2 mb-4">
+                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                      <Icon name="mdi:calendar" class="w-4 h-4" />
+                      <span>{formatDateRange(content.data.startDate, content.data.endDate)}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                      <Icon name="mdi:account-group" class="w-4 h-4" />
+                      <span>{content.data.candidates.length} candidate{content.data.candidates.length !== 1 ? 's' : ''}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                      <Icon name="mdi:vote-outline" class="w-4 h-4" />
+                      <span>{content.data.votingMethod.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="flex gap-3">
+                    <a 
+                      href={`/elections/${content.slug}`}
+                      class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200 text-center"
+                    >
+                      {status.canVote ? 'Vote Now' : 'View Details'}
+                    </a>
+                    {content.data.resultsDisplay.showResults && (
+                      <a 
+                        href={`/elections/${content.slug}/results`}
+                        class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+                      >
+                        <Icon name="mdi:chart-bar" class="w-4 h-4 inline mr-1" />
+                        Results
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Upcoming Elections -->
+      {upcomingElections.length > 0 && (
+        <section class="mb-12">
+          <div class="flex items-center gap-3 mb-6">
+            <Icon name="mdi:clock" class="w-8 h-8 text-yellow-600 dark:text-yellow-400" />
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+              Upcoming Elections
+            </h2>
+            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+              {upcomingElections.length}
+            </span>
+          </div>
+          
+          <div class="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            {upcomingElections.map(({ content, status }) => (
+              <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                <div class="p-6">
+                  <div class="flex items-center gap-3 mb-3">
+                    <span class={`px-3 py-1 rounded-full text-sm font-medium border ${getStatusBadgeClass(status.phase)}`}>
+                      <Icon name={getStatusIcon(status.phase)} class="w-4 h-4 inline mr-1" />
+                      {status.phase.charAt(0).toUpperCase() + status.phase.slice(1)}
+                    </span>
+                    {content.data.featured && (
+                      <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                    {content.data.title}
+                  </h3>
+                  
+                  <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+                    {content.data.description}
+                  </p>
+                  
+                  <div class="space-y-1 mb-4">
+                    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Icon name="mdi:calendar-start" class="w-3 h-3" />
+                      <span>Starts {formatDate(content.data.startDate)}</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                      <Icon name="mdi:account-group" class="w-3 h-3" />
+                      <span>{content.data.candidates.length} candidate{content.data.candidates.length !== 1 ? 's' : ''}</span>
+                    </div>
+                  </div>
+                  
+                  <a 
+                    href={`/elections/${content.slug}`}
+                    class="block w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 text-center text-sm"
+                  >
+                    View Details
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Completed Elections -->
+      {completedElections.length > 0 && (
+        <section class="mb-12">
+          <div class="flex items-center gap-3 mb-6">
+            <Icon name="mdi:check-circle" class="w-8 h-8 text-gray-600 dark:text-gray-400" />
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">
+              Completed Elections
+            </h2>
+            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+              {completedElections.length}
+            </span>
+          </div>
+          
+          <div class="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+            {completedElections.slice(0, 6).map(({ content, status }) => (
+              <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                <div class="p-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusBadgeClass(status.phase)}`}>
+                      <Icon name={getStatusIcon(status.phase)} class="w-3 h-3 inline mr-1" />
+                      Completed
+                    </span>
+                    {content.data.featured && (
+                      <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-2">
+                    {content.data.title}
+                  </h3>
+                  
+                  <div class="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    Ended {formatDate(content.data.endDate)}
+                  </div>
+                  
+                  <div class="flex gap-2">
+                    <a 
+                      href={`/elections/${content.slug}`}
+                      class="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-3 py-2 rounded text-center text-xs hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+                    >
+                      Details
+                    </a>
+                    {content.data.resultsDisplay.showResults && (
+                      <a 
+                        href={`/elections/${content.slug}/results`}
+                        class="flex-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 font-medium px-3 py-2 rounded text-center text-xs hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-200"
+                      >
+                        <Icon name="mdi:chart-bar" class="w-3 h-3 inline mr-1" />
+                        Results
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {completedElections.length > 6 && (
+            <div class="text-center mt-6">
+              <button 
+                id="show-more-completed"
+                class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-6 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200"
+              >
+                Show More ({completedElections.length - 6} remaining)
+              </button>
+            </div>
+          )}
+        </section>
+      )}
+
+      <!-- Empty State -->
+      {sortedElections.length === 0 && (
+        <div class="text-center py-16">
+          <Icon name="mdi:vote-outline" class="w-24 h-24 text-gray-400 dark:text-gray-600 mx-auto mb-6" />
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            No Elections Available
+          </h2>
+          <p class="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+            There are currently no elections to display. Check back later for upcoming voting opportunities!
+          </p>
+        </div>
+      )}
+
+      <!-- Info Section -->
+      <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-2xl p-8 mt-12">
+        <div class="flex items-start gap-4">
+          <Icon name="mdi:information" class="w-8 h-8 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+          <div>
+            <h3 class="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">
+              How CS Club Elections Work
+            </h3>
+            <div class="grid md:grid-cols-2 gap-6 text-blue-800 dark:text-blue-200">
+              <div>
+                <h4 class="font-semibold mb-2">Voting Methods</h4>
+                <ul class="text-sm space-y-1">
+                  <li><strong>STAR Voting:</strong> Rate candidates 0-5 stars</li>
+                  <li><strong>Single Choice:</strong> Pick your favorite option</li>
+                  <li><strong>Multi-Choice:</strong> Select multiple options</li>
+                  <li><strong>Ranked Choice:</strong> Rank by preference</li>
+                </ul>
+              </div>
+              <div>
+                <h4 class="font-semibold mb-2">Election Types</h4>
+                <ul class="text-sm space-y-1">
+                  <li><strong>Leadership:</strong> Officer and committee positions</li>
+                  <li><strong>Topics:</strong> Workshop and event planning</li>
+                  <li><strong>Projects:</strong> Club initiatives and priorities</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    // Show more completed elections functionality
+    const showMoreBtn = document.getElementById('show-more-completed');
+    if (showMoreBtn) {
+      showMoreBtn.addEventListener('click', function() {
+        // This would ideally load more elections via AJAX
+        // For now, we'll just hide the button
+        this.style.display = 'none';
+        
+        // In a real implementation, you'd fetch more data here
+        console.log('Loading more completed elections...');
+      });
+    }
+  </script>
+</Layout>
