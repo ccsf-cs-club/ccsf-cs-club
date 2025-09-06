@@ -185,7 +185,7 @@ import Layout from "../layouts/Layout.astro";
               ${result.finalRoundScore !== undefined ? `
                 <div class="flex justify-between border-t pt-1 mt-2">
                   <span>Runoff Score:</span>
-                  <span class="font-medium">${result.finalRoundScore.toFixed(2)}</span>
+                  <span class="font-medium">${result.finalRoundScore?.toFixed(2) || 'N/A'}</span>
                 </div>
               ` : ''}
             </div>
