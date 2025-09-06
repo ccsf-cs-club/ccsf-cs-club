@@ -2,8 +2,8 @@
 title: "Preferred Snacks for Club Events"
 slug: "preferred-snacks-2024"
 description: "Help us choose the best snacks to provide at club meetings and events"
-startDate: 2024-09-01
-endDate: 2024-12-31
+startDate: 2025-01-01
+endDate: 2026-12-31
 status: "voting"
 featured: true
 electionType: "topics"

@@ -2,8 +2,8 @@
 title: "Programming Topics You Want to Learn"
 slug: "programming-learning-interests-2024"
 description: "Tell us what programming skills you want to learn - we'll plan workshops and find speakers to help!"
-startDate: 2024-09-01
-endDate: 2024-12-31
+startDate: 2025-01-01
+endDate: 2026-12-31
 status: "voting"
 featured: true
 electionType: "topics"
