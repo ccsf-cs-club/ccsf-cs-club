@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { experimental_AstroContainer } from 'astro/container';
 import { GET, POST } from '../../pages/api/results.ts';
+import type { APIContext } from 'astro';
 
 // Mock database module
 const mockDb = {
@@ -12,6 +12,32 @@ const mockDb = {
 vi.mock('../../lib/db', () => ({
   getDatabase: () => mockDb
 }));
+
+// Helper function to create mock API context
+function createMockAPIContext(request: Request, url?: URL): APIContext {
+  return {
+    request,
+    url: url || new URL(request.url),
+    params: {},
+    props: {},
+    redirect: vi.fn(),
+    rewrite: vi.fn(),
+    site: new URL('http://localhost:4321'),
+    generator: 'test',
+    locals: {},
+    clientAddress: 'test-ip',
+    cookies: {} as any,
+    preferredLocale: 'en',
+    preferredLocaleList: ['en'],
+    currentLocale: 'en',
+    routePattern: '/api/results',
+    originPathname: '/api/results',
+    getActionResult: vi.fn(),
+    callAction: vi.fn(),
+    isPrerendered: false,
+    responseHeaders: new Headers()
+  } as unknown as APIContext;
+}
 
 describe('/api/results API Integration Tests', () => {
   beforeEach(() => {
@@ -55,7 +81,7 @@ describe('/api/results API Integration Tests', () => {
       const url = new URL(request.url);
 
       // Call the API endpoint
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       // Verify response structure
@@ -105,7 +131,7 @@ describe('/api/results API Integration Tests', () => {
       const request = new Request('http://localhost:4321/api/results?format=simple');
       const url = new URL(request.url);
 
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -123,7 +149,7 @@ describe('/api/results API Integration Tests', () => {
       const request = new Request('http://localhost:4321/api/results?format=star');
       const url = new URL(request.url);
 
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -137,7 +163,7 @@ describe('/api/results API Integration Tests', () => {
           headers: { 'x-forwarded-for': '127.0.0.1' }
         });
         const url = new URL(request.url);
-        return GET({ request, url });
+        return GET(createMockAPIContext(request, url));
       });
 
       // Wait for all requests
@@ -157,7 +183,7 @@ describe('/api/results API Integration Tests', () => {
 
       const request = new Request('http://localhost:4321/api/results', { method: 'POST' });
 
-      const response = await POST({ request });
+      const response = await POST(createMockAPIContext(request));
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -170,7 +196,7 @@ describe('/api/results API Integration Tests', () => {
 
       const request = new Request('http://localhost:4321/api/results', { method: 'POST' });
 
-      const response = await POST({ request });
+      const response = await POST(createMockAPIContext(request));
       const data = await response.json();
 
       expect(response.status).toBe(503);
@@ -186,7 +212,7 @@ describe('/api/results API Integration Tests', () => {
       const request = new Request('http://localhost:4321/api/results?format=star');
       const url = new URL(request.url);
 
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -199,7 +225,7 @@ describe('/api/results API Integration Tests', () => {
       const request = new Request('http://localhost:4321/api/results?format=invalid');
       const url = new URL(request.url);
 
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -231,7 +257,7 @@ describe('/api/results API Integration Tests', () => {
       const request = new Request('http://localhost:4321/api/results?format=star');
       const url = new URL(request.url);
 
-      const response = await GET({ request, url });
+      const response = await GET(createMockAPIContext(request, url));
       const data = await response.json();
 
       expect(response.status).toBe(200);
