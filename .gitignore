@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# scratch dir
+scratch/
+
 # generated types
 .astro/
 
@@ -22,3 +25,5 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+/src/generated/prisma
