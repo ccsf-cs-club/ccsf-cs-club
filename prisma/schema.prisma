@@ -33,15 +33,53 @@ model Contact {
   @@map("contacts")
 }
 
-model Vote {
-  id          Int      @id @default(autoincrement())
-  voterId     String   @map("voter_id")
-  candidateId String   @map("candidate_id")
-  score       Int      @db.SmallInt // 0-5 range for STAR voting
-  createdAt   DateTime @default(now()) @map("created_at")
+model Election {
+  id          String      @id
+  slug        String      @unique
+  title       String
+  status      String      // draft, active, closed, archived
+  startDate   DateTime    @map("start_date")
+  endDate     DateTime    @map("end_date")
+  settings    Json        // voting configuration
+  candidates  Candidate[]
+  votes       Vote[]
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
 
-  @@unique([voterId, candidateId])
+  @@index([slug])
+  @@index([status])
+  @@index([startDate])
+  @@index([endDate])
+  @@map("elections")
+}
+
+model Candidate {
+  id          String    @id
+  electionId  String    @map("election_id")
+  candidateId String    @map("candidate_id")
+  name        String
+  description String?
+  order       Int       @default(0)
+  election    Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  
+  @@unique([electionId, candidateId])
+  @@index([electionId])
+  @@index([candidateId])
+  @@map("candidates")
+}
+
+model Vote {
+  id          Int       @id @default(autoincrement())
+  voterId     String    @map("voter_id")
+  candidateId String    @map("candidate_id")
+  electionId  String?   @map("election_id") // Optional for backward compatibility
+  score       Int       @db.SmallInt // 0-5 range for STAR voting
+  createdAt   DateTime  @default(now()) @map("created_at")
+  election    Election? @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  @@unique([voterId, candidateId, electionId]) // Unique per voter, candidate, and election
   @@index([candidateId])
   @@index([voterId])
+  @@index([electionId])
   @@map("votes")
 }
