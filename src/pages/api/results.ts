@@ -3,6 +3,40 @@ import { getDatabase } from '../../lib/db';
 
 export const prerender = false;
 
+// Static candidate data for mapping IDs to names  
+const candidates = [
+  {
+    id: 'web-development',
+    name: 'Web Development',
+    description: 'Learn modern web technologies like React, Vue, and TypeScript for building responsive websites and web applications'
+  },
+  {
+    id: 'artificial-intelligence',
+    name: 'Artificial Intelligence',
+    description: 'Explore machine learning, neural networks, and AI algorithms to build intelligent systems and applications'
+  },
+  {
+    id: 'cybersecurity',
+    name: 'Cybersecurity',
+    description: 'Master security principles, ethical hacking, and defense strategies to protect digital systems and data'
+  },
+  {
+    id: 'data-science',
+    name: 'Data Science',
+    description: 'Analyze big data, create visualizations, and extract insights using Python, R, and statistical methods'
+  },
+  {
+    id: 'mobile-development',
+    name: 'Mobile Development',
+    description: 'Build iOS and Android apps using native frameworks or cross-platform solutions like React Native'
+  },
+  {
+    id: 'game-development',
+    name: 'Game Development',
+    description: 'Create engaging games using engines like Unity or Unreal, covering graphics, physics, and gameplay mechanics'
+  }
+];
+
 // Rate limiting store (in production, use Redis or similar)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
@@ -83,13 +117,34 @@ export const GET: APIRoute = async ({ request, url }) => {
         ? starResults.filter(result => result.candidate_id === candidateFilter)
         : starResults;
 
+      // Transform to match frontend expectations
+      const candidatesWithResults = filteredResults.map(result => {
+        const candidate = candidates.find(c => c.id === result.candidate_id);
+        return {
+          candidate: candidate || {
+            id: result.candidate_id,
+            name: result.candidate_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            description: 'CS Topic'
+          },
+          averageScore: result.average_score,
+          totalStars: result.total_score,
+          voteCount: result.vote_count,
+          finalRoundScore: result.runoff_votes
+        };
+      });
+
+      // Find winner candidate object
+      const winnerResult = filteredResults.find(result => result.winner);
+      const winnerCandidate = winnerResult ? candidates.find(c => c.id === winnerResult.candidate_id) : null;
+
       const response = {
         success: true,
         format: 'star',
         timestamp: new Date().toISOString(),
-        results: filteredResults,
-        total_candidates: filteredResults.length,
-        winner: filteredResults.find(result => result.winner) || null,
+        candidates: candidatesWithResults.sort((a, b) => b.averageScore - a.averageScore),
+        totalCandidates: candidatesWithResults.length,
+        totalVotes: Math.max(...candidatesWithResults.map(c => c.voteCount), 0),
+        winner: winnerCandidate || null,
         metadata: includeDetails ? {
           explanation: 'STAR voting uses score totals to select top 2 candidates, then automatic runoff between them based on pairwise preferences.',
           scoring_range: '0-5 stars per candidate',
@@ -117,13 +172,33 @@ export const GET: APIRoute = async ({ request, url }) => {
         ? simpleResults.filter(result => result.candidate_id === candidateFilter)
         : simpleResults;
 
+      // Transform to match frontend expectations
+      const candidatesWithResults = filteredResults.map(result => {
+        const candidate = candidates.find(c => c.id === result.candidate_id);
+        return {
+          candidate: candidate || {
+            id: result.candidate_id,
+            name: result.candidate_id.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+            description: 'CS Topic'
+          },
+          averageScore: result.average_score,
+          totalStars: result.total_score,
+          voteCount: result.vote_count,
+          finalRoundScore: undefined
+        };
+      });
+
+      // Winner is first (highest scoring) candidate
+      const winnerCandidate = filteredResults.length > 0 ? candidates.find(c => c.id === filteredResults[0].candidate_id) : null;
+
       const response = {
         success: true,
         format: 'simple',
         timestamp: new Date().toISOString(),
-        results: filteredResults,
-        total_candidates: filteredResults.length,
-        winner: filteredResults[0] || null,
+        candidates: candidatesWithResults.sort((a, b) => b.totalStars - a.totalStars),
+        totalCandidates: candidatesWithResults.length,
+        totalVotes: Math.max(...candidatesWithResults.map(c => c.voteCount), 0),
+        winner: winnerCandidate || null,
         metadata: includeDetails ? {
           explanation: 'Simple scoring results ranked by total score points.',
           scoring_range: '0-5 stars per candidate',
