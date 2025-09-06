@@ -36,7 +36,7 @@ const candidates = [
   }
 ];
 
-export const GET: APIRoute = async ({ request, url }) => {
+export const GET: APIRoute = async () => {
   try {
     const response = {
       success: true,

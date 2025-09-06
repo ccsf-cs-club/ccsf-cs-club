@@ -24,59 +24,61 @@ const sizeClasses = {
 };
 
 const componentId = `star-rating-${Math.random().toString(36).substr(2, 9)}`;
+
+// Generate star data in the frontmatter
+const stars = Array.from({ length: maxStars }, (_, i) => {
+  const starValue = i + 1;
+  const isActive = starValue <= value;
+  return { starValue, isActive };
+});
 ---
 
 <div class="flex items-center gap-1" id={componentId} data-value={value}>
-  {Array.from({ length: maxStars }, (_, i) => {
-    const starValue = i + 1;
-    const isActive = starValue <= value;
-
-    return (
-      <button
-        type="button"
-        class:list={[
-          "transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 rounded",
-          readonly ? "cursor-default" : "cursor-pointer",
-          isActive ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
-        ]}
-        data-star-value={starValue}
-        disabled={readonly}
-      >
-        <span class="star-icon relative" data-filled={isActive}>
-          <Icon 
-            name="mdi:star"
-            class:list={[sizeClasses[size], isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
-          />
-          <Icon 
-            name="mdi:star-outline"
-            class:list={[sizeClasses[size], "absolute inset-0", !isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
-          />
-        </span>
-      </button>
-    );
-  })}
+  {stars.map(({ starValue, isActive }) => (
+    <button
+      type="button"
+      class:list={[
+        "transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 rounded",
+        readonly ? "cursor-default" : "cursor-pointer",
+        isActive ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
+      ]}
+      data-star-value={starValue}
+      disabled={readonly}
+    >
+      <span class="star-icon relative" data-filled={isActive}>
+        <Icon 
+          name="mdi:star"
+          class:list={[sizeClasses[size], isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
+        />
+        <Icon 
+          name="mdi:star-outline"
+          class:list={[sizeClasses[size], "absolute inset-0", !isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
+        />
+      </span>
+    </button>
+  ))}
   <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" data-rating-text>
     {value > 0 ? `${value}/${maxStars}` : 'Not rated'}
   </span>
 </div>
 
 {!readonly && onChange && (
-  <script define:vars={{ componentId, onChange, maxStars }}>
+  <script is:inline define:vars={{ componentId, onChange, maxStars }}>
     const container = document.getElementById(componentId);
     const buttons = container.querySelectorAll('button[data-star-value]');
-    let currentHover = 0;
+    // Removed unused currentHover variable
     
     // Store original value for hover reset
     const originalValue = parseInt(container.dataset.value || '0');
     let currentValue = originalValue;
     
-    buttons.forEach((button, index) => {
+    buttons.forEach((button) => {
       const starValue = parseInt(button.dataset.starValue);
       
       // Mouse enter - show hover preview
       button.addEventListener('mouseenter', () => {
         if (button.disabled) return;
-        currentHover = starValue;
+        // Show hover preview
         updateStars(starValue);
       });
       

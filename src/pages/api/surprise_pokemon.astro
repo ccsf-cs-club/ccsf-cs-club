@@ -2,11 +2,11 @@
 export const prerender = false;
 export const partial = true;
 
-function getRandomInt(max) {
+function getRandomInt(max: number): number {
     return Math.floor(Math.random() * max);
 }
 
-function title(txt) {
+function title(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
 
