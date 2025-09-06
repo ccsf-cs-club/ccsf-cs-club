@@ -1,0 +1,299 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="STAR Voting Results">
+  <main class="m-auto w-[800px] p-4 text-xl">
+    <h1 class="title-gradient my-6 text-center text-6xl font-bold">
+      STAR Voting Results
+    </h1>
+    
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="mt-2 text-gray-600">Loading results...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden text-center py-8">
+      <p class="text-red-600 mb-4">Failed to load voting results.</p>
+      <button id="retry-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+        Retry
+      </button>
+    </div>
+
+    <!-- Results Container -->
+    <div id="results-container" class="hidden space-y-8">
+      
+      <!-- Winner Announcement -->
+      <div id="winner-section" class="bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-800 dark:to-yellow-900 rounded-lg p-6 text-center shadow-lg">
+        <h2 class="text-3xl font-bold text-yellow-800 dark:text-yellow-200 mb-2">🏆 Winner</h2>
+        <h3 id="winner-name" class="text-2xl font-semibold text-yellow-900 dark:text-yellow-100"></h3>
+        <p id="winner-details" class="text-yellow-700 dark:text-yellow-300 mt-2"></p>
+      </div>
+
+      <!-- Star Breakdown Visual Display (Masonry Layout) -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+        <h2 class="text-2xl font-bold mb-6 text-center">Candidate Scores</h2>
+        <div id="candidates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Candidate cards will be inserted here -->
+        </div>
+      </div>
+
+      <!-- Detailed Statistics Table -->
+      <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg overflow-x-auto">
+        <h2 class="text-2xl font-bold mb-6 text-center">Detailed Statistics</h2>
+        <table id="stats-table" class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b-2 border-gray-200 dark:border-gray-700">
+              <th class="py-3 px-4 font-semibold text-gray-900 dark:text-gray-100">Candidate</th>
+              <th class="py-3 px-4 font-semibold text-gray-900 dark:text-gray-100 text-center">Average Score</th>
+              <th class="py-3 px-4 font-semibold text-gray-900 dark:text-gray-100 text-center">Total Stars</th>
+              <th class="py-3 px-4 font-semibold text-gray-900 dark:text-gray-100 text-center">Vote Count</th>
+              <th class="py-3 px-4 font-semibold text-gray-900 dark:text-gray-100 text-center">Runoff Score</th>
+            </tr>
+          </thead>
+          <tbody id="stats-tbody">
+            <!-- Statistics rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary Info -->
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-6 shadow-lg">
+        <h2 class="text-xl font-bold mb-4">Vote Summary</h2>
+        <div class="grid grid-cols-2 gap-4 text-center">
+          <div>
+            <p class="text-2xl font-bold text-indigo-600" id="total-votes">0</p>
+            <p class="text-gray-600 dark:text-gray-400">Total Votes</p>
+          </div>
+          <div>
+            <p class="text-2xl font-bold text-indigo-600" id="total-candidates">0</p>
+            <p class="text-gray-600 dark:text-gray-400">Candidates</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="text-center space-x-4">
+        <button id="vote-again-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-6 text-lg font-medium text-white shadow-sm hover:bg-indigo-700">
+          Vote Again
+        </button>
+        <a href="/" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-3 px-6 text-lg font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    interface Candidate {
+      id: string;
+      name: string;
+      description?: string;
+    }
+
+    interface VoteResult {
+      candidate: Candidate;
+      averageScore: number;
+      totalStars: number;
+      voteCount: number;
+      finalRoundScore?: number;
+    }
+
+    interface VotingResults {
+      totalVotes: number;
+      totalCandidates: number;
+      candidates: VoteResult[];
+      winner?: Candidate;
+      runoffCandidates?: Candidate[];
+    }
+
+    async function loadResults(): Promise<void> {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const resultsContainer = document.getElementById('results-container');
+
+      try {
+        const response = await fetch('/api/results');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const results: VotingResults = await response.json();
+        
+        // Hide loading, show results
+        loading?.classList.add('hidden');
+        error?.classList.add('hidden');
+        resultsContainer?.classList.remove('hidden');
+
+        // Populate the results
+        populateResults(results);
+
+      } catch (err) {
+        console.error('Failed to load results:', err);
+        
+        // Show error state
+        loading?.classList.add('hidden');
+        resultsContainer?.classList.add('hidden');
+        error?.classList.remove('hidden');
+      }
+    }
+
+    function populateResults(results: VotingResults): void {
+      // Winner section
+      const winnerName = document.getElementById('winner-name');
+      const winnerDetails = document.getElementById('winner-details');
+      
+      if (results.winner && winnerName && winnerDetails) {
+        winnerName.textContent = results.winner.name;
+        const winnerResult = results.candidates.find(c => c.candidate.id === results.winner?.id);
+        if (winnerResult) {
+          winnerDetails.textContent = `Average Score: ${winnerResult.averageScore.toFixed(2)} | Total Stars: ${winnerResult.totalStars}`;
+        }
+      }
+
+      // Candidates grid (masonry-style layout)
+      const candidatesGrid = document.getElementById('candidates-grid');
+      if (candidatesGrid) {
+        candidatesGrid.innerHTML = results.candidates.map(result => `
+          <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border ${result.candidate.id === results.winner?.id ? 'ring-2 ring-yellow-400 bg-yellow-50 dark:bg-yellow-900' : ''}">
+            <h3 class="font-bold text-lg mb-2 ${result.candidate.id === results.winner?.id ? 'text-yellow-800 dark:text-yellow-200' : ''}">${result.candidate.name}</h3>
+            ${result.candidate.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-3">${result.candidate.description}</p>` : ''}
+            
+            <!-- Visual star display -->
+            <div class="mb-3">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Average Score</span>
+                <span class="font-semibold">${result.averageScore.toFixed(2)}</span>
+              </div>
+              <div class="flex space-x-1">
+                ${generateStarDisplay(result.averageScore)}
+              </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+              <div class="flex justify-between">
+                <span>Total Stars:</span>
+                <span class="font-medium">${result.totalStars}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Vote Count:</span>
+                <span class="font-medium">${result.voteCount}</span>
+              </div>
+              ${result.finalRoundScore !== undefined ? `
+                <div class="flex justify-between border-t pt-1 mt-2">
+                  <span>Runoff Score:</span>
+                  <span class="font-medium">${result.finalRoundScore.toFixed(2)}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Statistics table
+      const statsTableBody = document.getElementById('stats-tbody');
+      if (statsTableBody) {
+        statsTableBody.innerHTML = results.candidates.map(result => `
+          <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 ${result.candidate.id === results.winner?.id ? 'bg-yellow-50 dark:bg-yellow-900' : ''}">
+            <td class="py-3 px-4 font-medium text-gray-900 dark:text-gray-100">
+              ${result.candidate.name}
+              ${result.candidate.id === results.winner?.id ? ' 🏆' : ''}
+            </td>
+            <td class="py-3 px-4 text-center">${result.averageScore.toFixed(2)}</td>
+            <td class="py-3 px-4 text-center">${result.totalStars}</td>
+            <td class="py-3 px-4 text-center">${result.voteCount}</td>
+            <td class="py-3 px-4 text-center">${result.finalRoundScore?.toFixed(2) || 'N/A'}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Summary
+      const totalVotes = document.getElementById('total-votes');
+      const totalCandidates = document.getElementById('total-candidates');
+      
+      if (totalVotes) totalVotes.textContent = results.totalVotes.toString();
+      if (totalCandidates) totalCandidates.textContent = results.totalCandidates.toString();
+    }
+
+    function generateStarDisplay(score: number): string {
+      const fullStars = Math.floor(score);
+      const hasHalfStar = score % 1 >= 0.5;
+      const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+      
+      let starsHtml = '';
+      
+      // Full stars
+      for (let i = 0; i < fullStars; i++) {
+        starsHtml += '<span class="text-yellow-400">★</span>';
+      }
+      
+      // Half star
+      if (hasHalfStar) {
+        starsHtml += '<span class="text-yellow-400">☆</span>';
+      }
+      
+      // Empty stars
+      for (let i = 0; i < emptyStars; i++) {
+        starsHtml += '<span class="text-gray-300 dark:text-gray-600">☆</span>';
+      }
+      
+      return starsHtml;
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadResults();
+
+      // Retry button
+      document.getElementById('retry-btn')?.addEventListener('click', loadResults);
+
+      // Vote again button - navigate to voting form
+      document.getElementById('vote-again-btn')?.addEventListener('click', () => {
+        window.location.href = '/vote'; // Assuming voting form will be at /vote
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  /* Custom styles for better responsive behavior */
+  @media (max-width: 768px) {
+    main {
+      width: 100%;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .overflow-x-auto table {
+      font-size: 0.875rem;
+    }
+    
+    #candidates-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* Smooth transitions */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Enhanced hover effects */
+  button:hover, a:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+  }
+  
+  /* Better dark mode contrast */
+  .dark table tbody tr:hover {
+    background-color: rgba(55, 65, 81, 0.3);
+  }
+</style>
