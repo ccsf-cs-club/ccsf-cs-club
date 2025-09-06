@@ -1,315 +1,452 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 
 export const prerender = false;
-
-// CS topic candidates for STAR voting
-const candidates = [
-  {
-    id: 'web-development',
-    name: 'Web Development',
-    description: 'Frontend, backend, full-stack development using modern frameworks and technologies'
-  },
-  {
-    id: 'data-science',
-    name: 'Data Science & Analytics',
-    description: 'Machine learning, data analysis, visualization, and statistical modeling'
-  },
-  {
-    id: 'cybersecurity',
-    name: 'Cybersecurity',
-    description: 'Network security, ethical hacking, cryptography, and security best practices'
-  },
-  {
-    id: 'mobile-development',
-    name: 'Mobile Development',
-    description: 'iOS, Android, cross-platform mobile application development'
-  },
-  {
-    id: 'game-development',
-    name: 'Game Development',
-    description: 'Game design, programming, graphics, and interactive entertainment systems'
-  },
-  {
-    id: 'ai-machine-learning',
-    name: 'AI & Machine Learning',
-    description: 'Artificial intelligence, neural networks, deep learning, and automation'
-  }
-];
 ---
 
-<Layout title="STAR Voting - CCSF CS Club">
-  <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-    <div class="max-w-4xl mx-auto">
-      <div class="bg-white rounded-lg shadow-xl p-8">
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">STAR Voting</h1>
-          <p class="text-gray-600">Rate each CS topic from 1-5 stars based on your interest</p>
+<Layout title="STAR Voting - Cast Your Vote - CCSF CS Club" description="Participate in STAR voting at CCSF CS Club. Rate candidates from 0-5 stars and help determine the winner through Score Then Automatic Runoff voting.">
+  <main class="m-auto w-[800px] p-4 text-xl">
+    <h1 class="title-gradient my-6 text-center text-6xl font-bold">
+      STAR Voting
+    </h1>
+    
+    <div class="mb-8 text-center">
+      <p class="text-lg text-gray-600 dark:text-gray-400 mb-2">
+        Rate each candidate from 0 to 5 stars based on your preference
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-500">
+        Your vote helps determine the winner through Score Then Automatic Runoff
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-8">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <p class="mt-2 text-gray-600">Loading candidates...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="hidden text-center py-8">
+      <p class="text-red-600 mb-4">Failed to load candidates.</p>
+      <button id="retry-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+        Retry
+      </button>
+    </div>
+
+    <!-- Voting Form -->
+    <div id="voting-form" class="hidden">
+      <form id="vote-form" class="space-y-6">
+        <div id="candidates-container" class="space-y-6">
+          <!-- Candidate cards will be inserted here -->
         </div>
 
-        <!-- Success Message -->
-        <div id="success-message" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-          <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-            </svg>
-            <span>Voting successful! Thank you for participating!</span>
-          </div>
-        </div>
-
-        <!-- Error Message -->
-        <div id="error-message" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-            </svg>
-            <span id="error-text">An error occurred. Please try again.</span>
-          </div>
-        </div>
-
-        <!-- Progress Tracker -->
-        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-          <div class="flex justify-between items-center">
-            <span class="text-sm text-blue-800">Progress</span>
-            <span id="progress-text" class="text-sm font-medium text-blue-900">0 of 6 topics rated</span>
-          </div>
-          <div class="mt-2 w-full bg-blue-200 rounded-full h-2">
-            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
-          </div>
-        </div>
-
-        <!-- Voting Form -->
-        <form id="voting-form" class="space-y-6">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {candidates.map((candidate) => (
-              <div class="candidate-card bg-gray-50 rounded-lg p-6 border border-gray-200 hover:border-gray-300 transition-colors">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">{candidate.name}</h3>
-                <p class="text-sm text-gray-600 mb-4">{candidate.description}</p>
-                
-                <!-- Star Rating Component -->
-                <div class="star-rating" data-candidate-id={candidate.id}>
-                  <div class="flex space-x-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        type="button"
-                        class="star-button w-8 h-8 text-gray-300 hover:text-yellow-400 focus:text-yellow-400 focus:outline-none transition-colors"
-                        data-rating={star}
-                        data-candidate-id={candidate.id}
-                      >
-                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                        </svg>
-                      </button>
-                    ))}
-                  </div>
-                  <input type="hidden" name={`rating-${candidate.id}`} id={`rating-${candidate.id}`} value="0">
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            type="submit"
-            id="submit-btn"
-            class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-            disabled
-          >
-            Submit Votes
-          </button>
-
-          <div id="loading-indicator" class="hidden text-center">
-            <div class="inline-flex items-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Submitting votes...
+        <!-- Vote Submission -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
+          <div class="text-center space-y-4">
+            <button type="submit" id="submit-vote-btn" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-lg font-medium text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+              Submit Vote
+            </button>
+            <div class="space-x-4">
+              <button type="button" id="clear-votes-btn" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                Clear All Votes
+              </button>
+              <a href="/results" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+                View Results
+              </a>
             </div>
           </div>
-        </form>
+        </div>
+      </form>
+    </div>
 
-        <div class="mt-8 text-center">
-          <p class="text-sm text-gray-500">
-            Rate all topics to submit your vote. <a href="/" class="text-indigo-600 hover:text-indigo-800">Return to homepage</a>
-          </p>
+    <!-- Success State -->
+    <div id="success" class="hidden text-center py-8">
+      <div class="bg-gradient-to-r from-green-100 to-green-200 dark:from-green-800 dark:to-green-900 rounded-lg p-6 shadow-lg">
+        <h2 class="text-3xl font-bold text-green-800 dark:text-green-200 mb-2">✅ Vote Submitted!</h2>
+        <p class="text-green-700 dark:text-green-300 mb-4">Thank you for participating in the STAR voting process.</p>
+        <div class="space-x-4">
+          <a href="/results" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-6 text-lg font-medium text-white shadow-sm hover:bg-indigo-700">
+            View Results
+          </a>
+          <button id="vote-again-btn" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-3 px-6 text-lg font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+            Vote Again
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Navigation -->
+    <div class="mt-8 text-center">
+      <a href="/" class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700">
+        Back to Home
+      </a>
+    </div>
   </main>
-</Layout>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('voting-form') as HTMLFormElement;
-    const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-    const loadingIndicator = document.getElementById('loading-indicator') as HTMLElement;
-    const successMessage = document.getElementById('success-message') as HTMLElement;
-    const errorMessage = document.getElementById('error-message') as HTMLElement;
-    const errorText = document.getElementById('error-text') as HTMLElement;
-    const progressText = document.getElementById('progress-text') as HTMLElement;
-    const progressBar = document.getElementById('progress-bar') as HTMLElement;
-
-    // Star rating state
-    const ratings: { [key: string]: number } = {};
-    const candidates = ['web-development', 'data-science', 'cybersecurity', 'mobile-development', 'game-development', 'ai-machine-learning'];
-
-    function showError(message: string) {
-      errorText.textContent = message;
-      errorMessage.classList.remove('hidden');
-      successMessage.classList.add('hidden');
+  <script>
+    interface Candidate {
+      id: string;
+      name: string;
+      description?: string;
     }
 
-    function showSuccess() {
-      successMessage.classList.remove('hidden');
-      errorMessage.classList.add('hidden');
+    interface VoteData {
+      candidate_id: string;
+      score: number;
     }
 
-    function hideMessages() {
-      successMessage.classList.add('hidden');
-      errorMessage.classList.add('hidden');
-    }
+    let candidates: Candidate[] = [];
+    let votes: Map<string, number> = new Map();
 
-    function updateProgress() {
-      const ratedCount = Object.keys(ratings).filter(key => ratings[key] > 0).length;
-      const progress = (ratedCount / candidates.length) * 100;
-      
-      progressText.textContent = `${ratedCount} of ${candidates.length} topics rated`;
-      progressBar.style.width = `${progress}%`;
-      
-      // Enable submit button if all candidates are rated
-      submitBtn.disabled = ratedCount < candidates.length;
-    }
-
-    function setRating(candidateId: string, rating: number) {
-      ratings[candidateId] = rating;
-      
-      // Update hidden input
-      const hiddenInput = document.getElementById(`rating-${candidateId}`) as HTMLInputElement;
-      if (hiddenInput) {
-        hiddenInput.value = rating.toString();
-      }
-      
-      // Update star display
-      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
-      if (starContainer) {
-        const stars = starContainer.querySelectorAll('.star-button');
-        stars.forEach((star, index) => {
-          const starElement = star as HTMLElement;
-          if (index < rating) {
-            starElement.classList.add('text-yellow-400');
-            starElement.classList.remove('text-gray-300');
-          } else {
-            starElement.classList.add('text-gray-300');
-            starElement.classList.remove('text-yellow-400');
-          }
-        });
-      }
-      
-      updateProgress();
-    }
-
-    // Handle star clicks
-    document.querySelectorAll('.star-button').forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
-        const rating = parseInt((this as HTMLElement).getAttribute('data-rating') || '0');
-        
-        if (candidateId) {
-          setRating(candidateId, rating);
-        }
-      });
-
-      // Handle hover effects
-      button.addEventListener('mouseenter', function() {
-        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
-        const hoverRating = parseInt((this as HTMLElement).getAttribute('data-rating') || '0');
-        
-        if (candidateId) {
-          const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
-          if (starContainer) {
-            const stars = starContainer.querySelectorAll('.star-button');
-            stars.forEach((star, index) => {
-              const starElement = star as HTMLElement;
-              if (index < hoverRating) {
-                starElement.classList.add('text-yellow-400');
-                starElement.classList.remove('text-gray-300');
-              } else {
-                starElement.classList.add('text-gray-300');
-                starElement.classList.remove('text-yellow-400');
-              }
-            });
-          }
-        }
-      });
-
-      button.addEventListener('mouseleave', function() {
-        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
-        if (candidateId && ratings[candidateId]) {
-          setRating(candidateId, ratings[candidateId]);
-        } else if (candidateId) {
-          // Reset to unrated state
-          const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
-          if (starContainer) {
-            const stars = starContainer.querySelectorAll('.star-button');
-            stars.forEach(star => {
-              const starElement = star as HTMLElement;
-              starElement.classList.add('text-gray-300');
-              starElement.classList.remove('text-yellow-400');
-            });
-          }
-        }
-      });
-    });
-
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      // Check if all candidates are rated
-      const ratedCount = Object.keys(ratings).filter(key => ratings[key] > 0).length;
-      if (ratedCount < candidates.length) {
-        showError('Please rate all topics before submitting.');
-        return;
-      }
-
-      // Show loading state
-      submitBtn.disabled = true;
-      submitBtn.classList.add('hidden');
-      loadingIndicator.classList.remove('hidden');
-      hideMessages();
+    async function loadCandidates(): Promise<void> {
+      const loading = document.getElementById('loading');
+      const error = document.getElementById('error');
+      const votingForm = document.getElementById('voting-form');
 
       try {
-        // Prepare vote data
-        const voteData = {
-          votes: ratings
-        };
+        const response = await fetch('/api/candidates');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
 
-        // For now, simulate API call since /api/vote doesn't exist yet
-        console.log('Would submit votes:', voteData);
+        const data = await response.json();
+        candidates = data.candidates || data;
         
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Hide loading, show form
+        loading?.classList.add('hidden');
+        error?.classList.add('hidden');
+        votingForm?.classList.remove('hidden');
+
+        // Populate the candidates
+        renderCandidates();
+
+      } catch (err) {
+        console.error('Failed to load candidates:', err);
         
-        // Show success
-        showSuccess();
-        
-        // Reset form
-        Object.keys(ratings).forEach(candidateId => {
-          setRating(candidateId, 0);
+        // Show error state
+        loading?.classList.add('hidden');
+        votingForm?.classList.add('hidden');
+        error?.classList.remove('hidden');
+      }
+    }
+
+    function renderCandidates(): void {
+      const container = document.getElementById('candidates-container');
+      if (!container) return;
+
+      container.innerHTML = candidates.map(candidate => `
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg border">
+          <div class="mb-4">
+            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">${candidate.name}</h3>
+            ${candidate.description ? `<p class="text-gray-600 dark:text-gray-400 mt-2">${candidate.description}</p>` : ''}
+          </div>
+          
+          <div class="space-y-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Your Rating (0-5 stars):
+            </label>
+            
+            <!-- Star Rating Interface -->
+            <div class="flex items-center space-x-2">
+              <div class="flex space-x-1" data-candidate-id="${candidate.id}">
+                ${Array.from({length: 6}, (_, i) => `
+                  <button type="button" class="star-btn text-2xl focus:outline-none hover:scale-110 transition-transform" 
+                          data-candidate-id="${candidate.id}" 
+                          data-score="${i}"
+                          title="${i} star${i !== 1 ? 's' : ''}"
+                          ${i === 0 ? 'aria-label="No rating"' : `aria-label="${i} star rating"`}>
+                    ${i === 0 ? '✗' : '☆'}
+                  </button>
+                `).join('')}
+              </div>
+              <span class="text-sm text-gray-500 dark:text-gray-400 ml-4" id="score-display-${candidate.id}">
+                No rating
+              </span>
+            </div>
+
+            <!-- Score slider as backup -->
+            <div class="mt-2">
+              <input type="range" min="0" max="5" step="1" value="0" 
+                     class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                     data-candidate-id="${candidate.id}"
+                     id="slider-${candidate.id}">
+              <div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                <span>0</span>
+                <span>1</span>
+                <span>2</span>
+                <span>3</span>
+                <span>4</span>
+                <span>5</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Add event listeners for star buttons and sliders
+      attachVotingListeners();
+    }
+
+    function attachVotingListeners(): void {
+      // Star button listeners
+      document.querySelectorAll('.star-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+          const target = e.target as HTMLButtonElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.dataset.score!);
+          
+          updateVote(candidateId, score);
+          updateStarDisplay(candidateId, score);
+          updateSlider(candidateId, score);
         });
 
-      } catch (error) {
-        console.error('Voting error:', error);
-        showError('Network error. Please check your connection and try again.');
-      } finally {
-        // Reset loading state
-        submitBtn.disabled = true; // Keep disabled until all topics are rated again
-        submitBtn.classList.remove('hidden');
-        loadingIndicator.classList.add('hidden');
-      }
-    });
+        // Hover effects
+        button.addEventListener('mouseenter', (e) => {
+          const target = e.target as HTMLButtonElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.dataset.score!);
+          previewStarDisplay(candidateId, score);
+        });
+      });
 
-    // Initialize progress
-    updateProgress();
-  });
-</script>
+      // Star container mouse leave
+      document.querySelectorAll('[data-candidate-id]').forEach(container => {
+        if (container.classList.contains('flex')) { // Star container
+          container.addEventListener('mouseleave', (e) => {
+            const target = e.target as HTMLElement;
+            const candidateId = target.dataset.candidateId!;
+            const currentScore = votes.get(candidateId) || 0;
+            updateStarDisplay(candidateId, currentScore);
+          });
+        }
+      });
+
+      // Slider listeners
+      document.querySelectorAll('input[type="range"]').forEach(slider => {
+        slider.addEventListener('input', (e) => {
+          const target = e.target as HTMLInputElement;
+          const candidateId = target.dataset.candidateId!;
+          const score = parseInt(target.value);
+          
+          updateVote(candidateId, score);
+          updateStarDisplay(candidateId, score);
+        });
+      });
+    }
+
+    function updateVote(candidateId: string, score: number): void {
+      votes.set(candidateId, score);
+      
+      // Update score display
+      const scoreDisplay = document.getElementById(`score-display-${candidateId}`);
+      if (scoreDisplay) {
+        if (score === 0) {
+          scoreDisplay.textContent = 'No rating';
+        } else {
+          scoreDisplay.textContent = `${score} star${score !== 1 ? 's' : ''}`;
+        }
+      }
+
+      // Enable submit button if at least one vote is cast
+      const submitBtn = document.getElementById('submit-vote-btn') as HTMLButtonElement;
+      if (submitBtn) {
+        const hasVotes = Array.from(votes.values()).some(score => score > 0);
+        submitBtn.disabled = !hasVotes;
+      }
+    }
+
+    function updateStarDisplay(candidateId: string, score: number): void {
+      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"].flex`);
+      if (!starContainer) return;
+
+      const starButtons = starContainer.querySelectorAll('.star-btn');
+      starButtons.forEach((button, index) => {
+        const btn = button as HTMLButtonElement;
+        if (index === 0) { // Clear button
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${score === 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-600'}`;
+        } else {
+          const isFilled = index <= score;
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${isFilled ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`;
+          btn.textContent = isFilled ? '★' : '☆';
+        }
+      });
+    }
+
+    function previewStarDisplay(candidateId: string, hoverScore: number): void {
+      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"].flex`);
+      if (!starContainer) return;
+
+      const starButtons = starContainer.querySelectorAll('.star-btn');
+      starButtons.forEach((button, index) => {
+        const btn = button as HTMLButtonElement;
+        if (index === 0) { // Clear button
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${hoverScore === 0 ? 'text-red-500' : 'text-gray-400 dark:text-gray-600'}`;
+        } else {
+          const isFilled = index <= hoverScore;
+          btn.className = `star-btn text-2xl focus:outline-none hover:scale-110 transition-transform ${isFilled ? 'text-yellow-300' : 'text-gray-300 dark:text-gray-600'}`;
+          btn.textContent = isFilled ? '★' : '☆';
+        }
+      });
+    }
+
+    function updateSlider(candidateId: string, score: number): void {
+      const slider = document.getElementById(`slider-${candidateId}`) as HTMLInputElement;
+      if (slider) {
+        slider.value = score.toString();
+      }
+    }
+
+    function clearAllVotes(): void {
+      votes.clear();
+      candidates.forEach(candidate => {
+        updateVote(candidate.id, 0);
+        updateStarDisplay(candidate.id, 0);
+        updateSlider(candidate.id, 0);
+      });
+    }
+
+    function generateVoterId(): string {
+      return 'voter_' + Math.random().toString(36).substring(2, 9) + '_' + Date.now().toString(36);
+    }
+
+    async function submitVote(): Promise<void> {
+      const submitBtn = document.getElementById('submit-vote-btn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent;
+      
+      // Show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>Submitting...';
+
+      try {
+        // Prepare vote data in the format expected by the API
+        const votesArray: VoteData[] = Array.from(votes.entries())
+          .filter(([_, score]) => score > 0)
+          .map(([candidateId, score]) => ({
+            candidate_id: candidateId,
+            score: score
+          }));
+
+        const voteData = {
+          voter_id: generateVoterId(),
+          votes: votesArray
+        };
+
+        const response = await fetch('/api/vote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(voteData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('Vote submitted successfully:', result);
+
+        // Show success state
+        document.getElementById('voting-form')?.classList.add('hidden');
+        document.getElementById('success')?.classList.remove('hidden');
+
+      } catch (err) {
+        console.error('Failed to submit vote:', err);
+        alert('Failed to submit vote. Please try again.');
+        
+        // Restore button state for retry
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      loadCandidates();
+
+      // Form submission
+      document.getElementById('vote-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitVote();
+      });
+
+      // Clear votes button
+      document.getElementById('clear-votes-btn')?.addEventListener('click', clearAllVotes);
+
+      // Retry button
+      document.getElementById('retry-btn')?.addEventListener('click', loadCandidates);
+
+      // Vote again button (in success state)
+      document.getElementById('vote-again-btn')?.addEventListener('click', () => {
+        document.getElementById('success')?.classList.add('hidden');
+        document.getElementById('voting-form')?.classList.remove('hidden');
+        clearAllVotes();
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  /* Custom styles for better responsive behavior */
+  @media (max-width: 768px) {
+    main {
+      width: 100%;
+      max-width: 100%;
+      padding: 1rem;
+    }
+    
+    .title-gradient {
+      font-size: 3rem;
+    }
+  }
+  
+  /* Smooth transitions */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Enhanced hover effects */
+  button:hover, a:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+  }
+  
+  /* Star button enhancements */
+  .star-btn {
+    transition: all 0.2s ease;
+  }
+  
+  .star-btn:hover {
+    transform: scale(1.2);
+  }
+  
+  /* Range slider styling */
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #4f46e5;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #4f46e5;
+    cursor: pointer;
+    border: none;
+  }
+  
+  /* Loading animation in submit button */
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+</style>
