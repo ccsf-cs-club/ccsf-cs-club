@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Existing user model (for registration system)
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+// Contact form submissions
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contacts")
+}
+
+// STAR voting system
+model Vote {
+  id          Int      @id @default(autoincrement())
+  voterId     String   @map("voter_id")
+  candidateId String   @map("candidate_id")
+  score       Int      @db.SmallInt // 0-5 range for STAR voting
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Ensure one vote per voter per candidate
+  @@unique([voterId, candidateId], map: "votes_voter_id_candidate_id_key")
+  // Performance indexes
+  @@index([candidateId], map: "idx_votes_candidate_id")
+  @@index([voterId], map: "idx_votes_voter_id")
+  @@map("votes")
+}
