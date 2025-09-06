@@ -1,7 +1,7 @@
 ---
-title: "Software Engineering Paths of Interest"
-slug: "software-engineering-paths-2024"
-description: "Vote on which software engineering areas interest you most for guest speakers and workshops"
+title: "Programming Topics You Want to Learn"
+slug: "programming-learning-interests-2024"
+description: "Tell us what programming skills you want to learn - we'll plan workshops and find speakers to help!"
 startDate: 2024-09-01
 endDate: 2024-12-31
 status: "voting"
@@ -13,45 +13,45 @@ voterEligibility:
   requireMembership: true
   minimumMembershipDays: 0
 candidates:
-  - id: "web-development"
-    name: "Web Development"
-    description: "Frontend, backend, full-stack development, modern frameworks"
-    category: "Development"
+  - id: "building-websites"
+    name: "Building Websites & Web Apps"
+    description: "HTML, CSS, JavaScript, making interactive websites people actually use"
+    category: "Getting Started"
     order: 1
-  - id: "mobile-development"
-    name: "Mobile Development"
-    description: "iOS, Android, cross-platform apps, mobile UI/UX"
-    category: "Development"
+  - id: "mobile-apps"
+    name: "Making Phone Apps"
+    description: "Building apps for iPhone and Android, publishing to app stores"
+    category: "Getting Started"
     order: 2
-  - id: "data-science-ai"
-    name: "Data Science & AI/ML"
-    description: "Machine learning, data analysis, artificial intelligence, data visualization"
-    category: "Specialized"
+  - id: "coding-fundamentals"
+    name: "Programming Fundamentals"
+    description: "Logic, algorithms, data structures - the building blocks of all coding"
+    category: "Core Skills"
     order: 3
-  - id: "devops-cloud"
-    name: "DevOps & Cloud Engineering"
-    description: "CI/CD, containerization, cloud platforms, infrastructure management"
-    category: "Operations"
+  - id: "databases-apis"
+    name: "Working with Data & APIs"
+    description: "Storing information, connecting different services, making apps talk to each other"
+    category: "Core Skills"
     order: 4
-  - id: "cybersecurity"
-    name: "Cybersecurity"
-    description: "Application security, ethical hacking, security architecture, compliance"
-    category: "Security"
+  - id: "ai-tools"
+    name: "AI Tools & Automation"
+    description: "Using ChatGPT, Claude, and AI to build things and automate tasks"
+    category: "Modern Tools"
     order: 5
-  - id: "game-development"
-    name: "Game Development"
-    description: "Game engines, graphics programming, game design, interactive media"
-    category: "Specialized"
+  - id: "creative-coding"
+    name: "Creative & Visual Programming"
+    description: "Making art with code, animations, interactive graphics, fun projects"
+    category: "Creative"
     order: 6
-  - id: "systems-programming"
-    name: "Systems Programming"
-    description: "Operating systems, embedded systems, performance optimization, low-level programming"
-    category: "Systems"
+  - id: "getting-hired"
+    name: "Getting Your First Tech Job"
+    description: "Portfolios, interviews, resumes, freelancing, breaking into the industry"
+    category: "Career"
     order: 7
-  - id: "product-management"
-    name: "Product & Project Management"
-    description: "Agile methodologies, product strategy, technical leadership, team coordination"
-    category: "Leadership"
+  - id: "open-source"
+    name: "Contributing to Open Source"
+    description: "Working on real projects with other developers, GitHub, collaboration"
+    category: "Community"
     order: 8
 resultsDisplay:
   showResults: true
@@ -62,57 +62,57 @@ settings:
   allowAbstention: true
   sendNotifications: false
   autoCloseOnEndDate: false
-tags: ["career-paths", "workshops", "speakers", "learning", "ongoing"]
+tags: ["learning", "workshops", "beginner-friendly", "skill-building", "ongoing"]
 author: "Programming Committee"
 ---
 
-## Shape Our Learning Focus!
+## Tell Us What You Want to Learn!
 
-Help us understand which software engineering areas excite you most! Your votes directly influence which guest speakers we invite and what workshop topics we prioritize throughout the year.
+Whether you're brand new to programming, switching careers, or just getting started - help us understand what skills you want to develop! Your input shapes which workshops we run and what speakers we bring in.
 
 ## How to Vote
 
-Using **STAR voting**, rate each software engineering path from 0-5 based on your interest level:
-- **5**: Extremely interested! Please bring speakers and do workshops on this
-- **4**: Very interested, would definitely attend related events
-- **3**: Moderately interested, good learning opportunity  
-- **2**: Somewhat interested, might attend depending on schedule
-- **1**: Limited interest, but open to learning
-- **0**: Not interested in this area
+Using **STAR voting**, rate each topic from 0-5 based on how much you want to learn about it:
+- **5**: Really want to learn this! Please plan workshops and bring speakers
+- **4**: Definitely interested, would attend sessions on this
+- **3**: Sounds useful, would probably check it out
+- **2**: Might be interesting, depends on my schedule
+- **1**: Not a priority but I'm curious
+- **0**: Not something I want to focus on right now
 
-## Software Engineering Paths
+## Programming Learning Areas
 
-### Web Development
-The foundation of modern internet applications, from user interfaces to server architecture.
+### Building Websites & Web Apps
+Start here! Learn to make websites that people can visit and use. Great first step into programming.
 
-### Mobile Development  
-Building apps for smartphones and tablets across iOS and Android platforms.
+### Making Phone Apps
+Build apps that people can download from app stores. Popular way to get into programming with visible results.
 
-### Data Science & AI/ML
-Working with big data, building intelligent systems, and extracting insights from information.
+### Programming Fundamentals
+The core thinking skills every programmer needs - problem solving, logic, and how computers work.
 
-### DevOps & Cloud Engineering
-Bridging development and operations, managing scalable infrastructure and deployment pipelines.
+### Working with Data & APIs
+Learn how apps store information and connect to other services. Essential skill for most programming jobs.
 
-### Cybersecurity
-Protecting systems, data, and users from digital threats and vulnerabilities.
+### AI Tools & Automation
+2025's hottest area! Use AI assistants to help you code and automate boring tasks.
 
-### Game Development
-Creating interactive entertainment, from indie games to AAA titles.
+### Creative & Visual Programming
+Make art, animations, and interactive graphics with code. Great for visual learners and creative people.
 
-### Systems Programming
-Low-level programming for operating systems, embedded devices, and high-performance applications.
+### Getting Your First Tech Job
+The practical stuff - building a portfolio, interviewing, networking, and actually landing a job.
 
-### Product & Project Management
-Leading technical teams, managing software projects, and bridging business and engineering.
+### Contributing to Open Source
+Work on real projects with experienced developers. Great way to learn and build your reputation.
 
 ## How We Use These Results
 
-Your preferences help us:
-- **Invite Relevant Speakers**: Prioritize industry professionals in high-interest areas
-- **Plan Targeted Workshops**: Focus on skills members want to develop
-- **Form Study Groups**: Connect members with similar interests
-- **Career Guidance**: Provide resources for popular career paths
-- **Partnership Opportunities**: Reach out to companies in preferred domains
+Your votes help us:
+- **Plan Better Workshops**: Focus on what you actually want to learn
+- **Find Great Speakers**: Bring in people who can teach the popular topics
+- **Connect You with Others**: Form study groups and project teams around shared interests
+- **Provide Resources**: Point you to tutorials, courses, and practice opportunities
+- **Plan Events**: Schedule workshops and talks around your learning goals
 
-This is an ongoing poll - vote anytime and update your preferences as your interests evolve!
+This poll stays open all semester - vote now and update your interests as you learn and grow!
