@@ -1,0 +1,144 @@
+---
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  value: number;
+  onChange?: string; // Client-side function name for interactive mode
+  maxStars?: number;
+  size?: 'sm' | 'md' | 'lg';
+  readonly?: boolean;
+}
+
+const { 
+  value, 
+  onChange,
+  maxStars = 5, 
+  size = 'md',
+  readonly = false 
+} = Astro.props;
+
+const sizeClasses = {
+  sm: 'w-4 h-4',
+  md: 'w-6 h-6', 
+  lg: 'w-8 h-8'
+};
+
+const componentId = `star-rating-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div class="flex items-center gap-1" id={componentId} data-value={value}>
+  {Array.from({ length: maxStars }, (_, i) => {
+    const starValue = i + 1;
+    const isActive = starValue <= value;
+
+    return (
+      <button
+        type="button"
+        class:list={[
+          "transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-opacity-50 rounded",
+          readonly ? "cursor-default" : "cursor-pointer",
+          isActive ? "text-yellow-400" : "text-gray-300 hover:text-yellow-200"
+        ]}
+        data-star-value={starValue}
+        disabled={readonly}
+      >
+        <span class="star-icon relative" data-filled={isActive}>
+          <Icon 
+            name="mdi:star"
+            class:list={[sizeClasses[size], isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
+          />
+          <Icon 
+            name="mdi:star-outline"
+            class:list={[sizeClasses[size], "absolute inset-0", !isActive ? "opacity-100" : "opacity-0", "transition-opacity duration-200"]}
+          />
+        </span>
+      </button>
+    );
+  })}
+  <span class="ml-2 text-sm text-gray-600 dark:text-gray-400" data-rating-text>
+    {value > 0 ? `${value}/${maxStars}` : 'Not rated'}
+  </span>
+</div>
+
+{!readonly && onChange && (
+  <script define:vars={{ componentId, onChange, maxStars }}>
+    const container = document.getElementById(componentId);
+    const buttons = container.querySelectorAll('button[data-star-value]');
+    let currentHover = 0;
+    
+    // Store original value for hover reset
+    const originalValue = parseInt(container.dataset.value || '0');
+    let currentValue = originalValue;
+    
+    buttons.forEach((button, index) => {
+      const starValue = parseInt(button.dataset.starValue);
+      
+      // Mouse enter - show hover preview
+      button.addEventListener('mouseenter', () => {
+        if (button.disabled) return;
+        currentHover = starValue;
+        updateStars(starValue);
+      });
+      
+      // Mouse leave from container - reset to current value  
+      button.addEventListener('mouseleave', () => {
+        if (button.disabled) return;
+        updateStars(currentValue);
+      });
+      
+      // Click - set new value
+      button.addEventListener('click', (e) => {
+        if (button.disabled) return;
+        e.preventDefault();
+        currentValue = starValue;
+        updateStars(starValue);
+        
+        // Call the provided onChange function
+        if (typeof window[onChange] === 'function') {
+          window[onChange](starValue);
+        }
+      });
+    });
+    
+    // Reset on container mouse leave
+    container.addEventListener('mouseleave', () => {
+      updateStars(currentValue);
+    });
+    
+    function updateStars(rating) {
+      buttons.forEach((btn) => {
+        const btnValue = parseInt(btn.dataset.starValue);
+        const isActive = btnValue <= rating;
+        const starIcon = btn.querySelector('.star-icon');
+        const filledStar = starIcon.querySelector('[data-icon="mdi:star"]');
+        const outlineStar = starIcon.querySelector('[data-icon="mdi:star-outline"]');
+        
+        // Update button classes
+        if (isActive) {
+          btn.classList.remove('text-gray-300');
+          btn.classList.add('text-yellow-400');
+        } else {
+          btn.classList.remove('text-yellow-400');
+          btn.classList.add('text-gray-300');
+        }
+        
+        // Update icon visibility
+        if (filledStar && outlineStar) {
+          if (isActive) {
+            filledStar.style.opacity = '1';
+            outlineStar.style.opacity = '0';
+          } else {
+            filledStar.style.opacity = '0';
+            outlineStar.style.opacity = '1';
+          }
+        }
+        
+        starIcon.dataset.filled = isActive.toString();
+      });
+      
+      // Update rating text
+      const ratingText = container.querySelector('[data-rating-text]');
+      ratingText.textContent = rating > 0 ? `${rating}/${maxStars}` : 'Not rated';
+    }
+  </script>
+)}
