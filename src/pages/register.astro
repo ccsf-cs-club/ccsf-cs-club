@@ -2,15 +2,49 @@
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = false;
+
+// CS topic candidates for STAR voting
+const candidates = [
+  {
+    id: 'web-development',
+    name: 'Web Development',
+    description: 'Frontend, backend, full-stack development using modern frameworks and technologies'
+  },
+  {
+    id: 'data-science',
+    name: 'Data Science & Analytics',
+    description: 'Machine learning, data analysis, visualization, and statistical modeling'
+  },
+  {
+    id: 'cybersecurity',
+    name: 'Cybersecurity',
+    description: 'Network security, ethical hacking, cryptography, and security best practices'
+  },
+  {
+    id: 'mobile-development',
+    name: 'Mobile Development',
+    description: 'iOS, Android, cross-platform mobile application development'
+  },
+  {
+    id: 'game-development',
+    name: 'Game Development',
+    description: 'Game design, programming, graphics, and interactive entertainment systems'
+  },
+  {
+    id: 'ai-machine-learning',
+    name: 'AI & Machine Learning',
+    description: 'Artificial intelligence, neural networks, deep learning, and automation'
+  }
+];
 ---
 
-<Layout title="Register - CCSF CS Club">
+<Layout title="STAR Voting - CCSF CS Club">
   <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-    <div class="max-w-md mx-auto">
+    <div class="max-w-4xl mx-auto">
       <div class="bg-white rounded-lg shadow-xl p-8">
         <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">Join the CS Club</h1>
-          <p class="text-gray-600">Register to become part of our community</p>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">STAR Voting</h1>
+          <p class="text-gray-600">Rate each CS topic from 1-5 stars based on your interest</p>
         </div>
 
         <!-- Success Message -->
@@ -19,7 +53,7 @@ export const prerender = false;
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
             </svg>
-            <span>Registration successful! Welcome to the CS Club!</span>
+            <span>Voting successful! Thank you for participating!</span>
           </div>
         </div>
 
@@ -33,47 +67,54 @@ export const prerender = false;
           </div>
         </div>
 
-        <!-- Registration Form -->
-        <form id="registration-form" class="space-y-6">
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              minlength="2"
-              maxlength="255"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-              placeholder="Enter your full name"
-            />
-            <div id="name-error" class="hidden text-red-600 text-sm mt-1"></div>
+        <!-- Progress Tracker -->
+        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-blue-800">Progress</span>
+            <span id="progress-text" class="text-sm font-medium text-blue-900">0 of 6 topics rated</span>
           </div>
+          <div class="mt-2 w-full bg-blue-200 rounded-full h-2">
+            <div id="progress-bar" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+          </div>
+        </div>
 
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              maxlength="255"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-              placeholder="Enter your email address"
-            />
-            <div id="email-error" class="hidden text-red-600 text-sm mt-1"></div>
+        <!-- Voting Form -->
+        <form id="voting-form" class="space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {candidates.map((candidate) => (
+              <div class="candidate-card bg-gray-50 rounded-lg p-6 border border-gray-200 hover:border-gray-300 transition-colors">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{candidate.name}</h3>
+                <p class="text-sm text-gray-600 mb-4">{candidate.description}</p>
+                
+                <!-- Star Rating Component -->
+                <div class="star-rating" data-candidate-id={candidate.id}>
+                  <div class="flex space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        type="button"
+                        class="star-button w-8 h-8 text-gray-300 hover:text-yellow-400 focus:text-yellow-400 focus:outline-none transition-colors"
+                        data-rating={star}
+                        data-candidate-id={candidate.id}
+                      >
+                        <svg fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                  <input type="hidden" name={`rating-${candidate.id}`} id={`rating-${candidate.id}`} value="0">
+                </div>
+              </div>
+            ))}
           </div>
 
           <button
             type="submit"
             id="submit-btn"
-            class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+            disabled
           >
-            Register
+            Submit Votes
           </button>
 
           <div id="loading-indicator" class="hidden text-center">
@@ -82,14 +123,14 @@ export const prerender = false;
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Registering...
+              Submitting votes...
             </div>
           </div>
         </form>
 
         <div class="mt-8 text-center">
           <p class="text-sm text-gray-500">
-            Already registered? <a href="/" class="text-indigo-600 hover:text-indigo-800">Return to homepage</a>
+            Rate all topics to submit your vote. <a href="/" class="text-indigo-600 hover:text-indigo-800">Return to homepage</a>
           </p>
         </div>
       </div>
@@ -99,18 +140,18 @@ export const prerender = false;
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('registration-form') as HTMLFormElement;
+    const form = document.getElementById('voting-form') as HTMLFormElement;
     const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
     const loadingIndicator = document.getElementById('loading-indicator') as HTMLElement;
     const successMessage = document.getElementById('success-message') as HTMLElement;
     const errorMessage = document.getElementById('error-message') as HTMLElement;
     const errorText = document.getElementById('error-text') as HTMLElement;
+    const progressText = document.getElementById('progress-text') as HTMLElement;
+    const progressBar = document.getElementById('progress-bar') as HTMLElement;
 
-    // Form validation
-    const nameInput = document.getElementById('name') as HTMLInputElement;
-    const emailInput = document.getElementById('email') as HTMLInputElement;
-    const nameError = document.getElementById('name-error') as HTMLElement;
-    const emailError = document.getElementById('email-error') as HTMLElement;
+    // Star rating state
+    const ratings: { [key: string]: number } = {};
+    const candidates = ['web-development', 'data-science', 'cybersecurity', 'mobile-development', 'game-development', 'ai-machine-learning'];
 
     function showError(message: string) {
       errorText.textContent = message;
@@ -128,52 +169,106 @@ export const prerender = false;
       errorMessage.classList.add('hidden');
     }
 
-    function validateName(): boolean {
-      const name = nameInput.value.trim();
-      if (name.length < 2) {
-        nameError.textContent = 'Name must be at least 2 characters long';
-        nameError.classList.remove('hidden');
-        return false;
-      }
-      if (name.length > 255) {
-        nameError.textContent = 'Name must be less than 255 characters';
-        nameError.classList.remove('hidden');
-        return false;
-      }
-      nameError.classList.add('hidden');
-      return true;
-    }
-
-    function validateEmail(): boolean {
-      const email = emailInput.value.trim();
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    function updateProgress() {
+      const ratedCount = Object.keys(ratings).filter(key => ratings[key] > 0).length;
+      const progress = (ratedCount / candidates.length) * 100;
       
-      if (!emailRegex.test(email)) {
-        emailError.textContent = 'Please enter a valid email address';
-        emailError.classList.remove('hidden');
-        return false;
-      }
-      if (email.length > 255) {
-        emailError.textContent = 'Email must be less than 255 characters';
-        emailError.classList.remove('hidden');
-        return false;
-      }
-      emailError.classList.add('hidden');
-      return true;
+      progressText.textContent = `${ratedCount} of ${candidates.length} topics rated`;
+      progressBar.style.width = `${progress}%`;
+      
+      // Enable submit button if all candidates are rated
+      submitBtn.disabled = ratedCount < candidates.length;
     }
 
-    // Real-time validation
-    nameInput.addEventListener('blur', validateName);
-    emailInput.addEventListener('blur', validateEmail);
+    function setRating(candidateId: string, rating: number) {
+      ratings[candidateId] = rating;
+      
+      // Update hidden input
+      const hiddenInput = document.getElementById(`rating-${candidateId}`) as HTMLInputElement;
+      if (hiddenInput) {
+        hiddenInput.value = rating.toString();
+      }
+      
+      // Update star display
+      const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
+      if (starContainer) {
+        const stars = starContainer.querySelectorAll('.star-button');
+        stars.forEach((star, index) => {
+          const starElement = star as HTMLElement;
+          if (index < rating) {
+            starElement.classList.add('text-yellow-400');
+            starElement.classList.remove('text-gray-300');
+          } else {
+            starElement.classList.add('text-gray-300');
+            starElement.classList.remove('text-yellow-400');
+          }
+        });
+      }
+      
+      updateProgress();
+    }
+
+    // Handle star clicks
+    document.querySelectorAll('.star-button').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
+        const rating = parseInt((this as HTMLElement).getAttribute('data-rating') || '0');
+        
+        if (candidateId) {
+          setRating(candidateId, rating);
+        }
+      });
+
+      // Handle hover effects
+      button.addEventListener('mouseenter', function() {
+        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
+        const hoverRating = parseInt((this as HTMLElement).getAttribute('data-rating') || '0');
+        
+        if (candidateId) {
+          const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
+          if (starContainer) {
+            const stars = starContainer.querySelectorAll('.star-button');
+            stars.forEach((star, index) => {
+              const starElement = star as HTMLElement;
+              if (index < hoverRating) {
+                starElement.classList.add('text-yellow-400');
+                starElement.classList.remove('text-gray-300');
+              } else {
+                starElement.classList.add('text-gray-300');
+                starElement.classList.remove('text-yellow-400');
+              }
+            });
+          }
+        }
+      });
+
+      button.addEventListener('mouseleave', function() {
+        const candidateId = (this as HTMLElement).getAttribute('data-candidate-id');
+        if (candidateId && ratings[candidateId]) {
+          setRating(candidateId, ratings[candidateId]);
+        } else if (candidateId) {
+          // Reset to unrated state
+          const starContainer = document.querySelector(`[data-candidate-id="${candidateId}"]`);
+          if (starContainer) {
+            const stars = starContainer.querySelectorAll('.star-button');
+            stars.forEach(star => {
+              const starElement = star as HTMLElement;
+              starElement.classList.add('text-gray-300');
+              starElement.classList.remove('text-yellow-400');
+            });
+          }
+        }
+      });
+    });
 
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       
-      // Validate form
-      const isNameValid = validateName();
-      const isEmailValid = validateEmail();
-      
-      if (!isNameValid || !isEmailValid) {
+      // Check if all candidates are rated
+      const ratedCount = Object.keys(ratings).filter(key => ratings[key] > 0).length;
+      if (ratedCount < candidates.length) {
+        showError('Please rate all topics before submitting.');
         return;
       }
 
@@ -184,34 +279,37 @@ export const prerender = false;
       hideMessages();
 
       try {
-        const formData = new FormData(form);
+        // Prepare vote data
+        const voteData = {
+          votes: ratings
+        };
+
+        // For now, simulate API call since /api/vote doesn't exist yet
+        console.log('Would submit votes:', voteData);
         
-        const response = await fetch('/api/register', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Show success
+        showSuccess();
+        
+        // Reset form
+        Object.keys(ratings).forEach(candidateId => {
+          setRating(candidateId, 0);
         });
 
-        const result = await response.json();
-
-        if (response.ok) {
-          showSuccess();
-          form.reset();
-        } else {
-          showError(result.error || 'Registration failed. Please try again.');
-        }
-
       } catch (error) {
-        console.error('Registration error:', error);
+        console.error('Voting error:', error);
         showError('Network error. Please check your connection and try again.');
       } finally {
         // Reset loading state
-        submitBtn.disabled = false;
+        submitBtn.disabled = true; // Keep disabled until all topics are rated again
         submitBtn.classList.remove('hidden');
         loadingIndicator.classList.add('hidden');
       }
     });
+
+    // Initialize progress
+    updateProgress();
   });
 </script>
