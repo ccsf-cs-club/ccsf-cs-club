@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSession } from 'auth-astro/server';
+
+const session = await getSession(Astro.request);
+
+// Redirect if not authenticated
+if (!session?.user) {
+  return Astro.redirect('/auth/signin');
+}
+
+const user = session.user;
+---
+
+<Layout title="Dashboard - CCSF CS Club">
+  <main class="min-h-screen bg-base-100 py-8">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Dashboard</h1>
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost">
+            <div class="avatar placeholder">
+              <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
+                <span class="text-xs">{user.name?.charAt(0).toUpperCase()}</span>
+              </div>
+            </div>
+            <span class="ml-2">{user.name}</span>
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/auth/signout">Sign Out</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Welcome Card -->
+      <div class="card bg-primary text-primary-content mb-8">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Welcome back, {user.name}!</h2>
+          <p>
+            {user.studentId ? 
+              `Student ID: ${user.studentId} • Role: ${user.role}` :
+              `Role: ${user.role}`
+            }
+          </p>
+          <div class="badge badge-secondary">
+            {user.isVerified ? 'Verified Student' : 'Pending Verification'}
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title">Elections</h3>
+            <p>View active elections and cast your votes</p>
+            <div class="card-actions justify-end">
+              <a href="/elections" class="btn btn-primary btn-sm">View Elections</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title">Events</h3>
+            <p>Check upcoming club events and meetings</p>
+            <div class="card-actions justify-end">
+              <a href="/events" class="btn btn-primary btn-sm">View Events</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title">Resources</h3>
+            <p>Access study materials and club resources</p>
+            <div class="card-actions justify-end">
+              <a href="/resources" class="btn btn-primary btn-sm">Browse Resources</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="card bg-base-200 shadow-lg">
+        <div class="card-body">
+          <h3 class="card-title mb-4">Recent Activity</h3>
+          <div class="space-y-2">
+            <div class="alert alert-info">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Welcome to the CCSF CS Club platform! Complete your profile to get started.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

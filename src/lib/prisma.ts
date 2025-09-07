@@ -18,7 +18,7 @@ export type Contact = {
 
 export type Vote = {
   id: number;
-  voterId: string;
+  voterId: number; // Changed to number to match User.id
   candidateId: string;
   electionId: string | null;
   score: number;
@@ -60,7 +60,7 @@ export type CreateContactData = {
 };
 
 export type CreateVoteData = {
-  voterId: string;
+  voterId: number; // Changed to number to match User.id
   candidateId: string;
   electionId?: string;
   score: number;
@@ -345,7 +345,7 @@ class PrismaConnection {
     }
   }
 
-  async getVotesByVoter(voterId: string): Promise<Vote[]> {
+  async getVotesByVoter(voterId: number): Promise<Vote[]> {
     try {
       return await this.prisma.vote.findMany({
         where: { voterId },

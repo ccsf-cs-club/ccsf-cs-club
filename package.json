@@ -18,23 +18,29 @@
     "@astrojs/netlify": "^6.5.7",
     "@astrojs/node": "^9.4.3",
     "@astrojs/tailwind": "^6.0.2",
+    "@auth/core": "^0.40.0",
+    "@auth/prisma-adapter": "^2.10.0",
     "@iconify-json/mdi": "^1.2.1",
     "@neondatabase/serverless": "^1.0.1",
     "@prisma/client": "^6.15.0",
     "astro": "^5.13.2",
     "astro-icon": "^1.1.4",
+    "auth-astro": "^4.2.0",
+    "bcryptjs": "^3.0.2",
     "daisyui": "^4.7.2",
     "dotenv": "^17.2.2",
     "flowbite": "^2.3.0",
     "flowbite-datepicker": "^1.2.6",
+    "nodemailer": "^7.0.6",
     "postgres": "^3.4.7",
     "prisma": "^6.15.0",
     "typescript": "^5.3.3",
-    "yarn": "^1.22.22",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^24.3.1",
+    "@types/nodemailer": "^7.0.1",
     "@vitest/ui": "^3.2.4",
     "happy-dom": "^18.0.1",
     "prettier": "3.2.5",
@@ -42,6 +48,5 @@
     "prettier-plugin-tailwindcss": "0.5.11",
     "tailwindcss": "^3.4.1",
     "vitest": "^3.2.4"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }

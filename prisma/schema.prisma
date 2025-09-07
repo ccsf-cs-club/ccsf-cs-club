@@ -15,12 +15,63 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now()) @map("created_at")
+  id              Int       @id @default(autoincrement())
+  email           String    @unique
+  name            String
+  studentId       String?   @unique @map("student_id")
+  role            Role      @default(MEMBER)
+  isVerified      Boolean   @default(false) @map("is_verified")
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  lastLoginAt     DateTime? @map("last_login_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  oauthAccounts OAuthAccount[]
+  sessions      UserSession[]
+  votes         Vote[]
 
   @@map("users")
+}
+
+enum Role {
+  GUEST
+  MEMBER
+  OFFICER
+  ADMIN
+  SUPER_ADMIN
+
+  @@map("user_role")
+}
+
+model OAuthAccount {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  provider       String
+  providerUserId String    @map("provider_user_id")
+  providerEmail  String?   @map("provider_email")
+  accessToken    String?   @map("access_token") @db.Text
+  refreshToken   String?   @map("refresh_token") @db.Text
+  expiresAt      DateTime? @map("expires_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@map("oauth_accounts")
+}
+
+model UserSession {
+  id             String   @id @default(uuid())
+  userId         Int      @map("user_id")
+  expiresAt      DateTime @map("expires_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  lastAccessedAt DateTime @default(now()) @map("last_accessed_at")
+  ipAddress      String?  @map("ip_address")
+  userAgent      String?  @map("user_agent") @db.Text
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
 }
 
 model Contact {
@@ -70,11 +121,13 @@ model Candidate {
 
 model Vote {
   id          Int       @id @default(autoincrement())
-  voterId     String    @map("voter_id")
+  voterId     Int       @map("voter_id") // Changed to Int to reference User.id
   candidateId String    @map("candidate_id")
   electionId  String?   @map("election_id") // Optional for backward compatibility
   score       Int       @db.SmallInt // 0-5 range for STAR voting
   createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user        User      @relation(fields: [voterId], references: [id], onDelete: Cascade)
   election    Election? @relation(fields: [electionId], references: [id], onDelete: Cascade)
 
   @@unique([voterId, candidateId, electionId]) // Unique per voter, candidate, and election

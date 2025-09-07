@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getSession } from 'auth-astro/server';
+
+const session = await getSession(Astro.request);
+---
+
+<Layout title="Sign Out - CCSF CS Club">
+  <main class="min-h-screen bg-base-100 py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-md mx-auto">
+        <div class="card bg-base-200 shadow-xl">
+          <div class="card-body text-center">
+            <h1 class="card-title text-2xl font-bold mb-6">
+              Sign Out
+            </h1>
+            
+            {session?.user ? (
+              <div>
+                <p class="mb-4">Are you sure you want to sign out?</p>
+                <div class="alert alert-info mb-4">
+                  <div>
+                    <div class="font-medium">{session.user.name}</div>
+                    <div class="text-sm opacity-70">{session.user.email}</div>
+                  </div>
+                </div>
+                
+                <form action="/api/auth/signout" method="POST" class="space-y-4">
+                  <button type="submit" class="btn btn-error w-full">
+                    Yes, Sign Out
+                  </button>
+                </form>
+                
+                <a href="/" class="btn btn-ghost w-full mt-2">
+                  Cancel
+                </a>
+              </div>
+            ) : (
+              <div>
+                <p class="mb-4">You are not currently signed in.</p>
+                <a href="/auth/signin" class="btn btn-primary w-full">
+                  Sign In
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
