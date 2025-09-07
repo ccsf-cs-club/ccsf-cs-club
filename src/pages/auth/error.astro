@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const error = Astro.url.searchParams.get('error') || 'unknown';
+
+const errorMessages = {
+  'Signin': 'Try signing with a different account.',
+  'OAuthSignin': 'Try signing with a different account.',
+  'OAuthCallback': 'Try signing with a different account.',
+  'OAuthCreateAccount': 'Try signing with a different account.',
+  'EmailCreateAccount': 'Try signing with a different account.',
+  'Callback': 'Try signing with a different account.',
+  'OAuthAccountNotLinked': 'To confirm your identity, sign in with the same account you used originally.',
+  'EmailSignin': 'Check your email address.',
+  'CredentialsSignin': 'Sign in failed. Check the details you provided are correct.',
+  'default': 'Unable to sign in.',
+  'Configuration': 'There is a problem with the server configuration.',
+  'AccessDenied': 'Access denied. You do not have permission to sign in.',
+  'Verification': 'The sign in link is no longer valid. It may have been used already or it may have expired.',
+};
+---
+
+<Layout title="Authentication Error - CCSF CS Club">
+  <main class="min-h-screen bg-base-100 py-12">
+    <div class="container mx-auto px-4">
+      <div class="max-w-md mx-auto">
+        <div class="card bg-base-200 shadow-xl">
+          <div class="card-body text-center">
+            <div class="text-error text-6xl mb-4">⚠️</div>
+            <h1 class="card-title text-2xl font-bold mb-4">
+              Authentication Error
+            </h1>
+            
+            <div class="alert alert-error mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <h3 class="font-bold">Error: {error}</h3>
+                <div class="text-sm">
+                  {errorMessages[error as keyof typeof errorMessages] || errorMessages.default}
+                </div>
+              </div>
+            </div>
+            
+            {error === 'AccessDenied' && (
+              <div class="alert alert-warning mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                  <h3 class="font-bold">CCSF Students Only</h3>
+                  <div class="text-sm">
+                    Please use your @mail.ccsf.edu email address to sign in.
+                    Only verified CCSF students can access this platform.
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div class="space-y-2">
+              <a href="/auth/signin" class="btn btn-primary w-full">
+                Try Again
+              </a>
+              <a href="/" class="btn btn-ghost w-full">
+                Go Home
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
