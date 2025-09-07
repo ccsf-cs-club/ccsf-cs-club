@@ -1,12 +1,9 @@
 import { defineConfig } from 'auth-astro';
 import Google from '@auth/core/providers/google';
 import GitHub from '@auth/core/providers/github';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export default defineConfig({
+  secret: process.env.AUTH_SECRET,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -23,7 +20,8 @@ export default defineConfig({
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     }),
   ],
-  adapter: PrismaAdapter(prisma),
+  // Note: Database adapter removed to resolve dependency conflicts
+  // User data will be stored in JWT tokens instead of database
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === 'google') {
