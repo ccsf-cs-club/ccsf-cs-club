@@ -27,3 +27,9 @@ pnpm-debug.log*
 
 # Playwright screenshots and test artifacts
 .playwright-mcp/
+
+# Development environment
+.flox/
+
+# Drafts and temporary files
+drafts/
